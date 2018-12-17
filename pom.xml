@@ -359,31 +359,15 @@
             <exclude>**/*.iml</exclude>
             <exclude>*.patch</exclude>
             <exclude>*.diff</exclude>
-            <!-- Documentation -->
-            <exclude>src/**</exclude>
-            <exclude>docs/**</exclude>
             <!-- File generated during build -->
             <exclude>**/target/**</exclude>
             <exclude>**/dependency-reduced-pom.xml</exclude>
             <!-- Other files -->
             <exclude>ReleaseProcedure.txt</exclude>
-            <exclude>benchmarks/*.txt</exclude>
-            <exclude>benchmarks/*.csv</exclude>
-            <exclude>analyzer/run-pitest.sh</exclude>
-            <exclude>analyzer/pitest/</exclude>
             <exclude>**/.~lock.*</exclude>
-            <exclude>docker/_m2/**</exclude>
-            <exclude>docker/_gnupg/**</exclude>
             <!-- Test scripts -->
             <exclude>*.sh</exclude>
             <exclude>**/_*/**</exclude>
-            <!-- Icon stuff in the demo webapp -->
-            <exclude>webapp/src/main/**/*.json</exclude>
-            <exclude>webapp/src/main/**/*.xml</exclude>
-            <exclude>webapp/src/main/**/*.svg</exclude>
-            <exclude>webapp/src/main/**/robots.txt</exclude>
-            <exclude>webapp/README.md</exclude>
-            <exclude>webapp/icon/**</exclude>
           </excludes>
         </configuration>
       </plugin>
