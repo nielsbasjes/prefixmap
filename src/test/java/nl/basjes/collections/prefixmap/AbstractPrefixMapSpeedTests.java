@@ -40,7 +40,7 @@ public abstract class AbstractPrefixMapSpeedTests {
         List<String> testModels = new ArrayList<>(testBatchSize);
 
         Iterator<String> iterator = TEST_MODELS.iterator();
-        for (int i = 0 ; i < testBatchSize ; i++ ){
+        for (int i = 0; i < testBatchSize; i++){
             if (!iterator.hasNext()) {
                 iterator = TEST_MODELS.iterator();
             }

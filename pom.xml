@@ -372,91 +372,81 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${checkstyle-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <consoleOutput>true</consoleOutput>
+          <configLocation>${project.build.testSourceDirectory}/../checkstyle/checkstyle.xml</configLocation>
+          <suppressionsLocation>${project.build.testSourceDirectory}/../checkstyle/suppressions.xml</suppressionsLocation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+        </configuration>
+        <!-- Runs by default in the verify phase  (mvn verify or later in the build cycle)
+             the 'check' goal will fail the build if it does not pass.  "mvn checkstyle:check"
+             will do this alone, or "mvn checkstyle:checkstyle" will report but not break  -->
+        <executions>
+          <execution>
+            <id>checkstyle-check</id>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Coverage analysis for tests -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <!--
+              Prepares the property pointing to the JaCoCo runtime agent which
+              is passed as VM argument when Maven the Surefire plugin is executed.
+          -->
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <!--
+                  Sets the name of the property containing the settings
+                  for JaCoCo runtime agent.
+              -->
+              <propertyName>jacoco.surefireArgLine</propertyName>
+            </configuration>
+          </execution>
+          <!--
+              Ensures that the code coverage report for unit tests is created after
+              unit tests have been run.
+          -->
+          <execution>
+            <id>post-unit-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.5.0.1254</version>
+      </plugin>
+
     </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${checkstyle-plugin.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>nl.basjes.parse.useragent</groupId>
-              <artifactId>devtools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>${checkstyle.version}</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <consoleOutput>true</consoleOutput>
-            <configLocation>checkstyle/checkstyle.xml</configLocation>
-            <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          </configuration>
-          <!-- Runs by default in the verify phase  (mvn verify or later in the build cycle)
-               the 'check' goal will fail the build if it does not pass.  "mvn checkstyle:check"
-               will do this alone, or "mvn checkstyle:checkstyle" will report but not break  -->
-          <executions>
-            <execution>
-              <id>checkstyle-check</id>
-              <phase>test</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <!-- Coverage analysis for tests -->
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.version}</version>
-          <executions>
-            <!--
-                Prepares the property pointing to the JaCoCo runtime agent which
-                is passed as VM argument when Maven the Surefire plugin is executed.
-            -->
-            <execution>
-              <id>pre-unit-test</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-              <configuration>
-                <!--
-                    Sets the name of the property containing the settings
-                    for JaCoCo runtime agent.
-                -->
-                <propertyName>jacoco.surefireArgLine</propertyName>
-              </configuration>
-            </execution>
-            <!--
-                Ensures that the code coverage report for unit tests is created after
-                unit tests have been run.
-            -->
-            <execution>
-              <id>post-unit-test</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.5.0.1254</version>
-        </plugin>
-
-      </plugins>
-    </pluginManagement>
   </build>
 
   <licenses>

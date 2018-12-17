@@ -21,9 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class PrefixMapSpeedTestData {
+final class PrefixMapSpeedTestData {
 
-    static final Map<String, String> PREFIX_MAP = new HashMap<>(500);
+    private PrefixMapSpeedTestData() {
+    }
+
+    static final Map<String, String> PREFIX_MAP      = new HashMap<>(500);
     static final Map<String, String> FULL_PREFIX_MAP = new HashMap<>(20000);
 
     // This data was collected as part of the Apache 2.0 licensed project
