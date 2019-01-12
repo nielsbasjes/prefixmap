@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-  ~ Copyright (C) 2018-2018 Niels Basjes
+  ~ Copyright (C) 2018-2019 Niels Basjes
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
   <name>PrefixMap</name>
   <description>A datastructure the allows looking up the best matching prefix.</description>
 
-  <url>https://prefixmap.basjes.nl</url>
+  <url>https://github.com/nielsbasjes/prefixmap</url>
 
   <properties>
     <jdkLevel>1.8</jdkLevel>
@@ -470,7 +470,7 @@
   </developers>
 
   <scm>
-    <url>https://prefixmap.basjes.nl</url>
+    <url>https://github.com/nielsbasjes/prefixmap</url>
     <connection>scm:git:https://github.com/nielsbasjes/prefixmap.git</connection>
     <developerConnection>scm:git:.</developerConnection>
   </scm>
