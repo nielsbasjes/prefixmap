@@ -67,7 +67,7 @@ public abstract class AbstractPrefixMapSpeedTests {
         }
         long stop = System.nanoTime();
         System.out.println("Speed stats " + prefixMap.getClass().getSimpleName() +
-                " (" + prefixes.size() + " rules): " +
+                "\t (" + prefixes.size() + "\t rules): " +
                 iterations + " runs took " +
                 ((stop - start)/1000000) + "ms --> " +
                 ((stop - start)/iterations) + "ns each (=" +
