@@ -21,6 +21,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+
 public class StringPrefixMapTest extends AbstractPrefixMapTests {
 
     @Override
@@ -312,6 +314,22 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
 
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
+    }
+
+    @Test
+    public void verifyDocumentationExampleUsage() {
+        // Parameter caseSensitive=false --> so lookups are caseINsensitive
+        PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
+
+        brandLookup.put("RM-", "Nokia");
+        brandLookup.put("GT-", "Samsung");
+
+        String brandGT = brandLookup.getLongestMatch("GT-I8190N");   // --> "Samsung"
+        String brandRM = brandLookup.getLongestMatch("RM-1092");     // --> "Nokia"
+
+        assertEquals("Samsung", brandGT);
+        assertEquals("Nokia", brandRM);
+
     }
 
 }

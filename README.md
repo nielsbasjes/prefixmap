@@ -8,6 +8,33 @@ PrefixMap: A Map type datastructure that uses prefixes instead of keys
 
 This is a java library that implements a datastructure I consider to be missing in the java landscape.
 
+The datastructure and its usages
+================================
+
+In several situations I have a set of values that are each associated with a different prefix of a String.
+
+The example where I found the biggest need for this was when analyzing the device tags of mobile devices.
+
+- A "GT-I8190N" is a "Samsung" device because it starts with "GT-".
+- A "RM-1092" is a "Nokia" device because it starts with "RM-".
+
+So I needed a lookup structure that maps these prefixes to the desired brands.
+
+    "RM-" : "Nokia"
+    "GT-" : "Samsung"
+
+With this code you can now do this type of lookup in a very fast way:
+
+    // Parameter caseSensitive=false --> so lookups are caseINsensitive
+    PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
+
+    brandLookup.put("RM-", "Nokia");
+    brandLookup.put("GT-", "Samsung");
+
+    String brandGT = brandLookup.getLongestMatch("GT-I8190N");   // --> "Samsung"
+    String brandRM = brandLookup.getLongestMatch("RM-1092");     // --> "Nokia"
+
+
 Blog post 
 =========
 A bit more background about this datastructure and how it works can be found in this blog which I wrote about it: [https://techlab.bol.com/finding-the-longest-matching-string-prefix-fast/](https://partnerprogramma.bol.com/click/click?p=1&t=url&s=2171&f=TXL&url=https%3A%2F%2Ftechlab.bol.com%2Ffinding-the-longest-matching-string-prefix-fast%2F&name=prefixmap)
