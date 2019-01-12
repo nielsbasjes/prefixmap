@@ -18,15 +18,16 @@ package nl.basjes.collections;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * <p>
- * An object that maps String prefixes to values.
+ * An object that maps prefixes to values.
  * A PrefixMap cannot contain duplicate prefixes; each prefix can map to at most one value.
  * </p>
  * <p>
  * The PrefixMap is a key-value type collection where the key is assumed to be the prefix of
- * the String for which later an answer is requested.
+ * the 'list of C' for which later an answer is requested.
  * </p>
  * <p>
  * So the retrieval of the value is based on a startsWith() check of the requested <tt>input</tt> against each of
@@ -39,7 +40,7 @@ import java.util.Map;
  * </p>
  * <p>Note that implementations may be constructed to match either case sensitive or case insensitive.</p>
  */
-public interface PrefixMap<V extends Serializable> extends Serializable {
+public interface PrefixMap<K extends Serializable, C, V extends Serializable> extends Serializable {
     /**
      * @return the number of prefix-value mappings in this prefixmap
      */
@@ -53,6 +54,22 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
     }
 
     /**
+     * The generic way of walking over the provided prefix
+     * @param prefix The input
+     * @param i The desired element index
+     * @return The element at the specified index.
+     * @throws IndexOutOfBoundsException in case of going out of bounds.
+     */
+    C getElementAtIndex(K prefix, int i) throws IndexOutOfBoundsException;
+
+    /**
+     * Get the length of the provided prefix
+     * @param prefix The input
+     * @return The number of elements in the provided prefix.
+     */
+    int getLength(K prefix);
+
+    /**
      * <p>Returns <tt>true</tt> if this map contains an exact mapping
      * for the specified prefix.</p>
      * <p>Note that implementations may be constructed to match either
@@ -61,7 +78,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @return <tt>true</tt> if this map contains an the exact mapping
      *         for the specified prefix.
      */
-    boolean containsPrefix(String prefix);
+    boolean containsPrefix(K prefix);
 
     /**
      * Copies all of the mappings from the specified map to this prefixmap.
@@ -69,7 +86,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @throws NullPointerException  if one or more of the prefixes or values are null.
      *         If this happens the PrefixMap is in an undefined state.
      */
-    default void putAll(Map<String, V> prefixesAndValues) {
+    default void putAll(Map<K, V> prefixesAndValues) {
         prefixesAndValues.forEach(this::put);
     }
 
@@ -86,7 +103,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @throws NullPointerException  if either the prefix or value are null.
      *         If this happens the PrefixMap is unchanged.
      */
-    V put(String prefix, V value);
+    V put(K prefix, V value);
 
     /**
      * <p>Removes the mapping for a prefix if present.</p>
@@ -96,7 +113,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @return the previous value associated with <tt>prefix</tt> (may be null).
      * @throws UnsupportedOperationException  if not implemented.
      */
-    default V remove(String prefix) {
+    default V remove(K prefix) {
         throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +
                 this.getClass().getCanonicalName());
     }
@@ -120,7 +137,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @param input  The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getShortestMatch(String input);
+    V getShortestMatch(K input);
 
     /**
      * <p>Return the value of the longest matching prefix.</p>
@@ -131,6 +148,6 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @param input  The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getLongestMatch(String input);
+    V getLongestMatch(K input);
 
 }

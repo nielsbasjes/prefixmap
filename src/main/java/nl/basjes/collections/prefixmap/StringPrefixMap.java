@@ -18,6 +18,7 @@ package nl.basjes.collections.prefixmap;
 import nl.basjes.collections.PrefixMap;
 
 import java.io.Serializable;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
@@ -25,110 +26,8 @@ import java.util.TreeMap;
  * stored prefixes can be any character in a String.
  * @param <V> The type of the value that is to be stored.
  */
-public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Serializable {
+public class StringPrefixMap<V extends Serializable> implements PrefixMap<String, Character, V>, Serializable {
 
-    private class PrefixTrie implements Serializable {
-        private TreeMap<Character, PrefixTrie> childNodes;
-        private boolean                        caseSensitive;
-        private int                            charIndex;
-        private V                              theValue;
-
-        PrefixTrie(boolean caseSensitive) {
-            this(caseSensitive, 0);
-        }
-
-        PrefixTrie(boolean caseSensitive, int charIndex) {
-            this.caseSensitive = caseSensitive;
-            this.charIndex = charIndex;
-        }
-
-        V add(String prefix, V value) {
-            V previousValue = theValue;
-            if (charIndex == prefix.length()) {
-                theValue = value;
-                return previousValue;
-            }
-
-            char myChar = prefix.charAt(charIndex);
-
-            if (childNodes == null) {
-                childNodes = new TreeMap<>();
-            }
-
-            if (caseSensitive) {
-                PrefixTrie child = childNodes.computeIfAbsent(myChar, c -> new PrefixTrie(true, charIndex + 1));
-                previousValue = child.add(prefix, value);
-            } else {
-                // If case INsensitive we build the tree
-                // and we link the same child to both the
-                // lower and uppercase entries in the child array.
-                char lower = Character.toLowerCase(myChar);
-                char upper = Character.toUpperCase(myChar);
-
-                PrefixTrie child = childNodes.computeIfAbsent(lower, c -> new PrefixTrie(false, charIndex + 1));
-                previousValue = child.add(prefix, value);
-                childNodes.put(upper, child);
-            }
-            return previousValue;
-        }
-
-        boolean containsPrefix(String prefix) {
-            if (charIndex == prefix.length()) {
-                return theValue != null;
-            }
-
-            if (childNodes == null) {
-                return false;
-            }
-
-            char myChar = prefix.charAt(charIndex);
-
-            PrefixTrie child = childNodes.get(myChar);
-            if (child == null) {
-                return false;
-            }
-
-            return child.containsPrefix(prefix);
-        }
-
-        V getShortestMatch(String input) {
-            if (theValue != null ||
-                charIndex == input.length() ||
-                childNodes == null) {
-                return theValue;
-            }
-
-            char myChar = input.charAt(charIndex);
-
-            PrefixTrie child = childNodes.get(myChar);
-            if (child == null) {
-                return null;
-            }
-
-            return child.getShortestMatch(input);
-        }
-
-        V getLongestMatch(String input) {
-            if (charIndex == input.length() || childNodes == null) {
-                return theValue;
-            }
-
-            char myChar = input.charAt(charIndex);
-
-            PrefixTrie child = childNodes.get(myChar);
-            if (child == null) {
-                return theValue;
-            }
-
-            V returnValue = child.getLongestMatch(input);
-            return (returnValue == null) ? theValue : returnValue;
-        }
-
-        public void clear() {
-            childNodes = null;
-            theValue = null;
-        }
-    }
 
     private PrefixTrie prefixPrefixTrie;
     private int size = 0;
@@ -160,6 +59,11 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public Character getElementAtIndex(String prefix, int i) {
+        return prefix.charAt(i);
     }
 
     @Override

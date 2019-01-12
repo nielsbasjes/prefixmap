@@ -24,4 +24,4 @@
  * </ul>
  * </p>
  */
-package nl.basjes.collections.prefixmap;
+package nl.basjes.collections.iterableprefixmap;
