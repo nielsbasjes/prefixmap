@@ -26,7 +26,7 @@ So I needed a lookup structure that maps these prefixes to the desired brands.
 With this code you can now do this type of lookup in a very fast way:
 
     // Parameter caseSensitive=false --> so lookups are caseINsensitive
-    PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
+    PrefixMap<String, Character, String> brandLookup = new StringPrefixMap<>(false);
 
     brandLookup.put("RM-", "Nokia");
     brandLookup.put("GT-", "Samsung");

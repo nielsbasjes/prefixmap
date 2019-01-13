@@ -24,7 +24,7 @@ import java.util.Map;
 public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
     @Override
-    PrefixMap<String> createPrefixMap(boolean caseSensitive) {
+    PrefixMap<String, Character, String> createPrefixMap(boolean caseSensitive) {
         return new ASCIIPrefixMap<>(caseSensitive);
     }
 
@@ -34,7 +34,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         expectedEx.expectMessage("Only readable ASCII is allowed as key !!!");
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("你好", "Hello in Chinese");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        PrefixMap<String, Character, String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
     }
 
@@ -42,7 +42,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     public void testNonASCIIValue() {
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("Hello in Chinese", "你好");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        PrefixMap<String, Character, String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
         // This should just work.
     }
@@ -54,7 +54,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
 
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        PrefixMap<String, Character, String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
 
         prefixLookup.put("ABCDEF",  "Result ABCDEF");
@@ -195,7 +195,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
 
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(true);
+        PrefixMap<String, Character, String> prefixLookup = new ASCIIPrefixMap<>(true);
         prefixLookup.putAll(prefixMap);
 
         prefixLookup.put("ABCDEF",  "Result ABCDEF");

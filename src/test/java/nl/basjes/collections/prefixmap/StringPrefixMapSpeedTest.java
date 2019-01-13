@@ -22,8 +22,8 @@ import java.util.Map;
 public class StringPrefixMapSpeedTest extends AbstractPrefixMapSpeedTests {
 
     @Override
-    protected PrefixMap<String> create(Map<String, String> prefixMap) {
-        PrefixMap<String> result = new StringPrefixMap<>(false);
+    protected PrefixMap<String, Character, String> create(Map<String, String> prefixMap) {
+        PrefixMap<String, Character, String> result = new StringPrefixMap<>(false);
         result.putAll(prefixMap);
         return result;
     }

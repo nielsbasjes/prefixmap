@@ -25,20 +25,20 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractPrefixMapTests {
 
-    abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
+    abstract PrefixMap<String, Character, String> createPrefixMap(boolean caseSensitive);
 
     @Rule
     public final transient ExpectedException expectedEx = ExpectedException.none();
 
-    protected void checkShortest(PrefixMap<String> prefixLookup, String prefix, String expected) {
+    protected void checkShortest(PrefixMap<String, Character, String> prefixLookup, String prefix, String expected) {
         assertEquals("Wrong 'ShortestMatch' result for '" + prefix + "'", expected, prefixLookup.getShortestMatch(prefix));
     }
 
-    protected void checkLongest(PrefixMap<String> prefixLookup, String prefix, String expected) {
+    protected void checkLongest(PrefixMap<String, Character, String> prefixLookup, String prefix, String expected) {
         assertEquals("Wrong 'LongestMatch' result for '" + prefix + "'", expected, prefixLookup.getLongestMatch(prefix));
     }
 
-    protected void checkContains(PrefixMap<String> prefixLookup, String prefix, boolean expected) {
+    protected void checkContains(PrefixMap<String, Character, String> prefixLookup, String prefix, boolean expected) {
         assertEquals("Wrong 'Contains' result for '" + prefix + "'", expected, prefixLookup.containsPrefix(prefix));
     }
 
@@ -46,7 +46,7 @@ public abstract class AbstractPrefixMapTests {
     public void testNullPrefix() {
         expectedEx.expect(NullPointerException.class);
         expectedEx.expectMessage("The prefix may not be null");
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
+        PrefixMap<String, Character, String> prefixLookup = createPrefixMap(true);
         prefixLookup.put(null, "Something");
     }
 
@@ -54,13 +54,13 @@ public abstract class AbstractPrefixMapTests {
     public void testNullValue() {
         expectedEx.expect(NullPointerException.class);
         expectedEx.expectMessage("The value may not be null");
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
+        PrefixMap<String, Character, String> prefixLookup = createPrefixMap(true);
         prefixLookup.put("Something", null);
     }
 
     @Test
     public void testSize() {
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
+        PrefixMap<String, Character, String> prefixLookup = createPrefixMap(true);
 
         assertEquals(0,         prefixLookup.size());
         assertEquals(null,      prefixLookup.put("One",     "One"));

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class StringPrefixMapTest extends AbstractPrefixMapTests {
 
     @Override
-    PrefixMap<String> createPrefixMap(boolean caseSensitive) {
+    PrefixMap<String, Character, String> createPrefixMap(boolean caseSensitive) {
         return new StringPrefixMap<>(caseSensitive);
     }
 
@@ -39,7 +39,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         prefixMap.put("ABCDEF",  "Result ABCDEF");
         prefixMap.put("你", "Hello in Chinese");
 
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
+        PrefixMap<String, Character, String> prefixLookup = new StringPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
 
         // ----------------------------------------------------
@@ -185,7 +185,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         prefixMap.put("ABCDEF",  "Result ABCDEF");
         prefixMap.put("你", "Hello in Chinese");
 
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(true);
+        PrefixMap<String, Character, String> prefixLookup = new StringPrefixMap<>(true);
         prefixLookup.putAll(prefixMap);
 
         // ----------------------------------------------------
@@ -319,7 +319,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     @Test
     public void verifyDocumentationExampleUsage() {
         // Parameter caseSensitive=false --> so lookups are caseINsensitive
-        PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
+        PrefixMap<String, Character, String> brandLookup = new StringPrefixMap<>(false);
 
         brandLookup.put("RM-", "Nokia");
         brandLookup.put("GT-", "Samsung");

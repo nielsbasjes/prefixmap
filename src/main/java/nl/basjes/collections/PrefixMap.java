@@ -39,7 +39,7 @@ import java.util.Map;
  * </p>
  * <p>Note that implementations may be constructed to match either case sensitive or case insensitive.</p>
  */
-public interface PrefixMap<V extends Serializable> extends Serializable {
+public interface PrefixMap<P extends Serializable, E extends Serializable, V extends Serializable> extends Serializable {
     /**
      * @return the number of prefix-value mappings in this prefixmap
      */

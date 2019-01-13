@@ -31,7 +31,7 @@ import static nl.basjes.collections.prefixmap.PrefixMapSpeedTestData.TEST_MODELS
 
 public abstract class AbstractPrefixMapSpeedTests {
 
-    protected abstract PrefixMap<String> create(Map<String, String> prefixMap);
+    protected abstract PrefixMap<String, Character, String> create(Map<String, String> prefixMap);
 
     abstract long getIterations();
 

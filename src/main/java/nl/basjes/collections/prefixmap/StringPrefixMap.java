@@ -24,12 +24,12 @@ import java.io.Serializable;
  * stored prefixes can be any character in a String.
  * @param <V> The type of the value that is to be stored.
  */
-public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Serializable {
+public class StringPrefixMap<V extends Serializable> implements PrefixMap<String, Character, V>, Serializable {
 
-    private PrefixTrie<V> prefixTrie;
+    private PrefixTrie<String, Character, V> prefixTrie;
     private int           size = 0;
 
-    protected StringPrefixMap(PrefixTrie<V> prefixTrie) {
+    protected StringPrefixMap(PrefixTrie<String, Character, V> prefixTrie) {
         this.prefixTrie = prefixTrie;
     }
 
@@ -44,7 +44,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
     @Override
     public V put(String prefix, V value) {
-        V previousValue = prefixTrie.add(prefix, value);
+        V previousValue = prefixTrie.put(prefix, value);
         if (previousValue == null) {
             size++;
         }

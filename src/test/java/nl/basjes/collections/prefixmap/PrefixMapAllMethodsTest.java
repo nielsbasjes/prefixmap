@@ -26,7 +26,7 @@ public class PrefixMapAllMethodsTest {
 
     @Test
     public void testIsEmpty() {
-        PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
+        PrefixMap<String, Character, String> stringPrefixMap = new StringPrefixMap<>(false);
 
         assertTrue(stringPrefixMap.isEmpty());
         stringPrefixMap.put("Foo", "Bar");
@@ -37,13 +37,13 @@ public class PrefixMapAllMethodsTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveNotImplemented() {
-        PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
+        PrefixMap<String, Character, String> stringPrefixMap = new StringPrefixMap<>(false);
         stringPrefixMap.remove("Something");
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testClearNotImplemented() {
-        PrefixMap<String> dummyPrefixMap = new PrefixMap<String>() {
+        PrefixMap<String, Character, String> dummyPrefixMap = new PrefixMap<String, Character, String>() {
             @Override
             public int size() {
                 return 0;

@@ -19,117 +19,50 @@ package nl.basjes.collections.prefixmap;
 import java.io.Serializable;
 import java.util.TreeMap;
 
-class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
-    protected TreeMap<Character, PrefixTrie<V>> childNodes;
-    private boolean                              caseSensitive;
-    private int                                  charIndex;
-    private V                                    theValue;
+class StringPrefixTrie<V extends Serializable> extends AbstractStringPrefixTrie<V> {
+    private TreeMap<Character, PrefixTrie<String, Character, V>>  childNodes;
 
     StringPrefixTrie(boolean caseSensitive) {
-        this(caseSensitive, 0);
+        super(caseSensitive);
     }
 
     StringPrefixTrie(boolean caseSensitive, int charIndex) {
-        this.caseSensitive = caseSensitive;
-        this.charIndex = charIndex;
+        super(caseSensitive, charIndex);
     }
 
     @Override
-    public V add(String prefix, V value) {
-        if (prefix == null) {
-            throw new NullPointerException("The prefix may not be null");
-        }
-        if (value == null) {
-            throw new NullPointerException("The value may not be null");
-        }
+    public boolean doesNotHaveChildren() {
+        return childNodes == null;
+    }
 
-        V previousValue = theValue;
-        if (charIndex == prefix.length()) {
-            theValue = value;
-            return previousValue;
-        }
+    @Override
+    public Character getElement(String prefix, int elementIndex) {
+        return prefix.charAt(elementIndex);
+    }
 
-        char myChar = prefix.charAt(charIndex);
+    public PrefixTrie<String, Character, V> createPrefixTrie(boolean caseSensitive, int charIndex) {
+        return new StringPrefixTrie<>(caseSensitive, charIndex);
+    }
 
+    @Override
+    public void storeChild(Character element, PrefixTrie<String, Character, V> child) {
         if (childNodes == null) {
             childNodes = new TreeMap<>();
         }
-
-        if (caseSensitive) {
-            PrefixTrie<V> child = childNodes.computeIfAbsent(myChar, c -> new StringPrefixTrie<>(true, charIndex + 1));
-            previousValue = child.add(prefix, value);
-        } else {
-            // If case INsensitive we build the tree
-            // and we link the same child to both the
-            // lower and uppercase entries in the child array.
-            char lower = Character.toLowerCase(myChar);
-            char upper = Character.toUpperCase(myChar);
-
-            PrefixTrie<V> child = childNodes.computeIfAbsent(lower, c -> new StringPrefixTrie<>(false, charIndex + 1));
-            previousValue = child.add(prefix, value);
-            childNodes.put(upper, child);
-        }
-        return previousValue;
+        childNodes.put(element, child);
     }
 
     @Override
-    public boolean containsPrefix(String prefix) {
-        if (charIndex == prefix.length()) {
-            return theValue != null;
-        }
-
+    public PrefixTrie<String, Character, V> getChild(Character element) {
         if (childNodes == null) {
-            return false;
-        }
-
-        char myChar = prefix.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
-            return false;
-        }
-
-        return child.containsPrefix(prefix);
-    }
-
-    @Override
-    public V getShortestMatch(String input) {
-        if (theValue != null ||
-            charIndex == input.length() ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
             return null;
         }
-
-        return child.getShortestMatch(input);
-    }
-
-    @Override
-    public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
-            return theValue;
-        }
-
-        V returnValue = child.getLongestMatch(input);
-        return (returnValue == null) ? theValue : returnValue;
+        return childNodes.get(element);
     }
 
     @Override
     public void clear() {
+        super.clear();
         childNodes = null;
-        theValue = null;
     }
 }

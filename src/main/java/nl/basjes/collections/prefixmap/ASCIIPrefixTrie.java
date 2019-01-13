@@ -19,134 +19,52 @@ package nl.basjes.collections.prefixmap;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 
-class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
-    private ASCIIPrefixTrie<V>[] childNodes;
-    private boolean      caseSensitive;
-    private int          charIndex;
-    private V            theValue;
+class ASCIIPrefixTrie<V extends Serializable> extends AbstractStringPrefixTrie<V> {
+    private PrefixTrie<String, Character, V>[] childArray;
 
     ASCIIPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);
     }
 
     ASCIIPrefixTrie(boolean caseSensitive, int charIndex) {
-        this.caseSensitive = caseSensitive;
-        this.charIndex = charIndex;
+        super(caseSensitive, charIndex);
+    }
+    @Override
+    public boolean doesNotHaveChildren() {
+        return childArray == null;
+    }
+
+    public PrefixTrie<String, Character, V> createPrefixTrie(boolean caseSensitive, int charIndex) {
+        return new ASCIIPrefixTrie<>(caseSensitive, charIndex);
+    }
+
+    @Override
+    public Character getElement(String prefix, int elementIndex) {
+        return prefix.charAt(elementIndex); // This will give us the ASCII value of the char
     }
 
     @SuppressWarnings("unchecked") // Creating the array of generics is tricky
     @Override
-    public V add(String prefix, V value) {
-        if (prefix == null) {
-            throw new NullPointerException("The prefix may not be null");
-        }
-        if (value == null) {
-            throw new NullPointerException("The value may not be null");
-        }
-
-        V previousValue = theValue;
-        if (charIndex == prefix.length()) {
-            theValue = value;
-            return previousValue;
-        }
-
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
+    public void storeChild(Character element, PrefixTrie<String, Character, V> child) {
+        if (element < 32 || element > 126) {
             throw new IllegalArgumentException("Only readable ASCII is allowed as key !!!");
         }
-
-        if (childNodes == null) {
-            childNodes = (ASCIIPrefixTrie<V>[]) Array.newInstance(ASCIIPrefixTrie.class, 128);
+        if (childArray == null) {
+            childArray = (PrefixTrie<String, Character, V>[]) Array.newInstance(PrefixTrie.class, 128);
         }
-
-        if (caseSensitive) {
-            if (childNodes[myChar] == null) {
-                childNodes[myChar] = new ASCIIPrefixTrie<>(true, charIndex + 1);
-            }
-            previousValue = childNodes[myChar].add(prefix, value);
-        } else {
-            // If case INsensitive we build the tree
-            // and we link the same child to both the
-            // lower and uppercase entries in the child array.
-            char lower = Character.toLowerCase(myChar);
-            char upper = Character.toUpperCase(myChar);
-
-            if (childNodes[lower] == null) {
-                childNodes[lower] = new ASCIIPrefixTrie<>(false, charIndex + 1);
-            }
-            previousValue = childNodes[lower].add(prefix, value);
-            childNodes[upper] = childNodes[lower];
-        }
-        return previousValue;
+        childArray[element] = child;
     }
 
     @Override
-    public boolean containsPrefix(String prefix) {
-        if (charIndex == prefix.length()) {
-            return theValue != null;
-        }
-
-        if (childNodes == null) {
-            return false;
-        }
-
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return false; // Cannot store these, so is false.
-        }
-
-        ASCIIPrefixTrie child = childNodes[myChar];
-        if (child == null) {
-            return false;
-        }
-
-        return child.containsPrefix(prefix);
-    }
-
-    @Override
-    public V getShortestMatch(String input) {
-        if (theValue != null ||
-            charIndex == input.length() ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return null; // Cannot store these, so this is where it ends.
-        }
-
-        ASCIIPrefixTrie<V> child = childNodes[myChar];
-        if (child == null) {
+    public PrefixTrie<String, Character, V> getChild(Character element) {
+        if (childArray == null || element < 32 || element > 126) {
             return null;
         }
-
-        return child.getShortestMatch(input);
-    }
-
-    @Override
-    public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return theValue; // Cannot store these, so this is where it ends.
-        }
-
-        ASCIIPrefixTrie<V> child = childNodes[myChar];
-        if (child == null) {
-            return theValue;
-        }
-
-        V returnValue = child.getLongestMatch(input);
-        return (returnValue == null) ? theValue : returnValue;
+        return childArray[element];
     }
 
     @Override
     public void clear() {
-        childNodes = null;
-        theValue = null;
+        childArray = null;
     }
 }

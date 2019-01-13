@@ -18,10 +18,16 @@ package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
 
-interface PrefixTrie<V extends Serializable> extends Serializable {
-    V add(String prefix, V value);
-    boolean containsPrefix(String prefix);
-    V getShortestMatch(String input);
-    V getLongestMatch(String input);
+interface PrefixTrie<P, E, V extends Serializable> extends Serializable {
+    boolean doesNotHaveChildren();
+    E getElement(P prefix, int elementIndex);
+    PrefixTrie<String, Character, V> createPrefixTrie(boolean caseSensitive, int charIndex);
+    void storeChild(E element, PrefixTrie<P, E, V> child);
+    PrefixTrie<P, E, V> getChild(E element);
+
+    V put(P prefix, V value);
+    boolean containsPrefix(P prefix);
+    V getShortestMatch(P input);
+    V getLongestMatch(P input);
     void clear();
 }
