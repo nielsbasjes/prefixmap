@@ -365,6 +365,7 @@
             <!-- Other files -->
             <exclude>ReleaseProcedure.txt</exclude>
             <exclude>**/.~lock.*</exclude>
+            <exclude>**/*.md</exclude>
             <!-- Test scripts -->
             <exclude>*.sh</exclude>
             <exclude>**/_*/**</exclude>
