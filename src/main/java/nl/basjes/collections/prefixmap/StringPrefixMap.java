@@ -64,6 +64,15 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
+    public V remove(String prefix) {
+        V oldValue = prefixTrie.remove(prefix);
+        if (oldValue != null) {
+            size--;
+        }
+        return oldValue;
+    }
+
+    @Override
     public V getShortestMatch(String input) {
         return prefixTrie.getShortestMatch(input);
     }

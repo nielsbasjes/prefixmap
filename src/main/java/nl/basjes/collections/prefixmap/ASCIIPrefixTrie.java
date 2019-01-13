@@ -52,7 +52,7 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
         char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
-            throw new IllegalArgumentException("Only readable ASCII is allowed as key !!!");
+            throw new IllegalArgumentException("Only readable ASCII is allowed as prefix !!!");
         }
 
         if (childNodes == null) {
@@ -78,6 +78,39 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             childNodes[upper] = childNodes[lower];
         }
         return previousValue;
+    }
+
+    @Override
+    public V remove(String prefix) {
+        if (prefix == null) {
+            throw new NullPointerException("The prefix may not be null");
+        }
+
+        if (charIndex == prefix.length()) {
+            V previousValue = theValue;
+            theValue = null;
+            return previousValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            throw new IllegalArgumentException("Only readable ASCII is allowed as prefix !!!");
+        }
+
+        if (!caseSensitive) {
+            // If case INsensitive we only follow the lower case one.
+            myChar = Character.toLowerCase(myChar);
+        }
+
+        PrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return null;
+        }
+        return child.remove(prefix);
     }
 
     @Override

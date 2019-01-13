@@ -35,43 +35,77 @@ public class PrefixMapAllMethodsTest {
         assertTrue(stringPrefixMap.isEmpty());
     }
 
+    // We implement the least possible
+    private static class DummyPrefixMap implements PrefixMap<String> {
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean containsPrefix(String prefix) {
+            return false;
+        }
+
+        @Override
+        public String put(String prefix, String value) {
+            return null;
+        }
+
+        @Override
+        public String getShortestMatch(String input) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(String input) {
+            return null;
+        }
+    };
+
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveNotImplemented() {
-        PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
-        stringPrefixMap.remove("Something");
+        PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
+        dummyPrefixMap.remove("Something");
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testClearNotImplemented() {
-        PrefixMap<String> dummyPrefixMap = new PrefixMap<String>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean containsPrefix(String prefix) {
-                return false;
-            }
-
-            @Override
-            public String put(String prefix, String value) {
-                return null;
-            }
-
-            @Override
-            public String getShortestMatch(String input) {
-                return null;
-            }
-
-            @Override
-            public String getLongestMatch(String input) {
-                return null;
-            }
-        };
+        PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
         dummyPrefixMap.clear();
     }
 
+    private static class DummyPrefixTrie implements PrefixTrie<String> {
+        @Override
+        public String add(String prefix, String value) {
+            return null;
+        }
 
+        @Override
+        public boolean containsPrefix(String prefix) {
+            return false;
+        }
+
+        @Override
+        public String getShortestMatch(String input) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(String input) {
+            return null;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRemoveTrieNotImplemented() {
+        PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
+        dummyPrefixTrie.remove("Something");
+    }
 
 }

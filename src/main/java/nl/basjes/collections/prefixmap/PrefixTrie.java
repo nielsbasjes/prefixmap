@@ -27,5 +27,10 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
 
     V getLongestMatch(String input);
 
+    default V remove(String prefix) {
+        throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
     void clear();
 }

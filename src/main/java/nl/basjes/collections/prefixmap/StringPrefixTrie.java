@@ -73,6 +73,36 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
+    public V remove(String prefix) {
+        if (prefix == null) {
+            throw new NullPointerException("The prefix may not be null");
+        }
+
+        if (charIndex == prefix.length()) {
+            V previousValue = theValue;
+            theValue = null;
+            return previousValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
+
+        if (!caseSensitive) {
+            // If case INsensitive we only follow the lower case one.
+            myChar = Character.toLowerCase(myChar);
+        }
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return null;
+        }
+        return child.remove(prefix);
+    }
+
+    @Override
     public boolean containsPrefix(String prefix) {
         if (charIndex == prefix.length()) {
             return theValue != null;

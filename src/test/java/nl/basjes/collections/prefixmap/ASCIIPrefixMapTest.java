@@ -29,9 +29,9 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testNonASCIIKey() {
+    public void testPutNonASCIIPrefix() {
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Only readable ASCII is allowed as key !!!");
+        expectedEx.expectMessage("Only readable ASCII is allowed as prefix !!!");
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("你好", "Hello in Chinese");
         PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
@@ -39,12 +39,21 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testNonASCIIValue() {
+    public void testPutNonASCIIValue() {
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("Hello in Chinese", "你好");
         PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
         // This should just work.
+    }
+
+    @Test
+    public void testRemoveNonASCIIPrefix() {
+        expectedEx.expect(IllegalArgumentException.class);
+        expectedEx.expectMessage("Only readable ASCII is allowed as prefix !!!");
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        prefixLookup.remove("你好");
     }
 
     @Test
