@@ -1,5 +1,6 @@
+#!/bin/bash
 #
-# Copyright (C) 2013-2018 Niels Basjes
+# Copyright (C) 2018-2019 Niels Basjes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,18 +15,6 @@
 # limitations under the License.
 #
 
-language: java
-
-jdk:
-  - oraclejdk8
-
-addons:
-  sonarcloud:
-    organization: "nielsbasjes-github"
-
-script:
-  - mvn test -PEnableReportPlugins coveralls:report sonar:sonar -Dsonar.projectKey=nielsbasjes_prefixmap
-
-cache:
-  directories:
-    - '$HOME/.m2/repository'
+. "/scripts/build_env_checks.sh"
+. "/usr/share/git-core/contrib/completion/git-prompt.sh"
+. "/scripts/prompt.sh"
