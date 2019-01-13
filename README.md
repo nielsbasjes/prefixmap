@@ -4,6 +4,7 @@ PrefixMap: A Map type datastructure that uses prefixes instead of keys
 [![Coverage Status](https://coveralls.io/repos/github/nielsbasjes/prefixmap/badge.svg?branch=master)](https://coveralls.io/github/nielsbasjes/prefixmap?branch=master)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=nielsbasjes_prefixmap&metric=alert_status)](https://sonarcloud.io/dashboard?id=nielsbasjes_prefixmap)
 [![License](https://img.shields.io/:license-apache-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Maven Central](https://img.shields.io/maven-central/v/nl.basjes.collections/prefixmap.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.basjes.collections%22)
 [![If this project has business value for you then don't hesitate to support me with a small donation.](https://img.shields.io/badge/Donations-via%20Paypal-blue.svg)](https://www.paypal.me/nielsbasjes)
 
 This is a java library that implements a datastructure I consider to be missing in the java landscape.
