@@ -21,9 +21,10 @@ import java.io.Serializable;
  * The ASCIIPrefixMap is an implementation of PrefixMap where the assumption is that the
  * stored prefixes only contain characters that are in the human readable range of the ASCII encoding.
  * Lookups using this one are about twice as fast as the StringPrefixMap
+ *
  * @param <V> The type of the value that is to be stored.
  */
-public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V>{
+public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V> {
 
     public ASCIIPrefixMap(boolean caseSensitive) {
         super(new ASCIIPrefixTrie<>(caseSensitive));

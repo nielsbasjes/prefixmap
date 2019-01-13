@@ -22,6 +22,7 @@ import java.io.Serializable;
 /**
  * The StringPrefixMap is an implementation of PrefixMap where the assumption is that the
  * stored prefixes can be any character in a String.
+ *
  * @param <V> The type of the value that is to be stored.
  */
 public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Serializable {

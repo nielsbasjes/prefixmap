@@ -21,9 +21,9 @@ import java.lang.reflect.Array;
 
 class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private ASCIIPrefixTrie<V>[] childNodes;
-    private boolean      caseSensitive;
-    private int          charIndex;
-    private V            theValue;
+    private boolean              caseSensitive;
+    private int                  charIndex;
+    private V                    theValue;
 
     ASCIIPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);

@@ -20,8 +20,12 @@ import java.io.Serializable;
 
 interface PrefixTrie<V extends Serializable> extends Serializable {
     V add(String prefix, V value);
+
     boolean containsPrefix(String prefix);
+
     V getShortestMatch(String input);
+
     V getLongestMatch(String input);
+
     void clear();
 }

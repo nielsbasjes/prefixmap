@@ -21,9 +21,9 @@ import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     protected TreeMap<Character, PrefixTrie<V>> childNodes;
-    private boolean                              caseSensitive;
-    private int                                  charIndex;
-    private V                                    theValue;
+    private   boolean                           caseSensitive;
+    private   int                               charIndex;
+    private   V                                 theValue;
 
     StringPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);

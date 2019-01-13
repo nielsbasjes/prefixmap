@@ -57,17 +57,19 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * for the specified prefix.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
-     * @param prefix  prefix whose presence in this prefixmap is to be checked
+     *
+     * @param prefix prefix whose presence in this prefixmap is to be checked
      * @return <tt>true</tt> if this map contains an the exact mapping
-     *         for the specified prefix.
+     * for the specified prefix.
      */
     boolean containsPrefix(String prefix);
 
     /**
      * Copies all of the mappings from the specified map to this prefixmap.
-     * @param prefixesAndValues  mappings to be stored in this map
-     * @throws NullPointerException  if one or more of the prefixes or values are null.
-     *         If this happens the PrefixMap is in an undefined state.
+     *
+     * @param prefixesAndValues mappings to be stored in this map
+     * @throws NullPointerException if one or more of the prefixes or values are null.
+     *                              If this happens the PrefixMap is in an undefined state.
      */
     default void putAll(Map<String, V> prefixesAndValues) {
         prefixesAndValues.forEach(this::put);
@@ -79,12 +81,13 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * old value is replaced with the new value and the old value is returned.</p>
      * <p>Note that implementations may be constructed to store this value for either
      * case sensitive or case insensitive matching during retrieval.</p>
-     * @param prefix  prefix with which the specified value is to be associated
+     *
+     * @param prefix prefix with which the specified value is to be associated
      * @param value  value to be associated with the specified prefix
      * @return the previous value of the specified <tt>prefix</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>prefix</tt>.
-     * @throws NullPointerException  if either the prefix or value are null.
-     *         If this happens the PrefixMap is unchanged.
+     * <tt>null</tt> if there was no mapping for <tt>prefix</tt>.
+     * @throws NullPointerException if either the prefix or value are null.
+     *                              If this happens the PrefixMap is unchanged.
      */
     V put(String prefix, V value);
 
@@ -92,23 +95,25 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * <p>Removes the mapping for a prefix if present.</p>
      * <p>Note that implementations may be constructed to remove either
      * case sensitive (only this exact value) or case insensitive (all case variations).</p>
-     * @param prefix  prefix whose mapping is to be removed from the prefixmap
+     *
+     * @param prefix prefix whose mapping is to be removed from the prefixmap
      * @return the previous value associated with <tt>prefix</tt> (may be null).
-     * @throws UnsupportedOperationException  if not implemented.
+     * @throws UnsupportedOperationException if not implemented.
      */
     default V remove(String prefix) {
         throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +
-                this.getClass().getCanonicalName());
+            this.getClass().getCanonicalName());
     }
 
     /**
      * The prefixmap will be empty after this call returns.
-     * @throws UnsupportedOperationException  if the <tt>clear</tt> operation
-     *         is not supported by this map
+     *
+     * @throws UnsupportedOperationException if the <tt>clear</tt> operation
+     *                                       is not supported by this map
      */
     default void clear() {
         throw new UnsupportedOperationException("The 'clear()' method has not been implemented in " +
-                this.getClass().getCanonicalName());
+            this.getClass().getCanonicalName());
     }
 
     /**
@@ -117,7 +122,8 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * <tt>input.startsWith(prefix)</tt>.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
-     * @param input  The string for which we need value of the stored prefix
+     *
+     * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
     V getShortestMatch(String input);
@@ -128,7 +134,8 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * <tt>input.startsWith(prefix)</tt>.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
-     * @param input  The string for which we need value of the stored prefix
+     *
+     * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
     V getLongestMatch(String input);
