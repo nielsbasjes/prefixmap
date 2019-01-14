@@ -21,16 +21,16 @@ The example where I found the biggest need for this was when analyzing the devic
 
 So I needed a lookup structure that maps these prefixes to the desired brands.
 
-    "RM-" : "Nokia"
     "GT-" : "Samsung"
+    "RM-" : "Nokia"
 
 With this code you can now do this type of lookup in a very fast way:
 
     // Parameter caseSensitive=false --> so lookups are caseINsensitive
     PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
 
-    brandLookup.put("RM-", "Nokia");
     brandLookup.put("GT-", "Samsung");
+    brandLookup.put("RM-", "Nokia");
 
     String brandGT = brandLookup.getLongestMatch("GT-I8190N");   // --> "Samsung"
     String brandRM = brandLookup.getLongestMatch("RM-1092");     // --> "Nokia"
