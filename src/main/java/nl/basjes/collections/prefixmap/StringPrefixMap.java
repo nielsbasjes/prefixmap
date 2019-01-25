@@ -30,6 +30,10 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     private PrefixTrie<V> prefixTrie;
     private int           size = 0;
 
+    // private constructor for serialization systems ONLY (like Kyro)
+    private StringPrefixMap() {
+    }
+
     protected StringPrefixMap(PrefixTrie<V> prefixTrie) {
         this.prefixTrie = prefixTrie;
     }

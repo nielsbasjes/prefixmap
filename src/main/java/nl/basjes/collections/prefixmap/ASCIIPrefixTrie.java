@@ -25,6 +25,10 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private int                  charIndex;
     private V                    theValue;
 
+    // private constructor for serialization systems ONLY (like Kyro)
+    private ASCIIPrefixTrie() {
+    }
+
     ASCIIPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);
     }

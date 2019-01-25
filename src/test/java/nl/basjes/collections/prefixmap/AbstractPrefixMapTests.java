@@ -16,14 +16,31 @@
 
 package nl.basjes.collections.prefixmap;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import nl.basjes.collections.PrefixMap;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractPrefixMapTests {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPrefixMapTests.class);
 
     abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
 
@@ -252,5 +269,88 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
     }
+
+    private PrefixMap<String> createSerializationInstance() {
+        PrefixMap<String> brandLookup = createPrefixMap(false);
+
+        brandLookup.put("RM-", "Nokia");
+        brandLookup.put("GT-", "Samsung");
+        return brandLookup;
+    }
+
+    private void verifySerializationInstance(PrefixMap<String> instance) {
+        assertEquals("Samsung", instance.getLongestMatch("GT-I8190N"));
+        assertEquals("Nokia",   instance.getLongestMatch("RM-1092"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testJavaSerialization() throws IOException, ClassNotFoundException {
+        PrefixMap<String> instance = createSerializationInstance();
+        verifySerializationInstance(instance);
+
+        LOG.info("--------------------------------------------------------------");
+        LOG.info("Serialize");
+
+        byte[] bytes;
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            ObjectOutput out = new ObjectOutputStream(bos);
+            out.writeObject(instance);
+            out.flush();
+            bytes = bos.toByteArray();
+        }
+
+        LOG.info("The PrefixMap was serialized into {} bytes", bytes.length);
+        LOG.info("--------------------------------------------------------------");
+        LOG.info("Deserialize");
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+
+        try (ObjectInput in = new ObjectInputStream(bis)) {
+            Object o = in.readObject();
+            assertTrue(o instanceof PrefixMap);
+
+            instance= (PrefixMap<String>) o;
+        }
+
+        LOG.info("Done");
+        LOG.info("==============================================================");
+
+        verifySerializationInstance(instance);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testKyroSerialization() {
+        PrefixMap<String> instance = createSerializationInstance();
+        verifySerializationInstance(instance);
+
+        LOG.info("--------------------------------------------------------------");
+        LOG.info("Serialize");
+        Kryo kryo = new Kryo();
+
+        ByteBuffer bytes;
+
+        ByteBufferOutput byteBufferOutput = new ByteBufferOutput(1_000_000, -1);
+        kryo.writeClassAndObject(byteBufferOutput, instance);
+        bytes = byteBufferOutput.getByteBuffer();
+
+        LOG.info("The PrefixMap was serialized into {} bytes", bytes.position());
+        LOG.info("--------------------------------------------------------------");
+        LOG.info("Deserialize");
+
+        bytes.rewind();
+        ByteBufferInput byteBufferInput = new ByteBufferInput(bytes);
+        Object          uaaObject       = kryo.readClassAndObject(byteBufferInput);
+        assertTrue(uaaObject instanceof PrefixMap);
+
+        instance = (PrefixMap<String>) uaaObject;
+
+        LOG.info("Done");
+        LOG.info("==============================================================");
+
+        verifySerializationInstance(instance);
+    }
+
 
 }
