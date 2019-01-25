@@ -24,7 +24,7 @@
   <artifactId>prefixmap</artifactId>
   <packaging>jar</packaging>
   <groupId>nl.basjes.collections</groupId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
 
   <name>PrefixMap</name>
   <description>A datastructure the allows looking up the best matching prefix.</description>
