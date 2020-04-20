@@ -17,7 +17,7 @@
 package nl.basjes.collections.prefixmap;
 
 import nl.basjes.collections.PrefixMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,7 +47,7 @@ public abstract class AbstractPrefixMapSpeedTests {
             testModels.add(iterator.next());
         }
 
-        PrefixMap prefixMap = create(prefixes);
+        PrefixMap<String> prefixMap = create(prefixes);
 
         long iterations = getIterations();
 

@@ -16,12 +16,12 @@
 package nl.basjes.collections.prefixmap;
 
 import nl.basjes.collections.PrefixMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringPrefixMapTest extends AbstractPrefixMapTests {
 
@@ -329,7 +329,6 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
 
         assertEquals("Samsung", brandGT);
         assertEquals("Nokia", brandRM);
-
     }
 
 }

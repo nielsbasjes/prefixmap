@@ -17,10 +17,11 @@
 package nl.basjes.collections.prefixmap;
 
 import nl.basjes.collections.PrefixMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrefixMapAllMethodsTest {
 
@@ -61,18 +62,22 @@ public class PrefixMapAllMethodsTest {
         public String getLongestMatch(String input) {
             return null;
         }
-    };
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testRemoveNotImplemented() {
-        PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-        dummyPrefixMap.remove("Something");
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
+    public void testRemoveNotImplemented() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
+            dummyPrefixMap.remove("Something");
+        });
+    }
+
+    @Test
     public void testClearNotImplemented() {
-        PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-        dummyPrefixMap.clear();
+        assertThrows(UnsupportedOperationException.class, () -> {
+            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
+            dummyPrefixMap.clear();
+        });
     }
 
     private static class DummyPrefixTrie implements PrefixTrie<String> {
@@ -102,10 +107,12 @@ public class PrefixMapAllMethodsTest {
         }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveTrieNotImplemented() {
-        PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
-        dummyPrefixTrie.remove("Something");
+        assertThrows(UnsupportedOperationException.class, () -> {
+            PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
+            dummyPrefixTrie.remove("Something");
+        });
     }
 
 }

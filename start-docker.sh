@@ -24,7 +24,7 @@ DOCKER_BUILD="docker build"
 if [ ! -z ${INSIDE_DOCKER+x} ];
 then
   echo "Nothing to do: You are already INSIDE the docker environment"
-  exit -1;
+  exit 1;
 fi
 
 if [[ "$(docker images -q ${PROJECTNAME}-${OS} 2> /dev/null)" == "" ]]; then

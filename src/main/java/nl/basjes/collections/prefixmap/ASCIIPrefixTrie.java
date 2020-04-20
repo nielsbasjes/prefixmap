@@ -132,7 +132,7 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return false; // Cannot store these, so is false.
         }
 
-        ASCIIPrefixTrie child = childNodes[myChar];
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
         if (child == null) {
             return false;
         }

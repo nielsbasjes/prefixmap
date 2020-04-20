@@ -20,9 +20,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import nl.basjes.collections.PrefixMap;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +33,9 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractPrefixMapTests {
 
@@ -44,43 +43,44 @@ public abstract class AbstractPrefixMapTests {
 
     abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
 
-    @Rule
-    public final transient ExpectedException expectedEx = ExpectedException.none();
-
     protected void checkShortest(PrefixMap<String> prefixLookup, String prefix, String expected) {
-        assertEquals("Wrong 'ShortestMatch' result for '" + prefix + "'", expected, prefixLookup.getShortestMatch(prefix));
+        assertEquals(expected, prefixLookup.getShortestMatch(prefix), "Wrong 'ShortestMatch' result for '" + prefix + "'");
     }
 
     protected void checkLongest(PrefixMap<String> prefixLookup, String prefix, String expected) {
-        assertEquals("Wrong 'LongestMatch' result for '" + prefix + "'", expected, prefixLookup.getLongestMatch(prefix));
+        assertEquals(expected, prefixLookup.getLongestMatch(prefix), "Wrong 'ShortestMatch' result for '" + prefix + "'");
     }
 
     protected void checkContains(PrefixMap<String> prefixLookup, String prefix, boolean expected) {
-        assertEquals("Wrong 'Contains' result for '" + prefix + "'", expected, prefixLookup.containsPrefix(prefix));
+        assertEquals(expected, prefixLookup.containsPrefix(prefix), "Wrong 'Contains' result for '" + prefix + "'");
     }
 
     @Test
     public void testPutNullPrefix() {
-        expectedEx.expect(NullPointerException.class);
-        expectedEx.expectMessage("The prefix may not be null");
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
-        prefixLookup.put(null, "Something");
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            PrefixMap<String> prefixLookup = createPrefixMap(true);
+            prefixLookup.put(null, "Something");
+        });
+        assertEquals("The prefix may not be null", exception.getMessage());
     }
 
     @Test
     public void testPutNullValue() {
-        expectedEx.expect(NullPointerException.class);
-        expectedEx.expectMessage("The value may not be null");
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
-        prefixLookup.put("Something", null);
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            PrefixMap<String> prefixLookup = createPrefixMap(true);
+            prefixLookup.put("Something", null);
+        });
+        assertEquals("The value may not be null", exception.getMessage());
+
     }
 
     @Test
     public void testRemoveNullValue() {
-        expectedEx.expect(NullPointerException.class);
-        expectedEx.expectMessage("The prefix may not be null");
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
-        prefixLookup.remove(null);
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            PrefixMap<String> prefixLookup = createPrefixMap(true);
+            prefixLookup.remove(null);
+        });
+        assertEquals("The prefix may not be null", exception.getMessage());
     }
 
     @Test

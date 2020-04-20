@@ -16,10 +16,13 @@
 package nl.basjes.collections.prefixmap;
 
 import nl.basjes.collections.PrefixMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
@@ -30,12 +33,13 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
     @Test
     public void testPutNonASCIIPrefix() {
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Only readable ASCII is allowed as prefix !!!");
-        Map<String, String> prefixMap = new HashMap<>();
-        prefixMap.put("你好", "Hello in Chinese");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-        prefixLookup.putAll(prefixMap);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            Map<String, String> prefixMap = new HashMap<>();
+            prefixMap.put("你好", "Hello in Chinese");
+            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+            prefixLookup.putAll(prefixMap);
+        });
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
     @Test
@@ -49,11 +53,12 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
     @Test
     public void testRemoveNonASCIIPrefix() {
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Only readable ASCII is allowed as prefix !!!");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-        prefixLookup.put("Something",    "To ensure not empty");
-        prefixLookup.remove("你好");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+            prefixLookup.put("Something",    "To ensure not empty");
+            prefixLookup.remove("你好");
+        });
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
     @Test

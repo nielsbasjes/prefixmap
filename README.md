@@ -42,7 +42,7 @@ All you need is to add this dependency to you project
       <version>1.0</version>
     </dependency>
 
-Blog post 
+Blog post
 =========
 A bit more background about this datastructure and how it works can be found in this blog which I wrote about it: [https://techlab.bol.com/finding-the-longest-matching-string-prefix-fast/](https://partnerprogramma.bol.com/click/click?p=1&t=url&s=2171&f=TXL&url=https%3A%2F%2Ftechlab.bol.com%2Ffinding-the-longest-matching-string-prefix-fast%2F&name=prefixmap)
 
