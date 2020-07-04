@@ -29,8 +29,8 @@ import java.util.Map;
  * the String for which later an answer is requested.
  * </p>
  * <p>
- * So the retrieval of the value is based on a startsWith() check of the requested <tt>input</tt> against each of
- * the stored <tt>prefixes</tt>. The value associated with the selected prefix is then returned.
+ * So the retrieval of the value is based on a startsWith() check of the requested <code>input</code> against each of
+ * the stored <code>prefixes</code>. The value associated with the selected prefix is then returned.
  * </p>
  * <p>
  * An example use case is where mobile phone device models of a certain brand all start with
@@ -46,20 +46,20 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
     int size();
 
     /**
-     * @return <tt>true</tt> if empty.
+     * @return <b>true</b> if empty.
      */
     default boolean isEmpty() {
         return size() == 0;
     }
 
     /**
-     * <p>Returns <tt>true</tt> if this map contains an exact mapping
+     * <p>Returns <code>true</code> if this map contains an exact mapping
      * for the specified prefix.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
      *
      * @param prefix prefix whose presence in this prefixmap is to be checked
-     * @return <tt>true</tt> if this map contains an the exact mapping
+     * @return <code>true</code> if this map contains an the exact mapping
      * for the specified prefix.
      */
     boolean containsPrefix(String prefix);
@@ -84,8 +84,8 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      *
      * @param prefix prefix with which the specified value is to be associated
      * @param value  value to be associated with the specified prefix
-     * @return the previous value of the specified <tt>prefix</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>prefix</tt>.
+     * @return the previous value of the specified <code>prefix</code>, or
+     * <code>null</code> if there was no mapping for <code>prefix</code>.
      * @throws NullPointerException if either the prefix or value are null.
      *                              If this happens the PrefixMap is unchanged.
      */
@@ -97,7 +97,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * case sensitive (only this exact value) or case insensitive (all case variations).</p>
      *
      * @param prefix prefix whose mapping is to be removed from the prefixmap
-     * @return the previous value associated with <tt>prefix</tt> (may be null).
+     * @return the previous value associated with <code>prefix</code> (may be null).
      * @throws UnsupportedOperationException if not implemented.
      */
     default V remove(String prefix) {
@@ -108,7 +108,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
     /**
      * The prefixmap will be empty after this call returns.
      *
-     * @throws UnsupportedOperationException if the <tt>clear</tt> operation
+     * @throws UnsupportedOperationException if the <code>clear</code> operation
      *                                       is not supported by this map
      */
     default void clear() {
@@ -117,9 +117,9 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
     }
 
     /**
-     * <p>Return the value of the <tt>shortest</tt> matching prefix. </p>
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
      * <p>The value returned is the shortest stored prefix for which is true:
-     * <tt>input.startsWith(prefix)</tt>.</p>
+     * <code>input.startsWith(prefix)</code>.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
      *
@@ -131,7 +131,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
     /**
      * <p>Return the value of the longest matching prefix.</p>
      * <p>The value returned is the longest stored prefix for which is true:
-     * <tt>input.startsWith(prefix)</tt>.</p>
+     * <code>input.startsWith(prefix)</code>.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
      *
