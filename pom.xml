@@ -34,7 +34,7 @@
   <properties>
     <target.java.version>1.8</target.java.version>
     <target.java.release>8</target.java.release>
-    <maven.compiler.release>8</maven.compiler.release>
+<!--    <maven.compiler.release>8</maven.compiler.release>-->
 
     <!-- In order for everything to work correctly we need at least this version of maven. -->
     <maven.minimal.version>3.5.2</maven.minimal.version>
@@ -366,14 +366,14 @@
         <!-- Based upon https://maven.apache.org/plugins/maven-compiler-plugin/examples/module-info.html-->
         <executions>
           <execution>
-            <id>default-compile</id>
+            <id>Compile for Java 9 to build correct module-info</id>
             <configuration>
               <!-- compile everything to ensure module-info contains right entries -->
               <release>9</release>
             </configuration>
           </execution>
           <execution>
-            <id>base-compile</id>
+            <id>Compile for Java 8 to build classes correctly</id>
             <goals>
               <goal>compile</goal>
             </goals>
@@ -382,16 +382,18 @@
               <excludes>
                 <exclude>module-info.java</exclude>
               </excludes>
+              <release>${target.java.release}</release>
+              <compilerArgument>
+                -Xlint:unchecked
+              </compilerArgument>
+              <showWarnings>true</showWarnings>
+              <showDeprecation>true</showDeprecation>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <release>${target.java.release}</release>
-          <compilerArgument>
-            -Xlint:unchecked
-          </compilerArgument>
-          <showWarnings>true</showWarnings>
-          <showDeprecation>true</showDeprecation>
+          <!-- This here is to lie to plugins like javadoc -->
+          <release>9</release>
         </configuration>
       </plugin>
 
