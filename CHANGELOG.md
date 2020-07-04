@@ -1,5 +1,9 @@
 This is intended as an overview of the major changes
 
+v1.2
+===
+- Converted this into a Java 9+ module that can still be used as a Java 8 jar dependency.
+
 v1.1
 ===
 - Support for serialization using Kryo

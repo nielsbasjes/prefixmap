@@ -32,11 +32,15 @@
   <url>https://github.com/nielsbasjes/prefixmap</url>
 
   <properties>
-    <jdkLevel>1.8</jdkLevel>
+    <target.java.version>1.8</target.java.version>
+    <target.java.release>8</target.java.release>
+    <maven.compiler.release>8</maven.compiler.release>
+
+    <!-- In order for everything to work correctly we need at least this version of maven. -->
+    <maven.minimal.version>3.5.2</maven.minimal.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
-    <maven.compiler.source>${jdkLevel}</maven.compiler.source>
-    <maven.compiler.target>${jdkLevel}</maven.compiler.target>
 
     <!-- In order for everything to work correctly we need at least this version of maven. -->
     <maven.minimal.version>3.5.2</maven.minimal.version>
@@ -44,7 +48,7 @@
     <!-- ============================================== -->
 
     <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
-    <checkstyle.version>8.31</checkstyle.version>
+    <checkstyle.version>8.34</checkstyle.version>
     <slf4j.version>1.7.30</slf4j.version>
     <rat.version>0.13</rat.version>
     <jacoco.version>0.8.5</jacoco.version>
@@ -181,7 +185,7 @@
             <version>${git-commit-id-plugin.version}</version>
             <executions>
               <execution>
-                <id>Validate-Revision-Information</id>
+                <id>Enforce for release: Everything is committed</id>
                 <phase>validate</phase>
                 <goals>
                   <goal>validateRevision</goal>
@@ -216,7 +220,7 @@
             <version>${git-commit-id-plugin.version}</version>
             <executions>
               <execution>
-                <id>Validate-Revision-Information</id>
+                <id>Enforce for release: Everything is committed</id>
                 <phase>validate</phase>
                 <goals>
                   <goal>validateRevision</goal>
@@ -229,6 +233,19 @@
                       <value>${git.dirty}</value>
                       <shouldMatchTo>false</shouldMatchTo>
                     </validationProperty>
+                  </validationProperties>
+                  <validationShouldFailIfNoMatch>true</validationShouldFailIfNoMatch>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>Enforce for release: Current commit is tagged</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>validateRevision</goal>
+                </goals>
+                <configuration>
+                  <validationProperties>
                     <!-- verify that the current commit has a tag -->
                     <validationProperty>
                       <name>validating current commit has a tag</name>
@@ -247,6 +264,30 @@
             <artifactId>maven-enforcer-plugin</artifactId>
             <version>1.4.1</version>
             <executions>
+              <execution>
+                <id>enforce-build-environment</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireMavenVersion>
+                      <version>[${maven.minimal.version},)</version>
+                      <message>You must use Maven version ${maven.minimal.version} or newer to build this project.</message>
+                      <!-- Reasons for this need:                            -->
+                      <!-- https://issues.apache.org/jira/browse/MDEPLOY-221 -->
+                      <!-- https://issues.apache.org/jira/browse/MNG-6581    -->
+                    </requireMavenVersion>
+
+                    <requireJavaVersion>
+                      <message>You need JDK 11 or newer to build this project. The end result will be a Java 9 module that can still be used as a normal Java 8 dependency</message>
+                      <version>[11,)</version>
+                    </requireJavaVersion>
+                  </rules>
+                </configuration>
+              </execution>
+
               <execution>
                 <id>dependency-convergence</id>
                 <phase>validate</phase>
@@ -303,31 +344,65 @@
 
   <build>
     <defaultGoal>clean package</defaultGoal>
+
+    <pluginManagement>
+      <plugins>
+        <plugin><artifactId>maven-clean-plugin</artifactId>     <version>3.1.0</version></plugin>
+        <plugin><artifactId>maven-install-plugin</artifactId>   <version>2.5.2</version></plugin>
+        <plugin><artifactId>maven-jar-plugin</artifactId>       <version>3.2.0</version></plugin>
+        <plugin><artifactId>maven-resources-plugin</artifactId> <version>3.1.0</version></plugin>
+        <plugin><artifactId>maven-site-plugin</artifactId>      <version>3.8.2</version></plugin>
+        <plugin><artifactId>maven-compiler-plugin</artifactId>  <version>3.8.1</version></plugin>
+        <plugin><artifactId>maven-surefire-plugin</artifactId>  <version>2.22.2</version></plugin>
+        <plugin><artifactId>maven-deploy-plugin</artifactId>    <version>2.8.2</version></plugin>
+        <plugin><artifactId>maven-enforcer-plugin</artifactId>  <version>1.4.1</version></plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <!-- Based upon https://maven.apache.org/plugins/maven-compiler-plugin/examples/module-info.html-->
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <configuration>
+              <!-- compile everything to ensure module-info contains right entries -->
+              <release>9</release>
+            </configuration>
+          </execution>
+          <execution>
+            <id>base-compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <!-- recompile everything for target VM except the module-info.java -->
+            <configuration>
+              <excludes>
+                <exclude>module-info.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
-          <compilerVersion>${jdkLevel}</compilerVersion>
-          <source>${jdkLevel}</source>
-          <target>${jdkLevel}</target>
+          <release>${target.java.release}</release>
           <compilerArgument>
             -Xlint:unchecked
           </compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.2</version>
       </plugin>
 
       <plugin>
@@ -337,7 +412,7 @@
         <version>${git-commit-id-plugin.version}</version>
         <executions>
           <execution>
-            <id>get-the-git-infos</id>
+            <id>Populate maven properties for git information</id>
             <phase>validate</phase>
             <goals>
               <goal>revision</goal>
@@ -355,21 +430,54 @@
         <version>1.4.1</version>
         <executions>
           <execution>
-            <id>enforce-maven</id>
+            <id>Enforce Maven ${maven.minimal.version} or newer</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>[3.1,)</version>
-                  <message>You must use a newer version of Maven (the Maven 3.0.5 built in into IntelliJ IDEA is too old!)</message>
+                  <version>[${maven.minimal.version},)</version>
+                  <message>You must use Maven version ${maven.minimal.version} or newer to build this project.</message>
+                  <!-- Reasons for this need:                            -->
+                  <!-- https://issues.apache.org/jira/browse/MDEPLOY-221 -->
+                  <!-- https://issues.apache.org/jira/browse/MNG-6581    -->
                 </requireMavenVersion>
               </rules>
             </configuration>
           </execution>
+
+          <execution>
+            <id>Enforce JDK 11 or newer</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+
+              <requireJavaVersion>
+                  <version>[11,)</version><!-- Yauaa requires JDK 11 or newer to build, the result will run on JRE 8 -->
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>Enforce Dependency convergence</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence/>
+              </rules>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
+
 
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -392,7 +500,8 @@
         </dependencies>
         <executions>
           <execution>
-            <phase>test</phase>
+            <id>Enforce licence header compliance</id>
+            <phase>validate</phase>
             <goals>
               <goal>check</goal>
             </goals>
@@ -449,8 +558,8 @@
              will do this alone, or "mvn checkstyle:checkstyle" will report but not break  -->
         <executions>
           <execution>
-            <id>checkstyle-check</id>
-            <phase>test</phase>
+            <id>Enforce checkstyle compliance</id>
+            <phase>validate</phase>
             <goals>
               <goal>check</goal>
             </goals>
@@ -509,6 +618,26 @@
           <!-- Thank you https://stackoverflow.com/a/33727833/114196 -->
           <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>5.3.2</version>
+        <executions>
+          <execution>
+            <id>Perform OWASP dependency check</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <failBuildOnCVSS>1</failBuildOnCVSS>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
