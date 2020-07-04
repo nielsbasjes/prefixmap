@@ -39,7 +39,7 @@ All you need is to add this dependency to you project
     <dependency>
       <groupId>nl.basjes.collections</groupId>
       <artifactId>prefixmap</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
     </dependency>
 
 Blog post
