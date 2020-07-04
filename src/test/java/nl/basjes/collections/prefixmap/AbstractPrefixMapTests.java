@@ -147,7 +147,9 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
 
-        // Now remove one entry
+        // =====================
+
+        // Now remove one entry (uppercase)
         assertEquals("ONE",     prefixLookup.remove("A"));
         assertEquals(5,         prefixLookup.size());
 
@@ -167,6 +169,8 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
 
+        // =====================
+
         // Now re-add the removed entry
         assertEquals(null,      prefixLookup.put("A",   "ONE"));
         assertEquals(6,         prefixLookup.size());
@@ -184,6 +188,28 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("one",     prefixLookup.getShortestMatch("ab"));
         assertEquals("one",     prefixLookup.getShortestMatch("abc"));
         assertEquals("one",     prefixLookup.getLongestMatch("a"));
+        assertEquals("two",     prefixLookup.getLongestMatch("ab"));
+        assertEquals("three",   prefixLookup.getLongestMatch("abc"));
+
+        // =====================
+
+        // Now remove one entry (lowercase)
+        assertEquals("one",     prefixLookup.remove("a"));
+        assertEquals(5,         prefixLookup.size());
+
+        // Test uppercase (NOT changed)
+        assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
+        assertEquals("ONE",     prefixLookup.getShortestMatch("AB"));
+        assertEquals("ONE",     prefixLookup.getShortestMatch("ABC"));
+        assertEquals("ONE",     prefixLookup.getLongestMatch("A"));
+        assertEquals("TWO",     prefixLookup.getLongestMatch("AB"));
+        assertEquals("THREE",   prefixLookup.getLongestMatch("ABC"));
+
+        // Test lowercase (CHANGED!)
+        assertEquals(null,      prefixLookup.getShortestMatch("a"));
+        assertEquals("two",     prefixLookup.getShortestMatch("ab"));
+        assertEquals("two",     prefixLookup.getShortestMatch("abc"));
+        assertEquals(null,      prefixLookup.getLongestMatch("a"));
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
     }
