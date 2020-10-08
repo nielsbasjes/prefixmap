@@ -135,17 +135,21 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("AB"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("ABC"));
+        assertEquals("ONE",     prefixLookup.getShortestMatch("ABCD"));
         assertEquals("ONE",     prefixLookup.getLongestMatch("A"));
         assertEquals("TWO",     prefixLookup.getLongestMatch("AB"));
         assertEquals("THREE",   prefixLookup.getLongestMatch("ABC"));
+        assertEquals("THREE",   prefixLookup.getLongestMatch("ABCD"));
 
         // Test lowercase
         assertEquals("one",     prefixLookup.getShortestMatch("a"));
         assertEquals("one",     prefixLookup.getShortestMatch("ab"));
         assertEquals("one",     prefixLookup.getShortestMatch("abc"));
+        assertEquals("one",     prefixLookup.getShortestMatch("abcd"));
         assertEquals("one",     prefixLookup.getLongestMatch("a"));
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
+        assertEquals("three",   prefixLookup.getLongestMatch("abcd"));
 
         // =====================
 
@@ -228,20 +232,32 @@ public abstract class AbstractPrefixMapTests {
         assertEquals(3,         prefixLookup.size());
 
         // Test uppercase
+        assertEquals("one",     prefixLookup.get("A"));
+        assertEquals("two",     prefixLookup.get("AB"));
+        assertEquals("three",   prefixLookup.get("ABC"));
+        assertEquals(null,   prefixLookup.get("ABCD"));
         assertEquals("one",     prefixLookup.getShortestMatch("A"));
         assertEquals("one",     prefixLookup.getShortestMatch("AB"));
         assertEquals("one",     prefixLookup.getShortestMatch("ABC"));
+        assertEquals("one",     prefixLookup.getShortestMatch("ABCD"));
         assertEquals("one",     prefixLookup.getLongestMatch("A"));
         assertEquals("two",     prefixLookup.getLongestMatch("AB"));
         assertEquals("three",   prefixLookup.getLongestMatch("ABC"));
+        assertEquals("three",   prefixLookup.getLongestMatch("ABCD"));
 
         // Test lowercase
+        assertEquals("one",     prefixLookup.get("a"));
+        assertEquals("two",     prefixLookup.get("ab"));
+        assertEquals("three",   prefixLookup.get("abc"));
+        assertEquals(null,   prefixLookup.get("abcd"));
         assertEquals("one",     prefixLookup.getShortestMatch("a"));
         assertEquals("one",     prefixLookup.getShortestMatch("ab"));
         assertEquals("one",     prefixLookup.getShortestMatch("abc"));
+        assertEquals("one",     prefixLookup.getShortestMatch("abcd"));
         assertEquals("one",     prefixLookup.getLongestMatch("a"));
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
+        assertEquals("three",   prefixLookup.getLongestMatch("abcd"));
 
         // Now remove non-existing entry (Totally unrelated)
         assertEquals(null,      prefixLookup.remove("Does not exist"));
@@ -260,26 +276,41 @@ public abstract class AbstractPrefixMapTests {
         assertEquals(2,         prefixLookup.size());
 
         // Test uppercase (CHANGED!)
+        assertEquals(null,      prefixLookup.get("A"));
+        assertEquals("two",     prefixLookup.get("AB"));
+        assertEquals("three",   prefixLookup.get("ABC"));
+        assertEquals(null,      prefixLookup.get("ABCD"));
         assertEquals(null,      prefixLookup.getShortestMatch("A"));
-        assertEquals("two",     prefixLookup.getShortestMatch("ABC"));
         assertEquals("two",     prefixLookup.getShortestMatch("AB"));
+        assertEquals("two",     prefixLookup.getShortestMatch("ABC"));
+        assertEquals("two",     prefixLookup.getShortestMatch("ABCD"));
         assertEquals(null,      prefixLookup.getLongestMatch("A"));
         assertEquals("two",     prefixLookup.getLongestMatch("AB"));
         assertEquals("three",   prefixLookup.getLongestMatch("ABC"));
+        assertEquals("three",   prefixLookup.getLongestMatch("ABCD"));
 
         // Test lowercase (CHANGED!)
+        assertEquals(null,      prefixLookup.get("a"));
+        assertEquals("two",     prefixLookup.get("ab"));
+        assertEquals("three",   prefixLookup.get("abc"));
+        assertEquals(null,      prefixLookup.get("abcd"));
         assertEquals(null,      prefixLookup.getShortestMatch("a"));
         assertEquals("two",     prefixLookup.getShortestMatch("ab"));
         assertEquals("two",     prefixLookup.getShortestMatch("abc"));
+        assertEquals("two",     prefixLookup.getShortestMatch("abcd"));
         assertEquals(null,      prefixLookup.getLongestMatch("a"));
         assertEquals("two",     prefixLookup.getLongestMatch("ab"));
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
+        assertEquals("three",   prefixLookup.getLongestMatch("abcd"));
 
         // Now re-add the removed entry
         assertEquals(null,      prefixLookup.put("A",   "ONE"));
         assertEquals(3,         prefixLookup.size());
 
         // Test uppercase (Original tests)
+        assertEquals("ONE",     prefixLookup.get("A"));
+        assertEquals("two",     prefixLookup.get("AB"));
+        assertEquals("three",   prefixLookup.get("ABC"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("AB"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("ABC"));
@@ -288,6 +319,9 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("three",   prefixLookup.getLongestMatch("ABC"));
 
         // Test lowercase (Original tests)
+        assertEquals("ONE",     prefixLookup.get("a"));
+        assertEquals("two",     prefixLookup.get("ab"));
+        assertEquals("three",   prefixLookup.get("abc"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("a"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("ab"));
         assertEquals("ONE",     prefixLookup.getShortestMatch("abc"));
@@ -305,8 +339,10 @@ public abstract class AbstractPrefixMapTests {
     }
 
     private void verifySerializationInstance(PrefixMap<String> instance) {
-        assertEquals("Samsung", instance.getLongestMatch("GT-I8190N"));
-        assertEquals("Nokia",   instance.getLongestMatch("RM-1092"));
+        assertEquals("Samsung", instance.getLongestMatch("gT-i8190N"));
+        assertEquals("Samsung", instance.getLongestMatch("Gt-I8190n"));
+        assertEquals("Nokia",   instance.getLongestMatch("rM-1092"));
+        assertEquals("Nokia",   instance.getLongestMatch("Rm-1092"));
     }
 
     @Test
@@ -378,5 +414,14 @@ public abstract class AbstractPrefixMapTests {
         verifySerializationInstance(instance);
     }
 
+    @Test
+    public void testEntrySet() {
+        PrefixMap<String> instance = createSerializationInstance();
+        verifySerializationInstance(instance);
+
+        PrefixMap<String> instance2 = createPrefixMap(false);
+        instance.forEach(instance2::put);
+        verifySerializationInstance(instance2);
+    }
 
 }

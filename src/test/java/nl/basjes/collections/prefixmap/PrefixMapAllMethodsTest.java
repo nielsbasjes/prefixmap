@@ -19,6 +19,9 @@ package nl.basjes.collections.prefixmap;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +53,16 @@ public class PrefixMapAllMethodsTest {
 
         @Override
         public String put(String prefix, String value) {
+            return null;
+        }
+
+        @Override
+        public Set<Entry<String, String>> entrySet() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public String get(String prefix) {
             return null;
         }
 
@@ -92,6 +105,11 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public String get(String input) {
+            return null;
+        }
+
+        @Override
         public String getShortestMatch(String input) {
             return null;
         }
@@ -103,7 +121,11 @@ public class PrefixMapAllMethodsTest {
 
         @Override
         public void clear() {
+        }
 
+        @Override
+        public boolean caseSensitive() {
+            return false;
         }
     }
 

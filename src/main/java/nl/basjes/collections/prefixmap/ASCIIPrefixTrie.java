@@ -26,6 +26,7 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private V                    theValue;
 
     // private constructor for serialization systems ONLY (like Kyro)
+    @SuppressWarnings("unused")
     private ASCIIPrefixTrie() {
     }
 
@@ -119,25 +120,30 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     @Override
     public boolean containsPrefix(String prefix) {
+        return get(prefix) != null;
+    }
+
+    @Override
+    public V get(String prefix) {
         if (charIndex == prefix.length()) {
-            return theValue != null;
+            return theValue;
         }
 
         if (childNodes == null) {
-            return false;
+            return null;
         }
 
         char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
-            return false; // Cannot store these, so is false.
+            return null; // Cannot store these, so is false.
         }
 
         ASCIIPrefixTrie<V> child = childNodes[myChar];
         if (child == null) {
-            return false;
+            return null;
         }
 
-        return child.containsPrefix(prefix);
+        return child.get(prefix);
     }
 
     @Override
@@ -185,5 +191,10 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     public void clear() {
         childNodes = null;
         theValue = null;
+    }
+
+    @Override
+    public boolean caseSensitive() {
+        return caseSensitive;
     }
 }

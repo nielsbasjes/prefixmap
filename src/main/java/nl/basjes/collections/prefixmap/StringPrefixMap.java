@@ -15,9 +15,17 @@
  */
 package nl.basjes.collections.prefixmap;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import nl.basjes.collections.PrefixMap;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * The StringPrefixMap is an implementation of PrefixMap where the assumption is that the
@@ -25,21 +33,39 @@ import java.io.Serializable;
  *
  * @param <V> The type of the value that is to be stored.
  */
-public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Serializable {
-
-    private PrefixTrie<V> prefixTrie;
-    private int           size = 0;
+public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, KryoSerializable, Serializable {
+    private Boolean             caseSensitive;
+    private PrefixTrie<V>       prefixTrie = null;
+    private TreeMap<String, V>  allPrefixes;
+    private int                 size = 0;
 
     // private constructor for serialization systems ONLY (like Kyro)
-    private StringPrefixMap() {
+    protected StringPrefixMap() {
     }
 
-    protected StringPrefixMap(PrefixTrie<V> prefixTrie) {
-        this.prefixTrie = prefixTrie;
+    PrefixTrie<V> createTrie(boolean newCaseSensitive) {
+        return new StringPrefixTrie<>(newCaseSensitive);
     }
 
-    public StringPrefixMap(boolean caseSensitive) {
-        prefixTrie = new StringPrefixTrie<>(caseSensitive);
+    public StringPrefixMap(boolean newCaseSensitive) {
+        caseSensitive = newCaseSensitive;
+        prefixTrie = createTrie(caseSensitive);
+        allPrefixes = new TreeMap<>();
+    }
+
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeBoolean(caseSensitive);
+        kryo.writeClassAndObject(output, allPrefixes);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void read(Kryo kryo, Input input) {
+        caseSensitive = input.readBoolean();
+        prefixTrie = createTrie(caseSensitive);
+        allPrefixes = (TreeMap<String, V>) kryo.readClassAndObject(input);
+        allPrefixes.forEach((k, v) -> prefixTrie.add(k, v));
     }
 
     @Override
@@ -49,9 +75,17 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
     @Override
     public V put(String prefix, V value) {
+        if (prefixTrie == null) {
+            prefixTrie = createTrie(caseSensitive);
+        }
         V previousValue = prefixTrie.add(prefix, value);
         if (previousValue == null) {
             size++;
+            if (prefixTrie.caseSensitive()) {
+                allPrefixes.put(prefix, value);
+            } else {
+                allPrefixes.put(prefix.toLowerCase(), value);
+            }
         }
         return previousValue;
     }
@@ -64,6 +98,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     @Override
     public void clear() {
         prefixTrie.clear();
+        allPrefixes.clear();
         size = 0;
     }
 
@@ -72,8 +107,15 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         V oldValue = prefixTrie.remove(prefix);
         if (oldValue != null) {
             size--;
+            allPrefixes.remove(prefix);
         }
         return oldValue;
+    }
+
+    @Override
+    public V get(String prefix) {
+        // NOTE: The 'allPrefixes'
+        return prefixTrie.get(prefix);
     }
 
     @Override
@@ -86,4 +128,28 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         return prefixTrie.getLongestMatch(input);
     }
 
+    @Override
+    public Set<Map.Entry<String, V>> entrySet() {
+        return allPrefixes.entrySet();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return allPrefixes.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return allPrefixes.containsValue(value);
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return allPrefixes.keySet();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return allPrefixes.values();
+    }
 }

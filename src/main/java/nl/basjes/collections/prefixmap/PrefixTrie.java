@@ -19,12 +19,55 @@ package nl.basjes.collections.prefixmap;
 import java.io.Serializable;
 
 interface PrefixTrie<V extends Serializable> extends Serializable {
+    /**
+     * <p>Add a new prefix and related value to the PrefixTrie.</p>
+     * @param prefix The prefix for which we want to store the provided value
+     * @param value The value that we want to store. The may NOT be null.
+     * @return The previously stored value, null if no previous value was present.
+     */
     V add(String prefix, V value);
 
+    /**
+     * <p>Determine if we have a value for the <code>exact</code> prefix. </p>
+     * @param prefix The string for which we need to know if it is present
+     * @return True if the exact prefix value is present, False otherwise
+     */
     boolean containsPrefix(String prefix);
 
+    /**
+     * <p>Return the value of the <code>exact</code> matching prefix. </p>
+     * <p>The value returned is the stored prefix for which is true:
+     * <code>input.equals(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @return The value, null if not found.
+     */
+    V get(String input);
+
+    /**
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
+     * <p>The value returned is the shortest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @return The value, null if not found.
+     */
     V getShortestMatch(String input);
 
+    /**
+     * <p>Return the value of the longest matching prefix.</p>
+     * <p>The value returned is the longest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @return The value, null if not found.
+     */
     V getLongestMatch(String input);
 
     default V remove(String prefix) {
@@ -32,5 +75,15 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
             this.getClass().getCanonicalName());
     }
 
+    /**
+     * Wipe all prefixes and values.
+     */
     void clear();
+
+    /**
+     * Is the matching being done in a case sensitive way?
+     * @return True if the case 'a'/'A' makes a difference, False if they should be considered the same.
+     */
+    boolean caseSensitive();
+
 }

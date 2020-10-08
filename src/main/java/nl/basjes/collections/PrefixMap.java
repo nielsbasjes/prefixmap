@@ -17,7 +17,9 @@
 package nl.basjes.collections;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -39,7 +41,7 @@ import java.util.Map;
  * </p>
  * <p>Note that implementations may be constructed to match either case sensitive or case insensitive.</p>
  */
-public interface PrefixMap<V extends Serializable> extends Serializable {
+public interface PrefixMap<V extends Serializable> extends Serializable, Map<String, V> {
     /**
      * @return the number of prefix-value mappings in this prefixmap
      */
@@ -71,7 +73,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      * @throws NullPointerException if one or more of the prefixes or values are null.
      *                              If this happens the PrefixMap is in an undefined state.
      */
-    default void putAll(Map<String, V> prefixesAndValues) {
+    default void putAll(Map<? extends String, ? extends V> prefixesAndValues) {
         prefixesAndValues.forEach(this::put);
     }
 
@@ -102,6 +104,66 @@ public interface PrefixMap<V extends Serializable> extends Serializable {
      */
     default V remove(String prefix) {
         throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
+    @Override
+    default V remove(Object o) {
+        throw new UnsupportedOperationException("The 'remove(Object o)' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
+    @Override
+    default boolean containsKey(Object o) {
+        throw new UnsupportedOperationException("The 'containsKey(Object o)' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
+    @Override
+    default boolean containsValue(Object o) {
+        throw new UnsupportedOperationException("The 'containsValue(Object o)' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
+    /**
+     * <p>Return the value of the <code>exact</code> matching prefix. </p>
+     * <p>The value returned is the stored prefix for which is true:
+     * <code>input.equals(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param prefix The string for which we need value of the stored prefix
+     * @return The value, null if not found.
+     */
+    V get(String prefix);
+
+    /**
+     * <p>Return the value of the <code>exact</code> matching prefix. </p>
+     * <p>The value returned is the stored prefix for which is true:
+     * <code>input.equals(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param prefix The string for which we need the stored value
+     * @return The value, null if not found.
+     */
+    @Override
+    default V get(Object prefix) {
+        if (!(prefix instanceof String)) {
+            throw new UnsupportedOperationException("The 'get(Object)' method ONLY accepts objects of type String");
+        }
+        return get((String)prefix);
+    }
+
+    @Override
+    default Set<String> keySet() {
+        throw new UnsupportedOperationException("The 'keySet()' method has not been implemented in " +
+            this.getClass().getCanonicalName());
+    }
+
+    @Override
+    default Collection<V> values() {
+        throw new UnsupportedOperationException("The 'values()' method has not been implemented in " +
             this.getClass().getCanonicalName());
     }
 

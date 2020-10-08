@@ -1,5 +1,9 @@
 This is intended as an overview of the major changes
 
+v2.0
+===
+- The PrefixMap now implements the Map interface which increases the number of use cases
+
 v1.2
 ===
 - Converted this into a Java 9+ module that can still be used as a Java 8 jar dependency.

@@ -26,6 +26,7 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private   V                                 theValue;
 
     // private constructor for serialization systems ONLY (like Kyro)
+    @SuppressWarnings("unused")
     private StringPrefixTrie() {
     }
 
@@ -108,22 +109,27 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     @Override
     public boolean containsPrefix(String prefix) {
+        return get(prefix) != null;
+    }
+
+    @Override
+    public V get(String prefix) {
         if (charIndex == prefix.length()) {
-            return theValue != null;
+            return theValue;
         }
 
         if (childNodes == null) {
-            return false;
+            return null;
         }
 
         char myChar = prefix.charAt(charIndex);
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
-            return false;
+            return null;
         }
 
-        return child.containsPrefix(prefix);
+        return child.get(prefix);
     }
 
     @Override
@@ -166,4 +172,21 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         childNodes = null;
         theValue = null;
     }
+
+    @Override
+    public boolean caseSensitive() {
+        return caseSensitive;
+    }
+
+    @Override
+    public String toString() {
+        return "StringPrefixTrie{" +
+            "childNodes=" + childNodes +
+            "\n, caseSensitive=" + caseSensitive +
+            ", charIndex=" + charIndex +
+            ", theValue=" + theValue +
+            '}';
+    }
+
+
 }

@@ -27,12 +27,15 @@ import java.io.Serializable;
 public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V> {
 
     // private constructor for serialization systems ONLY (like Kyro)
-    private ASCIIPrefixMap() {
-        super(null);
+    protected ASCIIPrefixMap() {
     }
 
     public ASCIIPrefixMap(boolean caseSensitive) {
-        super(new ASCIIPrefixTrie<>(caseSensitive));
+        super(caseSensitive);
+    }
+
+    PrefixTrie<V> createTrie(boolean caseSensitive) {
+        return new ASCIIPrefixTrie<>(caseSensitive);
     }
 
 }

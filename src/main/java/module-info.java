@@ -15,6 +15,7 @@
  */
 
 module nl.basjes.collections.prefixmap {
+    requires com.esotericsoftware.kryo;
     exports nl.basjes.collections;
     opens   nl.basjes.collections;
 
