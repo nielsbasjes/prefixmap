@@ -15,10 +15,12 @@
  */
 package nl.basjes.collections.prefixmap;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import nl.basjes.collections.PrefixMap;
 
 import java.io.Serializable;
@@ -33,6 +35,7 @@ import java.util.TreeMap;
  *
  * @param <V> The type of the value that is to be stored.
  */
+@DefaultSerializer(DefaultSerializers.KryoSerializableSerializer.class)
 public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, KryoSerializable, Serializable {
     private Boolean             caseSensitive;
     private PrefixTrie<V>       prefixTrie = null;
@@ -66,6 +69,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
         prefixTrie = createTrie(caseSensitive);
         allPrefixes = (TreeMap<String, V>) kryo.readClassAndObject(input);
         allPrefixes.forEach((k, v) -> prefixTrie.add(k, v));
+        size = allPrefixes.size();
     }
 
     @Override

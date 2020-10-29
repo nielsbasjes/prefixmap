@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nl.basjes.collections.prefixmap;
+package nl.basjes.collections.prefixmap.speed;
 
 import java.util.Arrays;
 import java.util.HashMap;

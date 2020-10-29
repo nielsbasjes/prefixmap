@@ -16,30 +16,13 @@
 
 package nl.basjes.collections.prefixmap;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractPrefixMapTests {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractPrefixMapTests.class);
 
     abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
 
@@ -343,75 +326,6 @@ public abstract class AbstractPrefixMapTests {
         assertEquals("Samsung", instance.getLongestMatch("Gt-I8190n"));
         assertEquals("Nokia",   instance.getLongestMatch("rM-1092"));
         assertEquals("Nokia",   instance.getLongestMatch("Rm-1092"));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testJavaSerialization() throws IOException, ClassNotFoundException {
-        PrefixMap<String> instance = createSerializationInstance();
-        verifySerializationInstance(instance);
-
-        LOG.info("--------------------------------------------------------------");
-        LOG.info("Serialize");
-
-        byte[] bytes;
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            ObjectOutput out = new ObjectOutputStream(bos);
-            out.writeObject(instance);
-            out.flush();
-            bytes = bos.toByteArray();
-        }
-
-        LOG.info("The PrefixMap was serialized into {} bytes", bytes.length);
-        LOG.info("--------------------------------------------------------------");
-        LOG.info("Deserialize");
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-
-        try (ObjectInput in = new ObjectInputStream(bis)) {
-            Object o = in.readObject();
-            assertTrue(o instanceof PrefixMap);
-
-            instance= (PrefixMap<String>) o;
-        }
-
-        LOG.info("Done");
-        LOG.info("==============================================================");
-
-        verifySerializationInstance(instance);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testKyroSerialization() {
-        PrefixMap<String> instance = createSerializationInstance();
-        verifySerializationInstance(instance);
-
-        LOG.info("--------------------------------------------------------------");
-        LOG.info("Serialize");
-        Kryo kryo = new Kryo();
-
-        ByteBuffer bytes;
-
-        ByteBufferOutput byteBufferOutput = new ByteBufferOutput(1_000_000, -1);
-        kryo.writeClassAndObject(byteBufferOutput, instance);
-        bytes = byteBufferOutput.getByteBuffer();
-
-        LOG.info("The PrefixMap was serialized into {} bytes", bytes.position());
-        LOG.info("--------------------------------------------------------------");
-        LOG.info("Deserialize");
-
-        bytes.rewind();
-        ByteBufferInput byteBufferInput = new ByteBufferInput(bytes);
-        Object          uaaObject       = kryo.readClassAndObject(byteBufferInput);
-        assertTrue(uaaObject instanceof PrefixMap);
-
-        instance = (PrefixMap<String>) uaaObject;
-
-        LOG.info("Done");
-        LOG.info("==============================================================");
-
-        verifySerializationInstance(instance);
     }
 
     @Test

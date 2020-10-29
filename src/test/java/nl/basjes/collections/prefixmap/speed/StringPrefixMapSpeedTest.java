@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.basjes.collections.prefixmap;
+package nl.basjes.collections.prefixmap.speed;
 
 import nl.basjes.collections.PrefixMap;
+import nl.basjes.collections.prefixmap.StringPrefixMap;
 
 import java.util.Map;
 
-public class ASCIIPrefixMapSpeedTest extends AbstractPrefixMapSpeedTests {
+public class StringPrefixMapSpeedTest extends AbstractPrefixMapSpeedTests {
 
     @Override
     protected PrefixMap<String> create(Map<String, String> prefixMap) {
-        PrefixMap<String> result = new ASCIIPrefixMap<>(false);
+        PrefixMap<String> result = new StringPrefixMap<>(false);
         result.putAll(prefixMap);
         return result;
     }
@@ -32,4 +33,5 @@ public class ASCIIPrefixMapSpeedTest extends AbstractPrefixMapSpeedTests {
     long getIterations() {
         return 10_000_000;
     }
+
 }

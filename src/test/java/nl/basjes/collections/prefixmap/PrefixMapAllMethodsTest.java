@@ -16,6 +16,7 @@
 
 package nl.basjes.collections.prefixmap;
 
+import com.esotericsoftware.kryo.Kryo;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +75,10 @@ public class PrefixMapAllMethodsTest {
         @Override
         public String getLongestMatch(String input) {
             return null;
+        }
+
+        public static void registerClassesWithKryo_impl(Kryo kryo) {
+            kryo.register(DummyPrefixMap.class);
         }
     }
 

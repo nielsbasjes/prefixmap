@@ -42,6 +42,10 @@ All you need is to add this dependency to you project
       <version>1.2</version>
     </dependency>
 
+NEXT VERSION: If you are using Kryo 5.x you can use this to register all classes:
+
+        PrefixMapKryoUtil.registerClassesWithKryo(kryo);
+
 Blog post
 =========
 A bit more background about this datastructure and how it works can be found in this blog which I wrote about it: [https://techlab.bol.com/finding-the-longest-matching-string-prefix-fast/](https://techlab.bol.com/finding-the-longest-matching-string-prefix-fast/) ([Local copy](Article.md))

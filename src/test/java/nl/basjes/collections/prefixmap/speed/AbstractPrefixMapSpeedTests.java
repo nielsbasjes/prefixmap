@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nl.basjes.collections.prefixmap;
+package nl.basjes.collections.prefixmap.speed;
 
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static nl.basjes.collections.prefixmap.PrefixMapSpeedTestData.FULL_PREFIX_MAP;
-import static nl.basjes.collections.prefixmap.PrefixMapSpeedTestData.PREFIX_MAP;
-import static nl.basjes.collections.prefixmap.PrefixMapSpeedTestData.TEST_MODELS;
+import static nl.basjes.collections.prefixmap.speed.PrefixMapSpeedTestData.FULL_PREFIX_MAP;
+import static nl.basjes.collections.prefixmap.speed.PrefixMapSpeedTestData.PREFIX_MAP;
+import static nl.basjes.collections.prefixmap.speed.PrefixMapSpeedTestData.TEST_MODELS;
 
 
 public abstract class AbstractPrefixMapSpeedTests {

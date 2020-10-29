@@ -16,6 +16,9 @@
 
 package nl.basjes.collections;
 
+import com.esotericsoftware.kryo.Kryo;
+import nl.basjes.collections.prefixmap.PrefixMapKryoUtil;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
@@ -202,4 +205,13 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      */
     V getLongestMatch(String input);
 
+    /**
+     * For Kryo there is a desire to register all classes that must be serialized.
+     * Since many classes are not accessible outside of the module this method should
+     * be called to take care of this.
+     * @param kryo The kryo instance to register all used classes with
+     */
+    default void registerClassesWithKryo(Kryo kryo) {
+        PrefixMapKryoUtil.registerClassesWithKryo(kryo);
+    }
 }

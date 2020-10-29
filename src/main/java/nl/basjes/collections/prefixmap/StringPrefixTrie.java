@@ -16,9 +16,13 @@
 
 package nl.basjes.collections.prefixmap;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+
 import java.io.Serializable;
 import java.util.TreeMap;
 
+@DefaultSerializer(FieldSerializer.class)
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     protected TreeMap<Character, PrefixTrie<V>> childNodes;
     private   boolean                           caseSensitive;
