@@ -25,6 +25,8 @@ import nl.basjes.collections.prefixmap.PrefixMapKryoUtil;
 
 import java.nio.ByteBuffer;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class TestKryoSerialization extends AbstractSerializationTest {
 
     byte[] serialize(PrefixMap<String> instance) {
@@ -42,12 +44,15 @@ public class TestKryoSerialization extends AbstractSerializationTest {
         return arr;
     }
 
+    @SuppressWarnings("unchecked") // No way to check if the correct generic is used because of type erasure
     PrefixMap<String> deserialize(byte[] bytes) {
         Kryo            kryo            = new Kryo();
         PrefixMapKryoUtil.registerClassesWithKryo(kryo);
 
         ByteBufferInput byteBufferInput = new ByteBufferInput(bytes);
-        return (PrefixMap<String>) kryo.readClassAndObject(byteBufferInput);
+        Object instance =  kryo.readClassAndObject(byteBufferInput);
+        assertTrue(instance instanceof PrefixMap);
+        return (PrefixMap<String>) instance;
     }
 
 }

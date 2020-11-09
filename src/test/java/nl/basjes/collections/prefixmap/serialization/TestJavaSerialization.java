@@ -40,6 +40,7 @@ public class TestJavaSerialization extends AbstractSerializationTest {
         }
     }
 
+    @SuppressWarnings("unchecked") // No way to check if the correct generic is used because of type erasure
     PrefixMap<String> deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 

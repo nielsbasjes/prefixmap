@@ -46,13 +46,6 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     @SuppressWarnings("unchecked") // Creating the array of generics is tricky
     @Override
     public V add(String prefix, V value) {
-        if (prefix == null) {
-            throw new NullPointerException("The prefix may not be null");
-        }
-        if (value == null) {
-            throw new NullPointerException("The value may not be null");
-        }
-
         V previousValue = theValue;
         if (charIndex == prefix.length()) {
             theValue = value;
@@ -91,10 +84,6 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     @Override
     public V remove(String prefix) {
-        if (prefix == null) {
-            throw new NullPointerException("The prefix may not be null");
-        }
-
         if (charIndex == prefix.length()) {
             V previousValue = theValue;
             theValue = null;

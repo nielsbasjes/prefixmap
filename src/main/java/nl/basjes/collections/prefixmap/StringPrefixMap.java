@@ -79,9 +79,13 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
 
     @Override
     public V put(String prefix, V value) {
-        if (prefixTrie == null) {
-            prefixTrie = createTrie(caseSensitive);
+        if (prefix == null) {
+            throw new NullPointerException("The prefix may not be null");
         }
+        if (value == null) {
+            throw new NullPointerException("The value may not be null");
+        }
+
         V previousValue = prefixTrie.add(prefix, value);
         if (previousValue == null) {
             size++;
@@ -108,6 +112,9 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
 
     @Override
     public V remove(String prefix) {
+        if (prefix == null) {
+            throw new NullPointerException("The prefix may not be null");
+        }
         V oldValue = prefixTrie.remove(prefix);
         if (oldValue != null) {
             size--;

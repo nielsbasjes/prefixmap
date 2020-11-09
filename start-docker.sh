@@ -21,7 +21,7 @@ USER=$(id -un)
 CONTAINER_NAME=${PROJECTNAME}-${OS}-${USER}-$$
 DOCKER_BUILD="docker build"
 
-if [ ! -z ${INSIDE_DOCKER+x} ];
+if [[ -n ${INSIDE_DOCKER+x} ]];
 then
   echo "Nothing to do: You are already INSIDE the docker environment"
   exit 1;
@@ -63,7 +63,7 @@ fi
 
 ${DOCKER_BUILD} -t "${PROJECTNAME}-${OS}-${USER_NAME}" - <<UserSpecificDocker
 FROM ${PROJECTNAME}-${OS}
-RUN bash /scripts/configure-for-user.sh "${USER_NAME}" "${USER_ID}" "${GROUP_ID}" "$(fgrep vboxsf /etc/group)"
+RUN bash /scripts/configure-for-user.sh "${USER_NAME}" "${USER_ID}" "${GROUP_ID}" "$(grep -F vboxsf /etc/group)"
 UserSpecificDocker
 
 # Do NOT Map the real ~/.m2 directory !!!
