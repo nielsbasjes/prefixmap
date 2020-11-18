@@ -2,7 +2,8 @@ This is intended as an overview of the major changes
 
 v2.0
 ===
-- The PrefixMap now implements the Map interface which increases the number of use cases
+- The PrefixMap now implements the Map interface which increases the number of use cases.
+- Support for Kryo 5
 
 v1.2
 ===

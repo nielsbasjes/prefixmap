@@ -17,13 +17,14 @@ package nl.basjes.collections.prefixmap;
 
 import com.esotericsoftware.kryo.DefaultSerializer;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.KryoException;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import nl.basjes.collections.PrefixMap;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -35,41 +36,45 @@ import java.util.TreeMap;
  *
  * @param <V> The type of the value that is to be stored.
  */
-@DefaultSerializer(DefaultSerializers.KryoSerializableSerializer.class)
-public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, KryoSerializable, Serializable {
+@DefaultSerializer(StringPrefixMap.KryoSerializer.class)
+public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Serializable {
     private Boolean             caseSensitive;
-    private PrefixTrie<V>       prefixTrie = null;
+    private PrefixTrie<V>       prefixTrie;
     private TreeMap<String, V>  allPrefixes;
-    private int                 size = 0;
-
-    // private constructor for serialization systems ONLY (like Kyro)
-    protected StringPrefixMap() {
-    }
 
     PrefixTrie<V> createTrie(boolean newCaseSensitive) {
         return new StringPrefixTrie<>(newCaseSensitive);
     }
 
-    public StringPrefixMap(boolean newCaseSensitive) {
-        caseSensitive = newCaseSensitive;
+    public StringPrefixMap(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive; // Only needed for serialization.
         prefixTrie = createTrie(caseSensitive);
         allPrefixes = new TreeMap<>();
     }
 
-    @Override
-    public void write(Kryo kryo, Output output) {
-        output.writeBoolean(caseSensitive);
-        kryo.writeClassAndObject(output, allPrefixes);
-    }
+    public static class KryoSerializer extends Serializer<StringPrefixMap<Serializable>> {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void read(Kryo kryo, Input input) {
-        caseSensitive = input.readBoolean();
-        prefixTrie = createTrie(caseSensitive);
-        allPrefixes = (TreeMap<String, V>) kryo.readClassAndObject(input);
-        allPrefixes.forEach((k, v) -> prefixTrie.add(k, v));
-        size = allPrefixes.size();
+        public void write(Kryo kryo, Output output, StringPrefixMap<Serializable> instance) {
+            output.writeBoolean(instance.caseSensitive);
+            kryo.writeClassAndObject(output, instance.allPrefixes);
+        }
+
+        @SuppressWarnings("unchecked")
+        public StringPrefixMap<Serializable> read(Kryo kryo, Input input, Class<? extends StringPrefixMap<Serializable>> type) {
+            try {
+                boolean caseSensitive = input.readBoolean();
+                StringPrefixMap<Serializable> instance = type.getDeclaredConstructor(boolean.class).newInstance(caseSensitive);
+                Map<String, Serializable> allPrefixes = (TreeMap<String, Serializable>) kryo.readClassAndObject(input);
+
+                for (Entry<String, Serializable> entry : allPrefixes.entrySet()) {
+                    Serializable value = entry.getValue();
+                    instance.put(entry.getKey(), value);
+                }
+                return instance;
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new KryoException("Deserialization of StringPrefixMap failed", e);
+            }
+        }
     }
 
     @Override
@@ -88,7 +93,6 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
 
         V previousValue = prefixTrie.add(prefix, value);
         if (previousValue == null) {
-            size++;
             if (prefixTrie.caseSensitive()) {
                 allPrefixes.put(prefix, value);
             } else {
@@ -100,14 +104,13 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
 
     @Override
     public int size() {
-        return size;
+        return allPrefixes.size();
     }
 
     @Override
     public void clear() {
         prefixTrie.clear();
         allPrefixes.clear();
-        size = 0;
     }
 
     @Override
@@ -117,8 +120,11 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Kr
         }
         V oldValue = prefixTrie.remove(prefix);
         if (oldValue != null) {
-            size--;
-            allPrefixes.remove(prefix);
+            if (prefixTrie.caseSensitive()) {
+                allPrefixes.remove(prefix);
+            } else {
+                allPrefixes.remove(prefix.toLowerCase());
+            }
         }
         return oldValue;
     }

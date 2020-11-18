@@ -42,16 +42,16 @@
     <!-- ============================================== -->
 
     <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
-    <checkstyle.version>8.34</checkstyle.version>
+    <checkstyle.version>8.37</checkstyle.version>
     <slf4j.version>1.7.30</slf4j.version>
     <rat.version>0.13</rat.version>
-    <jacoco.version>0.8.5</jacoco.version>
+    <jacoco.version>0.8.6</jacoco.version>
 
     <!-- See http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html-->
     <jacoco.surefireArgLine/>
     <argLine>@{jacoco.surefireArgLine} -Xmx2048m</argLine>
 
-    <junit5.version>5.6.2</junit5.version>
+    <junit5.version>5.7.0</junit5.version>
     <hamcrest-core.version>2.2</hamcrest-core.version>
 
     <sonar.language>java</sonar.language>
@@ -59,7 +59,7 @@
     <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 
-    <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
+    <git-commit-id-plugin.version>4.0.2</git-commit-id-plugin.version>
     <version.copyright>Copyright (C) 2018-2020 Niels Basjes</version.copyright>
     <version.license>License Apache 2.0</version.license>
     <version.url>${project.url}</version.url>
@@ -146,7 +146,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.1.1</version>
+            <version>3.2.0</version>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
@@ -352,8 +352,8 @@
         <plugin><artifactId>maven-clean-plugin</artifactId>     <version>3.1.0</version></plugin>
         <plugin><artifactId>maven-install-plugin</artifactId>   <version>2.5.2</version></plugin>
         <plugin><artifactId>maven-jar-plugin</artifactId>       <version>3.2.0</version></plugin>
-        <plugin><artifactId>maven-resources-plugin</artifactId> <version>3.1.0</version></plugin>
-        <plugin><artifactId>maven-site-plugin</artifactId>      <version>3.8.2</version></plugin>
+        <plugin><artifactId>maven-resources-plugin</artifactId> <version>3.2.0</version></plugin>
+        <plugin><artifactId>maven-site-plugin</artifactId>      <version>3.9.1</version></plugin>
         <plugin><artifactId>maven-compiler-plugin</artifactId>  <version>3.8.1</version></plugin>
         <plugin><artifactId>maven-surefire-plugin</artifactId>  <version>2.22.2</version></plugin>
         <plugin><artifactId>maven-deploy-plugin</artifactId>    <version>2.8.2</version></plugin>
@@ -617,7 +617,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.7</version>
+        <version>2.8.1</version>
         <configuration>
           <!-- Thank you https://stackoverflow.com/a/33727833/114196 -->
           <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
@@ -627,7 +627,7 @@
       <plugin>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
-        <version>5.3.2</version>
+        <version>6.0.2</version>
         <executions>
           <execution>
             <id>Perform OWASP dependency check</id>

@@ -16,7 +16,6 @@
 package nl.basjes.collections.prefixmap;
 
 import com.esotericsoftware.kryo.DefaultSerializer;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import java.io.Serializable;
 
@@ -27,12 +26,8 @@ import java.io.Serializable;
  *
  * @param <V> The type of the value that is to be stored.
  */
-@DefaultSerializer(DefaultSerializers.KryoSerializableSerializer.class)
+@DefaultSerializer(ASCIIPrefixMap.KryoSerializer.class)
 public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V> {
-
-    // private constructor for serialization systems ONLY (like Kyro)
-    protected ASCIIPrefixMap() {
-    }
 
     public ASCIIPrefixMap(boolean caseSensitive) {
         super(caseSensitive);

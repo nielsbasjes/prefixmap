@@ -16,13 +16,9 @@
 
 package nl.basjes.collections.prefixmap;
 
-import com.esotericsoftware.kryo.DefaultSerializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
-
 import java.io.Serializable;
 import java.lang.reflect.Array;
 
-@DefaultSerializer(FieldSerializer.class)
 class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private ASCIIPrefixTrie<V>[] childNodes;
     private boolean              caseSensitive;

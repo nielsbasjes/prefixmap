@@ -18,6 +18,8 @@ package nl.basjes.collections.prefixmap;
 
 import com.esotericsoftware.kryo.Kryo;
 
+import java.lang.reflect.Array;
+
 public final class PrefixMapKryoUtil {
 
     private PrefixMapKryoUtil() {
@@ -32,6 +34,7 @@ public final class PrefixMapKryoUtil {
     public static void registerClassesWithKryo(Kryo kryo) {
         kryo.register(ASCIIPrefixMap.class);
         kryo.register(ASCIIPrefixTrie.class);
+        kryo.register(Array.newInstance(ASCIIPrefixTrie.class, 0).getClass());
         kryo.register(StringPrefixMap.class);
         kryo.register(StringPrefixTrie.class);
         kryo.register(java.util.TreeMap.class);
