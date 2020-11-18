@@ -10,7 +10,6 @@ This is a java library that implements a datastructure I consider to be missing 
 
 The datastructure and its usages
 ================================
-
 In several situations I have a set of values that are each associated with a different prefix of a String.
 
 The example where I found the biggest need for this was when analyzing the device tags of mobile devices.
@@ -42,9 +41,9 @@ All you need is to add this dependency to you project
       <version>1.2</version>
     </dependency>
 
-NEXT VERSION: If you are using Kryo 5.x you can use this to register all classes:
+Version 2.0 If you are using Kryo 5.x you can use this to register all classes:
 
-        PrefixMapKryoUtil.registerClassesWithKryo(kryo);
+    PrefixMapKryoUtil.registerClassesWithKryo(kryo);
 
 Blog post
 =========
