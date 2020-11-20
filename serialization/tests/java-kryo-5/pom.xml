@@ -23,38 +23,27 @@
 
   <parent>
     <groupId>nl.basjes.collections</groupId>
-    <artifactId>prefixmap-serialization-tests-parent</artifactId>
+    <artifactId>prefixmap-serialization-tests</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
 
   <artifactId>prefixmap-serialization-tests-java-kryo-5</artifactId>
-  <name>PrefixMap : Serialization Tests : Java Kryo 5</name>
+  <name>PrefixMap : Serialization : Tests : Java Kryo 5</name>
 
   <dependencies>
+
     <dependency>
       <groupId>nl.basjes.collections</groupId>
       <artifactId>prefixmap</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>nl.basjes.collections</groupId>
-      <artifactId>prefixmap-serialization-tests-lib</artifactId>
+      <artifactId>prefixmap-serialization-tests-base</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>

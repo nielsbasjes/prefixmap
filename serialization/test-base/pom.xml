@@ -28,27 +28,14 @@
 
   <packaging>jar</packaging>
 
-  <artifactId>prefixmap-serialization-tests-lib</artifactId>
-  <name>PrefixMap : Serialization Tests : Test Library</name>
+  <artifactId>prefixmap-serialization-tests-base</artifactId>
+  <name>PrefixMap : Serialization : Test Library</name>
 
   <dependencies>
     <dependency>
       <groupId>nl.basjes.collections</groupId>
       <artifactId>prefixmap</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>

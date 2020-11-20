@@ -19,8 +19,8 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>prefixmap-parent</artifactId>
   <groupId>nl.basjes.collections</groupId>
+  <artifactId>prefixmap-parent</artifactId>
   <version>2.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
