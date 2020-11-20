@@ -28,7 +28,7 @@
   <packaging>pom</packaging>
 
   <artifactId>prefixmap-serialization-tests-parent</artifactId>
-  <name>PrefixMap : Serialization Tests : </name>
+  <name>PrefixMap : Serialization : </name>
 
   <properties>
     <!-- We override this setting because the one in the parent causes problems -->
