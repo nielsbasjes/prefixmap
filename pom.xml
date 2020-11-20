@@ -19,12 +19,13 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>prefixmap</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>prefixmap-parent</artifactId>
   <groupId>nl.basjes.collections</groupId>
   <version>2.0-SNAPSHOT</version>
 
-  <name>PrefixMap</name>
+  <packaging>pom</packaging>
+
+  <name>PrefixMap :</name>
   <description>A datastructure the allows looking up the best matching prefix.</description>
 
   <url>https://github.com/nielsbasjes/prefixmap</url>
@@ -82,14 +83,6 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.esotericsoftware</groupId>
-      <artifactId>kryo</artifactId>
-      <version>5.0.0-RC9</version>
-      <!-- FIXME: DO NOT USE 5.0.0 because of bad java 9 module definition ! Next update to 5.0.1 -->
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -358,6 +351,81 @@
         <plugin><artifactId>maven-surefire-plugin</artifactId>  <version>2.22.2</version></plugin>
         <plugin><artifactId>maven-deploy-plugin</artifactId>    <version>2.8.2</version></plugin>
         <plugin><artifactId>maven-enforcer-plugin</artifactId>  <version>1.4.1</version></plugin>
+
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${checkstyle-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>nl.basjes.collections</groupId>
+              <artifactId>prefixmap-devtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <consoleOutput>true</consoleOutput>
+            <configLocation>checkstyle/checkstyle.xml</configLocation>
+            <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          </configuration>
+          <!-- Runs by default in the verify phase  (mvn verify or later in the build cycle)
+               the 'check' goal will fail the build if it does not pass.  "mvn checkstyle:check"
+               will do this alone, or "mvn checkstyle:checkstyle" will report but not break  -->
+          <executions>
+            <execution>
+              <id>checkstyle-check</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- Coverage analysis for tests -->
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <executions>
+            <!--
+                Prepares the property pointing to the JaCoCo runtime agent which
+                is passed as VM argument when Maven the Surefire plugin is executed.
+            -->
+            <execution>
+              <id>pre-unit-test</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <!--
+                    Sets the name of the property containing the settings
+                    for JaCoCo runtime agent.
+                -->
+                <propertyName>jacoco.surefireArgLine</propertyName>
+              </configuration>
+            </execution>
+            <!--
+                Ensures that the code coverage report for unit tests is created after
+                unit tests have been run.
+            -->
+            <execution>
+              <id>post-unit-test</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -460,7 +528,7 @@
               <rules>
 
               <requireJavaVersion>
-                  <version>[11,)</version><!-- Yauaa requires JDK 11 or newer to build, the result will run on JRE 8 -->
+                  <version>[11,)</version><!-- PrefixMap requires JDK 11 or newer to build, the result will run on JRE 8 -->
                 </requireJavaVersion>
               </rules>
             </configuration>
@@ -541,74 +609,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>${checkstyle.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <consoleOutput>true</consoleOutput>
-          <configLocation>${project.build.testSourceDirectory}/../checkstyle/checkstyle.xml</configLocation>
-          <suppressionsLocation>${project.build.testSourceDirectory}/../checkstyle/suppressions.xml</suppressionsLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-        </configuration>
-        <!-- Runs by default in the verify phase  (mvn verify or later in the build cycle)
-             the 'check' goal will fail the build if it does not pass.  "mvn checkstyle:check"
-             will do this alone, or "mvn checkstyle:checkstyle" will report but not break  -->
-        <executions>
-          <execution>
-            <id>Enforce checkstyle compliance</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Coverage analysis for tests -->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
-        <executions>
-          <!--
-              Prepares the property pointing to the JaCoCo runtime agent which
-              is passed as VM argument when Maven the Surefire plugin is executed.
-          -->
-          <execution>
-            <id>pre-unit-test</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <!--
-                  Sets the name of the property containing the settings
-                  for JaCoCo runtime agent.
-              -->
-              <propertyName>jacoco.surefireArgLine</propertyName>
-            </configuration>
-          </execution>
-          <!--
-              Ensures that the code coverage report for unit tests is created after
-              unit tests have been run.
-          -->
-          <execution>
-            <id>post-unit-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
         <version>3.7.0.1746</version>
@@ -646,6 +646,12 @@
 
     </plugins>
   </build>
+
+  <modules>
+    <module>devtools</module>
+    <module>prefixmap</module>
+    <module>serialization</module>
+  </modules>
 
   <licenses>
     <license>
