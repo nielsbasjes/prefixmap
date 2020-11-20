@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package nl.example.serialization;
+package nl.basjes.collections.prefixmap.serialization;
 
 import nl.basjes.collections.PrefixMap;
 import org.slf4j.Logger;
