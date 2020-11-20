@@ -28,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SerializeWithKryo extends AbstractSerializationTest {
 
+    // If the type Kryo is part o the method signature it has effects
+    // on the serialization we are trying to test here.
+    // So this returns Object !
     Object createKryo() {
         return new Kryo();
     }
