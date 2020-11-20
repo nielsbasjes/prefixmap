@@ -52,6 +52,19 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         allPrefixes = new TreeMap<>();
     }
 
+    /**
+     * This is used to configure the provided Kryo instance if Kryo serialization is desired.
+     * The expected type here is Object because otherwise the Kryo library becomes
+     * a mandatory dependency on any project that uses Yauaa.
+     * @param kryoInstance The instance of com.esotericsoftware.kryo.Kryo that needs to be configured.
+     */
+    public static void configureKryo(Object kryoInstance) {
+        Kryo kryo = (Kryo) kryoInstance;
+        kryo.register(StringPrefixMap.class);
+        kryo.register(StringPrefixTrie.class);
+        kryo.register(java.util.TreeMap.class);
+    }
+
     public static class KryoSerializer extends Serializer<StringPrefixMap<Serializable>> {
 
         public void write(Kryo kryo, Output output, StringPrefixMap<Serializable> instance) {

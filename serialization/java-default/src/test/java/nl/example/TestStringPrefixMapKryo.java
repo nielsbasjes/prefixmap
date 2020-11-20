@@ -15,22 +15,21 @@
  */
 package nl.example;
 
-import nl.example.serialization.SerializeWithJava;
+import nl.example.serialization.SerializeStringPrefixMapWithKryo;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestJava extends SerializeWithJava {
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+public class TestStringPrefixMapKryo {
+
+    // These should all fail because registering classes is mandatory in Kryo 5
     @Test
-    @Override
-    public void serializeAndDeserializeASCIIPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeASCIIPrefixMap();
+    public void serializeAndDeserialize() {
+        assertThrows(NoClassDefFoundError.class, () ->
+            new SerializeStringPrefixMapWithKryo().serializeAndDeserialize()
+        );
     }
 
-    @Test
-    @Override
-    public void serializeAndDeserializeStringPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeStringPrefixMap();
-    }
 }

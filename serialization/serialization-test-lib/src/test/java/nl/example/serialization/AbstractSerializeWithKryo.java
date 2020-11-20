@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SerializeWithKryo extends AbstractSerializationTest {
+public abstract class AbstractSerializeWithKryo extends AbstractSerializationTest {
 
     // If the type Kryo is part o the method signature it has effects
     // on the serialization we are trying to test here.

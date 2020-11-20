@@ -16,8 +16,10 @@
 package nl.basjes.collections.prefixmap;
 
 import com.esotericsoftware.kryo.DefaultSerializer;
+import com.esotericsoftware.kryo.Kryo;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 
 /**
  * The ASCIIPrefixMap is an implementation of PrefixMap where the assumption is that the
@@ -35,6 +37,20 @@ public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V> {
 
     PrefixTrie<V> createTrie(boolean caseSensitive) {
         return new ASCIIPrefixTrie<>(caseSensitive);
+    }
+
+    /**
+     * This is used to configure the provided Kryo instance if Kryo serialization is desired.
+     * The expected type here is Object because otherwise the Kryo library becomes
+     * a mandatory dependency on any project that uses Yauaa.
+     * @param kryoInstance The instance of com.esotericsoftware.kryo.Kryo that needs to be configured.
+     */
+    public static void configureKryo(Object kryoInstance) {
+        Kryo kryo = (Kryo) kryoInstance;
+        kryo.register(ASCIIPrefixMap.class);
+        kryo.register(ASCIIPrefixTrie.class);
+        kryo.register(Array.newInstance(ASCIIPrefixTrie.class, 0).getClass());
+        StringPrefixMap.configureKryo(kryo);
     }
 
 }

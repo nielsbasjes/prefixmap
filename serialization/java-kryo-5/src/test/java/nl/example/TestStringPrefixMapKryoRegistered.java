@@ -1,6 +1,5 @@
 /*
- * Yet Another UserAgent Analyzer
- * Copyright (C) 2013-2020 Niels Basjes
+ * Copyright (C) 2018-2020 Niels Basjes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package nl.example;
 
-package nl.example.serialization;
+import nl.example.serialization.SerializeStringPrefixMapKryoRegistered;
+import org.junit.jupiter.api.Test;
 
-import com.esotericsoftware.kryo.Kryo;
-import nl.basjes.collections.prefixmap.PrefixMapKryoUtil;
+import java.io.IOException;
 
-public class SerializeWithKryoRegistered extends SerializeWithKryo {
-    @Override
-    Object createKryo() {
-        Kryo kryo = (Kryo) super.createKryo();
-        PrefixMapKryoUtil.registerClassesWithKryo(kryo);
-        return kryo;
+public class TestStringPrefixMapKryoRegistered {
+
+    @Test
+    public void serializeAndDeserialize() throws IOException, ClassNotFoundException {
+        new SerializeStringPrefixMapKryoRegistered().serializeAndDeserialize();
     }
+
 }

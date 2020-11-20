@@ -29,7 +29,7 @@ import java.io.ObjectOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SerializeWithJava extends AbstractSerializationTest {
+public abstract class AbstractSerializeWithJava extends AbstractSerializationTest {
 
     byte[] serialize(PrefixMap<String> instance) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -40,7 +40,8 @@ public class SerializeWithJava extends AbstractSerializationTest {
         }
     }
 
-    @SuppressWarnings("unchecked") // No way to check if the correct generic is used because of type erasure
+    @SuppressWarnings("unchecked")
+        // No way to check if the correct generic is used because of type erasure
     PrefixMap<String> deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 

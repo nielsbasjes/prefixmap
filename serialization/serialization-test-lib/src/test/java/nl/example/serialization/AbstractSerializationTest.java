@@ -18,9 +18,6 @@
 package nl.example.serialization;
 
 import nl.basjes.collections.PrefixMap;
-import nl.basjes.collections.prefixmap.ASCIIPrefixMap;
-import nl.basjes.collections.prefixmap.StringPrefixMap;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +33,10 @@ public abstract class AbstractSerializationTest {
 
     abstract PrefixMap<String> deserialize(byte[] bytes) throws IOException, ClassNotFoundException;
 
-    public void serializeAndDeserializeASCIIPrefixMap() throws IOException, ClassNotFoundException {
-        serializeAndDeserialize(new ASCIIPrefixMap<>(false));
-    }
+    abstract PrefixMap<String> createInstance();
 
-    public void serializeAndDeserializeStringPrefixMap() throws IOException, ClassNotFoundException {
-        serializeAndDeserialize(new StringPrefixMap<>(false));
+    public void serializeAndDeserialize() throws IOException, ClassNotFoundException {
+        serializeAndDeserialize(createInstance());
     }
 
     private void serializeAndDeserialize(PrefixMap<String> prefixMapBefore) throws IOException, ClassNotFoundException {
@@ -52,9 +47,9 @@ public abstract class AbstractSerializationTest {
 
         verifyCaseINSensitive(prefixMapBefore);
 
-        long   serializeStartNs = System.nanoTime();
-        byte[] bytes            = serialize(prefixMapBefore);
-        long   serializeStopNs  = System.nanoTime();
+        long serializeStartNs = System.nanoTime();
+        byte[] bytes = serialize(prefixMapBefore);
+        long serializeStopNs = System.nanoTime();
 
         LOG.info("Serialize took {} ns ({} ms) into {} bytes", serializeStopNs - serializeStartNs, (serializeStopNs - serializeStartNs) / 1_000_000, bytes.length);
 
@@ -69,87 +64,87 @@ public abstract class AbstractSerializationTest {
 
 
     public void fillPrefixMap(PrefixMap<String> prefixLookup) {
-        prefixLookup.put("a",   "one");
-        prefixLookup.put("ab",  "two");
+        prefixLookup.put("a", "one");
+        prefixLookup.put("ab", "two");
         prefixLookup.put("abc", "three");
     }
 
     public void verifyCaseINSensitive(PrefixMap<String> prefixLookup) {
-        assertEquals(3,         prefixLookup.size());
+        assertEquals(3, prefixLookup.size());
 
         // Test uppercase
-        assertEquals("one",     prefixLookup.get("A"));
-        assertEquals("two",     prefixLookup.get("AB"));
-        assertEquals("three",   prefixLookup.get("ABC"));
-        assertEquals(null,      prefixLookup.get("ABCD"));
-        assertEquals("one",     prefixLookup.getShortestMatch("A"));
-        assertEquals("one",     prefixLookup.getShortestMatch("AB"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ABC"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ABCD"));
-        assertEquals("one",     prefixLookup.getLongestMatch("A"));
-        assertEquals("two",     prefixLookup.getLongestMatch("AB"));
-        assertEquals("three",   prefixLookup.getLongestMatch("ABC"));
-        assertEquals("three",   prefixLookup.getLongestMatch("ABCD"));
+        assertEquals("one", prefixLookup.get("A"));
+        assertEquals("two", prefixLookup.get("AB"));
+        assertEquals("three", prefixLookup.get("ABC"));
+        assertEquals(null, prefixLookup.get("ABCD"));
+        assertEquals("one", prefixLookup.getShortestMatch("A"));
+        assertEquals("one", prefixLookup.getShortestMatch("AB"));
+        assertEquals("one", prefixLookup.getShortestMatch("ABC"));
+        assertEquals("one", prefixLookup.getShortestMatch("ABCD"));
+        assertEquals("one", prefixLookup.getLongestMatch("A"));
+        assertEquals("two", prefixLookup.getLongestMatch("AB"));
+        assertEquals("three", prefixLookup.getLongestMatch("ABC"));
+        assertEquals("three", prefixLookup.getLongestMatch("ABCD"));
 
         // Test lowercase
-        assertEquals("one",     prefixLookup.get("a"));
-        assertEquals("two",     prefixLookup.get("ab"));
-        assertEquals("three",   prefixLookup.get("abc"));
-        assertEquals(null,      prefixLookup.get("abcd"));
-        assertEquals("one",     prefixLookup.getShortestMatch("a"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ab"));
-        assertEquals("one",     prefixLookup.getShortestMatch("abc"));
-        assertEquals("one",     prefixLookup.getShortestMatch("abcd"));
-        assertEquals("one",     prefixLookup.getLongestMatch("a"));
-        assertEquals("two",     prefixLookup.getLongestMatch("ab"));
-        assertEquals("three",   prefixLookup.getLongestMatch("abc"));
-        assertEquals("three",   prefixLookup.getLongestMatch("abcd"));
+        assertEquals("one", prefixLookup.get("a"));
+        assertEquals("two", prefixLookup.get("ab"));
+        assertEquals("three", prefixLookup.get("abc"));
+        assertEquals(null, prefixLookup.get("abcd"));
+        assertEquals("one", prefixLookup.getShortestMatch("a"));
+        assertEquals("one", prefixLookup.getShortestMatch("ab"));
+        assertEquals("one", prefixLookup.getShortestMatch("abc"));
+        assertEquals("one", prefixLookup.getShortestMatch("abcd"));
+        assertEquals("one", prefixLookup.getLongestMatch("a"));
+        assertEquals("two", prefixLookup.getLongestMatch("ab"));
+        assertEquals("three", prefixLookup.getLongestMatch("abc"));
+        assertEquals("three", prefixLookup.getLongestMatch("abcd"));
 
         // Test mixed upper/lowercase
-        assertEquals("two",     prefixLookup.get("aB"));
-        assertEquals("two",     prefixLookup.get("Ab"));
-        assertEquals("three",   prefixLookup.get("Abc"));
-        assertEquals("three",   prefixLookup.get("ABc"));
-        assertEquals("three",   prefixLookup.get("abC"));
-        assertEquals("three",   prefixLookup.get("aBC"));
-        assertEquals(null,      prefixLookup.get("Abcd"));
-        assertEquals(null,      prefixLookup.get("ABcd"));
-        assertEquals(null,      prefixLookup.get("abCd"));
-        assertEquals(null,      prefixLookup.get("aBCd"));
-        assertEquals(null,      prefixLookup.get("AbcD"));
-        assertEquals(null,      prefixLookup.get("ABcD"));
-        assertEquals(null,      prefixLookup.get("abCD"));
-        assertEquals(null,      prefixLookup.get("aBCD"));
+        assertEquals("two", prefixLookup.get("aB"));
+        assertEquals("two", prefixLookup.get("Ab"));
+        assertEquals("three", prefixLookup.get("Abc"));
+        assertEquals("three", prefixLookup.get("ABc"));
+        assertEquals("three", prefixLookup.get("abC"));
+        assertEquals("three", prefixLookup.get("aBC"));
+        assertEquals(null, prefixLookup.get("Abcd"));
+        assertEquals(null, prefixLookup.get("ABcd"));
+        assertEquals(null, prefixLookup.get("abCd"));
+        assertEquals(null, prefixLookup.get("aBCd"));
+        assertEquals(null, prefixLookup.get("AbcD"));
+        assertEquals(null, prefixLookup.get("ABcD"));
+        assertEquals(null, prefixLookup.get("abCD"));
+        assertEquals(null, prefixLookup.get("aBCD"));
 
-        assertEquals("one",     prefixLookup.getShortestMatch("aB"));
-        assertEquals("one",     prefixLookup.getShortestMatch("Ab"));
-        assertEquals("one",     prefixLookup.getShortestMatch("Abc"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ABc"));
-        assertEquals("one",     prefixLookup.getShortestMatch("abC"));
-        assertEquals("one",     prefixLookup.getShortestMatch("aBC"));
-        assertEquals("one",     prefixLookup.getShortestMatch("Abcd"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ABcd"));
-        assertEquals("one",     prefixLookup.getShortestMatch("abCd"));
-        assertEquals("one",     prefixLookup.getShortestMatch("aBCd"));
-        assertEquals("one",     prefixLookup.getShortestMatch("AbcD"));
-        assertEquals("one",     prefixLookup.getShortestMatch("ABcD"));
-        assertEquals("one",     prefixLookup.getShortestMatch("abCD"));
-        assertEquals("one",     prefixLookup.getShortestMatch("aBCD"));
+        assertEquals("one", prefixLookup.getShortestMatch("aB"));
+        assertEquals("one", prefixLookup.getShortestMatch("Ab"));
+        assertEquals("one", prefixLookup.getShortestMatch("Abc"));
+        assertEquals("one", prefixLookup.getShortestMatch("ABc"));
+        assertEquals("one", prefixLookup.getShortestMatch("abC"));
+        assertEquals("one", prefixLookup.getShortestMatch("aBC"));
+        assertEquals("one", prefixLookup.getShortestMatch("Abcd"));
+        assertEquals("one", prefixLookup.getShortestMatch("ABcd"));
+        assertEquals("one", prefixLookup.getShortestMatch("abCd"));
+        assertEquals("one", prefixLookup.getShortestMatch("aBCd"));
+        assertEquals("one", prefixLookup.getShortestMatch("AbcD"));
+        assertEquals("one", prefixLookup.getShortestMatch("ABcD"));
+        assertEquals("one", prefixLookup.getShortestMatch("abCD"));
+        assertEquals("one", prefixLookup.getShortestMatch("aBCD"));
 
-        assertEquals("two",     prefixLookup.getLongestMatch("aB"));
-        assertEquals("two",     prefixLookup.getLongestMatch("Ab"));
-        assertEquals("three",   prefixLookup.getLongestMatch("Abc"));
-        assertEquals("three",   prefixLookup.getLongestMatch("ABc"));
-        assertEquals("three",   prefixLookup.getLongestMatch("abC"));
-        assertEquals("three",   prefixLookup.getLongestMatch("aBC"));
-        assertEquals("three",   prefixLookup.getLongestMatch("Abcd"));
-        assertEquals("three",   prefixLookup.getLongestMatch("ABcd"));
-        assertEquals("three",   prefixLookup.getLongestMatch("abCd"));
-        assertEquals("three",   prefixLookup.getLongestMatch("aBCd"));
-        assertEquals("three",   prefixLookup.getLongestMatch("AbcD"));
-        assertEquals("three",   prefixLookup.getLongestMatch("ABcD"));
-        assertEquals("three",   prefixLookup.getLongestMatch("abCD"));
-        assertEquals("three",   prefixLookup.getLongestMatch("aBCD"));
+        assertEquals("two", prefixLookup.getLongestMatch("aB"));
+        assertEquals("two", prefixLookup.getLongestMatch("Ab"));
+        assertEquals("three", prefixLookup.getLongestMatch("Abc"));
+        assertEquals("three", prefixLookup.getLongestMatch("ABc"));
+        assertEquals("three", prefixLookup.getLongestMatch("abC"));
+        assertEquals("three", prefixLookup.getLongestMatch("aBC"));
+        assertEquals("three", prefixLookup.getLongestMatch("Abcd"));
+        assertEquals("three", prefixLookup.getLongestMatch("ABcd"));
+        assertEquals("three", prefixLookup.getLongestMatch("abCd"));
+        assertEquals("three", prefixLookup.getLongestMatch("aBCd"));
+        assertEquals("three", prefixLookup.getLongestMatch("AbcD"));
+        assertEquals("three", prefixLookup.getLongestMatch("ABcD"));
+        assertEquals("three", prefixLookup.getLongestMatch("abCD"));
+        assertEquals("three", prefixLookup.getLongestMatch("aBCD"));
     }
 
 }

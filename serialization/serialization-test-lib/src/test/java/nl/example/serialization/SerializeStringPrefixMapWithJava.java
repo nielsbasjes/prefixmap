@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018-2020 Niels Basjes
+ * Yet Another UserAgent Analyzer
+ * Copyright (C) 2013-2020 Niels Basjes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.example;
 
-import nl.example.serialization.SerializeWithKryo;
-import org.junit.jupiter.api.Test;
+package nl.example.serialization;
 
-import java.io.IOException;
+import nl.basjes.collections.PrefixMap;
+import nl.basjes.collections.prefixmap.StringPrefixMap;
 
-public class TestKryo extends SerializeWithKryo {
-
-    @Test
+public class SerializeStringPrefixMapWithJava extends AbstractSerializeWithJava {
     @Override
-    public void serializeAndDeserializeASCIIPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeASCIIPrefixMap();
-    }
-
-    @Test
-    @Override
-    public void serializeAndDeserializeStringPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeStringPrefixMap();
+    PrefixMap<String> createInstance() {
+        return new StringPrefixMap<>(false);
     }
 }

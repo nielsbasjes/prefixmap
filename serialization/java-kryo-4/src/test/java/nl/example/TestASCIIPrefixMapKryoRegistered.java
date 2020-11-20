@@ -15,22 +15,15 @@
  */
 package nl.example;
 
-import nl.example.serialization.SerializeWithKryoRegistered;
+import nl.example.serialization.SerializeASCIIPrefixMapWithKryoRegistered;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestKryoRegistered extends SerializeWithKryoRegistered {
+public class TestASCIIPrefixMapKryoRegistered {
 
     @Test
-    @Override
-    public void serializeAndDeserializeASCIIPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeASCIIPrefixMap();
-    }
-
-    @Test
-    @Override
-    public void serializeAndDeserializeStringPrefixMap() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserializeStringPrefixMap();
+    public void serializeAndDeserialize() throws IOException, ClassNotFoundException {
+        new SerializeASCIIPrefixMapWithKryoRegistered().serializeAndDeserialize();
     }
 }
