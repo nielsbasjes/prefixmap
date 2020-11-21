@@ -38,7 +38,6 @@
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>${kryo5.version}</version>
-      <!-- FIXME: DO NOT USE 5.0.0 because of bad java 9 module definition ! Next update to 5.0.1 -->
       <scope>provided</scope>
     </dependency>
   </dependencies>

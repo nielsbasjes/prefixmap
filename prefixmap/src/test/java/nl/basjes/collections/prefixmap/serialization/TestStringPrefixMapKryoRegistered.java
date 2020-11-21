@@ -15,21 +15,32 @@
  */
 package nl.basjes.collections.prefixmap.serialization;
 
+import com.esotericsoftware.kryo.Kryo;
 import nl.basjes.collections.PrefixMap;
 import nl.basjes.collections.prefixmap.StringPrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestStringPrefixMapKryoRegistered extends AbstractSerializeWithKryo {
-    @Override
-    PrefixMap<String> createInstance() {
-        return new StringPrefixMap<>(false);
+public class TestStringPrefixMapKryoRegistered {
+
+    public static class ThisTest extends AbstractSerializeWithKryo {
+        @Override
+        Object createKryo() {
+            Kryo kryo = (Kryo) super.createKryo();
+            StringPrefixMap.configureKryo(kryo);
+            return kryo;
+        }
+
+        @Override
+        PrefixMap<String> createInstance() {
+            return new StringPrefixMap<>(false);
+        }
     }
 
     @Test
     public void serializeAndDeserialize() throws IOException, ClassNotFoundException {
-        super.serializeAndDeserialize();
+        new ThisTest().serializeAndDeserialize();
     }
 
 }

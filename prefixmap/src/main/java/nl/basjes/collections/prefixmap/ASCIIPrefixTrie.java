@@ -20,15 +20,10 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 
 class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
+    private final boolean        caseSensitive;
+    private final int            charIndex;
     private ASCIIPrefixTrie<V>[] childNodes;
-    private boolean              caseSensitive;
-    private int                  charIndex;
     private V                    theValue;
-
-    // private constructor for serialization systems ONLY (like Kyro)
-    @SuppressWarnings("unused")
-    private ASCIIPrefixTrie() {
-    }
 
     ASCIIPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);

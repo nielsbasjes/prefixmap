@@ -74,6 +74,18 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>6.0.2</version>
+        <executions>
+          <execution>
+            <id>Perform OWASP dependency check</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

@@ -95,6 +95,14 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         return prefixTrie.containsPrefix(prefix);
     }
 
+    private String storedKey(String key) {
+        if (prefixTrie.caseSensitive()) {
+            return key;
+        } else {
+            return key.toLowerCase();
+        }
+    }
+
     @Override
     public V put(String prefix, V value) {
         if (prefix == null) {
@@ -106,11 +114,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
         V previousValue = prefixTrie.add(prefix, value);
         if (previousValue == null) {
-            if (prefixTrie.caseSensitive()) {
-                allPrefixes.put(prefix, value);
-            } else {
-                allPrefixes.put(prefix.toLowerCase(), value);
-            }
+            allPrefixes.put(storedKey(prefix), value);
         }
         return previousValue;
     }
@@ -133,18 +137,13 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         }
         V oldValue = prefixTrie.remove(prefix);
         if (oldValue != null) {
-            if (prefixTrie.caseSensitive()) {
-                allPrefixes.remove(prefix);
-            } else {
-                allPrefixes.remove(prefix.toLowerCase());
-            }
+            allPrefixes.remove(storedKey(prefix));
         }
         return oldValue;
     }
 
     @Override
     public V get(String prefix) {
-        // NOTE: The 'allPrefixes'
         return prefixTrie.get(prefix);
     }
 
@@ -165,7 +164,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
     @Override
     public boolean containsKey(Object key) {
-        return allPrefixes.containsKey(key);
+        return allPrefixes.containsKey(storedKey((String) key));
     }
 
     @Override

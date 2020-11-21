@@ -20,15 +20,10 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
+    private   final boolean                     caseSensitive;
+    private   final int                         charIndex;
     protected TreeMap<Character, PrefixTrie<V>> childNodes;
-    private   boolean                           caseSensitive;
-    private   int                               charIndex;
     private   V                                 theValue;
-
-    // private constructor for serialization systems ONLY (like Kyro)
-    @SuppressWarnings("unused")
-    private StringPrefixTrie() {
-    }
 
     StringPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);
@@ -166,16 +161,4 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     public boolean caseSensitive() {
         return caseSensitive;
     }
-
-    @Override
-    public String toString() {
-        return "StringPrefixTrie{" +
-            "childNodes=" + childNodes +
-            "\n, caseSensitive=" + caseSensitive +
-            ", charIndex=" + charIndex +
-            ", theValue=" + theValue +
-            '}';
-    }
-
-
 }

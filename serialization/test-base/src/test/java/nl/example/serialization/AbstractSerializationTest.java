@@ -40,34 +40,34 @@ public abstract class AbstractSerializationTest {
     }
 
     private void serializeAndDeserialize(PrefixMap<String> prefixMapBefore) throws IOException, ClassNotFoundException {
-        LOG.info("Create");
+//        LOG.info("Create");
 
         fillPrefixMap(prefixMapBefore);
 
-        LOG.info("Validating");
+//        LOG.info("Validating");
 
         verifyCaseINSensitive(prefixMapBefore);
 
-        long serializeStartNs = System.nanoTime();
+//        long serializeStartNs = System.nanoTime();
         byte[] bytes = serialize(prefixMapBefore);
-        long serializeStopNs = System.nanoTime();
+//        long serializeStopNs = System.nanoTime();
 
-        LOG.info("Serialize took {} ns ({} ms) into {} bytes",
-            serializeStopNs - serializeStartNs,
-            (serializeStopNs - serializeStartNs) / 1_000_000,
-            bytes.length);
+//        LOG.info("Serialize took {} ns ({} ms) into {} bytes",
+//            serializeStopNs - serializeStartNs,
+//            (serializeStopNs - serializeStartNs) / 1_000_000,
+//            bytes.length);
 
         long deserializeStartNs = System.nanoTime();
         PrefixMap<String> prefixMapAfter = deserialize(bytes);
         long deserializeStopNs = System.nanoTime();
 
-        LOG.info("Deserialize took {} ns ({} ms)",
-            deserializeStopNs - deserializeStartNs,
-            (deserializeStopNs - deserializeStartNs) / 1_000_000);
+//        LOG.info("Deserialize took {} ns ({} ms)",
+//            deserializeStopNs - deserializeStartNs,
+//            (deserializeStopNs - deserializeStartNs) / 1_000_000);
 
         verifyCaseINSensitive(prefixMapAfter);
 
-        LOG.info("Ok");
+//        LOG.info("Ok");
     }
 
     public void fillPrefixMap(PrefixMap<String> prefixLookup) {

@@ -149,10 +149,7 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      */
     @Override
     default V get(Object prefix) {
-        if (!(prefix instanceof String)) {
-            throw new UnsupportedOperationException("The 'get(Object)' method ONLY accepts objects of type String");
-        }
-        return get((String)prefix);
+        throw new UnsupportedOperationException("The 'get(Object)' method ONLY accepts keys of type String");
     }
 
     @Override

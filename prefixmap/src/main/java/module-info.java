@@ -16,7 +16,7 @@
 
 module nl.basjes.collections.prefixmap {
     // Optional module only needed if the Kryo serialization is desired
-    requires static com.esotericsoftware.kryo;
+    requires com.esotericsoftware.kryo;
 
     exports nl.basjes.collections;
     opens   nl.basjes.collections;
