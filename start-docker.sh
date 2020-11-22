@@ -45,7 +45,6 @@ cat << "Welcome-message"
  This will take a few minutes...
 Welcome-message
 else
-  DOCKER_BUILD="docker build -q"
   echo "Loading PrefixMap development environment"
 fi
 
