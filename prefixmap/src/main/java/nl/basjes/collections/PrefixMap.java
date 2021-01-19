@@ -185,7 +185,22 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getShortestMatch(String input);
+    default V getShortestMatch(String input) {
+        return getShortestMatch(input, 0);
+    }
+
+    /**
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
+     * <p>The value returned is the shortest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @param startOffset The offset in the input where we should start looking
+     * @return The value, null if not found.
+     */
+    V getShortestMatch(String input, int startOffset);
 
     /**
      * <p>Return the value of the longest matching prefix.</p>
@@ -197,5 +212,20 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getLongestMatch(String input);
+    default V getLongestMatch(String input) {
+        return getShortestMatch(input, 0);
+    }
+
+    /**
+     * <p>Return the value of the longest matching prefix.</p>
+     * <p>The value returned is the longest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @param startOffset The offset in the input where we should start looking
+     * @return The value, null if not found.
+     */
+    V getLongestMatch(String input, int startOffset);
 }

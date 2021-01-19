@@ -1,4 +1,7 @@
 This is intended as an overview of the major changes
+v2.1
+===
+- Add the option of a character offset to search for the prefix.
 
 v2.0
 ===

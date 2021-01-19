@@ -149,12 +149,22 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
     @Override
     public V getShortestMatch(String input) {
-        return prefixTrie.getShortestMatch(input);
+        return prefixTrie.getShortestMatch(input, 0);
+    }
+
+    @Override
+    public V getShortestMatch(String input, int startOffset) {
+        return prefixTrie.getShortestMatch(input, startOffset);
     }
 
     @Override
     public V getLongestMatch(String input) {
-        return prefixTrie.getLongestMatch(input);
+        return prefixTrie.getLongestMatch(input, 0);
+    }
+
+    @Override
+    public V getLongestMatch(String input, int startOffset) {
+        return prefixTrie.getLongestMatch(input, startOffset);
     }
 
     @Override

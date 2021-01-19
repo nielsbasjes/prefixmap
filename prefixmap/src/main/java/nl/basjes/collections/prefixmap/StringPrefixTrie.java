@@ -20,10 +20,10 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
-    private   final boolean                     caseSensitive;
-    private   final int                         charIndex;
-    protected TreeMap<Character, PrefixTrie<V>> childNodes;
-    private   V                                 theValue;
+    private final boolean                     caseSensitive;
+    private final int                         charIndex;
+    private TreeMap<Character, PrefixTrie<V>> childNodes;
+    private V                                 theValue;
 
     StringPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);
@@ -92,11 +92,6 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public boolean containsPrefix(String prefix) {
-        return get(prefix) != null;
-    }
-
-    @Override
     public V get(String prefix) {
         if (charIndex == prefix.length()) {
             return theValue;
@@ -117,37 +112,40 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public V getShortestMatch(String input) {
-        if (theValue != null ||
-            charIndex == input.length() ||
+    public V getShortestMatch(String input, int startOffset) {
+        if (startOffset < 0  ||
+            theValue != null ||
+            charIndex + startOffset == input.length() ||
             childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex);
+        char myChar = input.charAt(charIndex + startOffset);
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
             return null;
         }
 
-        return child.getShortestMatch(input);
+        return child.getShortestMatch(input, startOffset);
     }
 
     @Override
-    public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
+    public V getLongestMatch(String input, int startOffset) {
+        if (startOffset < 0  ||
+            charIndex + startOffset == input.length() ||
+            childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex);
+        char myChar = input.charAt(charIndex + startOffset);
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
             return theValue;
         }
 
-        V returnValue = child.getLongestMatch(input);
+        V returnValue = child.getLongestMatch(input, startOffset);
         return (returnValue == null) ? theValue : returnValue;
     }
 

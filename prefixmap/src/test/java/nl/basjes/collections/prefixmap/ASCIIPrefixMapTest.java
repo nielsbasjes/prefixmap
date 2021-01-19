@@ -24,7 +24,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
+class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
     @Override
     PrefixMap<String> createPrefixMap(boolean caseSensitive) {
@@ -32,7 +32,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testPutNonASCIIPrefix() {
+    void testPutNonASCIIPrefix() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             Map<String, String> prefixMap = new HashMap<>();
             prefixMap.put("你好", "Hello in Chinese");
@@ -43,7 +43,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testPutNonASCIIValue() {
+    void testPutNonASCIIValue() {
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("Hello in Chinese", "你好");
         PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
@@ -52,7 +52,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testRemoveNonASCIIPrefix() {
+    void testRemoveNonASCIIPrefix() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
             prefixLookup.put("Something",    "To ensure not empty");
@@ -62,7 +62,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseINSensitiveLookup(){
+    void testCaseINSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -203,7 +203,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseSensitiveLookup(){
+    void testCaseSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -341,6 +341,32 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
         checkContains(prefixLookup, "abcd€",   false);
+    }
+
+    @Test
+    void testOffsetLookup(){
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("BC",     "Result BC");
+        prefixMap.put("BCD",    "Result BCD");
+
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(true);
+        prefixLookup.putAll(prefixMap);
+
+        checkShortest(prefixLookup, "A",        0, null);
+        checkShortest(prefixLookup, "AB",       0, null);
+        checkShortest(prefixLookup, "ABC",      0, null);
+        checkShortest(prefixLookup, "ABCD",     1, "Result BC");
+        checkShortest(prefixLookup, "ABCD",     2, null);
+        checkShortest(prefixLookup, "ABCD",     3, null);
+        checkShortest(prefixLookup, "ABCD",     4, null);
+
+        checkLongest(prefixLookup,  "A",        0, null);
+        checkLongest(prefixLookup,  "AB",       0, null);
+        checkLongest(prefixLookup,  "ABC",      0, null);
+        checkLongest(prefixLookup,  "ABCD",     1, "Result BCD");
+        checkLongest(prefixLookup,  "ABCD",     2, null);
+        checkLongest(prefixLookup,  "ABCD",     3, null);
+        checkLongest(prefixLookup,  "ABCD",     4, null);
     }
 
 }

@@ -24,10 +24,10 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAllMapMethods {
+class TestAllMapMethods {
 
     @Test
-    public void checkASCIIPrefixMap(){
+    void checkASCIIPrefixMap(){
         PrefixMap<String> prefixMap = new ASCIIPrefixMap<>(true);
         prefixMap.put("A", "AA");
 
@@ -38,7 +38,7 @@ public class TestAllMapMethods {
     }
 
     @Test
-    public void checkStringPrefixMap(){
+    void checkStringPrefixMap(){
         PrefixMap<String> prefixMap = new StringPrefixMap<>(true);
         prefixMap.put("A", "AA");
 
@@ -49,7 +49,7 @@ public class TestAllMapMethods {
     }
 
     @Test
-    public void checkBasePrefixMap(){
+    void checkBasePrefixMap(){
         PrefixMap<String> prefixMap = new PrefixMap<>() {
             @Override
             public int size() {
@@ -77,12 +77,12 @@ public class TestAllMapMethods {
             }
 
             @Override
-            public String getShortestMatch(String input) {
+            public String getShortestMatch(String input, int startOffet) {
                 return null;
             }
 
             @Override
-            public String getLongestMatch(String input) {
+            public String getLongestMatch(String input, int startOffet) {
                 return null;
             }
         };

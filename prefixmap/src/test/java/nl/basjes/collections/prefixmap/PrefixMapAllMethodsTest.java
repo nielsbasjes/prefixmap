@@ -16,7 +16,6 @@
 
 package nl.basjes.collections.prefixmap;
 
-import com.esotericsoftware.kryo.Kryo;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrefixMapAllMethodsTest {
+class PrefixMapAllMethodsTest {
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
 
         assertTrue(stringPrefixMap.isEmpty());
@@ -68,22 +67,18 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
-        public String getShortestMatch(String input) {
+        public String getShortestMatch(String input, int startOffet) {
             return null;
         }
 
         @Override
-        public String getLongestMatch(String input) {
+        public String getLongestMatch(String input, int startOffet) {
             return null;
-        }
-
-        public static void registerClassesWithKryo_impl(Kryo kryo) {
-            kryo.register(DummyPrefixMap.class);
         }
     }
 
     @Test
-    public void testRemoveNotImplemented() {
+    void testRemoveNotImplemented() {
         assertThrows(UnsupportedOperationException.class, () -> {
             PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
             dummyPrefixMap.remove("Something");
@@ -91,7 +86,7 @@ public class PrefixMapAllMethodsTest {
     }
 
     @Test
-    public void testClearNotImplemented() {
+    void testClearNotImplemented() {
         assertThrows(UnsupportedOperationException.class, () -> {
             PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
             dummyPrefixMap.clear();
@@ -115,12 +110,12 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
-        public String getShortestMatch(String input) {
+        public String getShortestMatch(String input, int startOffet) {
             return null;
         }
 
         @Override
-        public String getLongestMatch(String input) {
+        public String getLongestMatch(String input, int startOffet) {
             return null;
         }
 

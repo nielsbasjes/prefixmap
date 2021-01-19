@@ -32,7 +32,9 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
      * @param prefix The string for which we need to know if it is present
      * @return True if the exact prefix value is present, False otherwise
      */
-    boolean containsPrefix(String prefix);
+    default boolean containsPrefix(String prefix) {
+        return get(prefix) != null;
+    }
 
     /**
      * <p>Return the value of the <code>exact</code> matching prefix. </p>
@@ -56,7 +58,22 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getShortestMatch(String input);
+    default V getShortestMatch(String input) {
+        return getShortestMatch(input, 0);
+    }
+
+    /**
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
+     * <p>The value returned is the shortest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @param startOffset The offset in the input where we should start looking
+     * @return The value, null if not found.
+     */
+    V getShortestMatch(String input, int startOffset);
 
     /**
      * <p>Return the value of the longest matching prefix.</p>
@@ -68,7 +85,22 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getLongestMatch(String input);
+    default V getLongestMatch(String input) {
+        return getLongestMatch(input, 0);
+    }
+
+    /**
+     * <p>Return the value of the longest matching prefix.</p>
+     * <p>The value returned is the longest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @param startOffset The offset in the input where we should start looking
+     * @return The value, null if not found.
+     */
+    V getLongestMatch(String input, int startOffset);
 
     default V remove(String prefix) {
         throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +

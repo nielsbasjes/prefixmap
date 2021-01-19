@@ -131,14 +131,15 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public V getShortestMatch(String input) {
-        if (theValue != null ||
-            charIndex == input.length() ||
+    public V getShortestMatch(String input, int startOffset) {
+        if (startOffset < 0  ||
+            theValue != null ||
+            charIndex + startOffset == input.length() ||
             childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
+        char myChar = input.charAt(charIndex + startOffset); // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
             return null; // Cannot store these, so this is where it ends.
         }
@@ -148,16 +149,18 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return null;
         }
 
-        return child.getShortestMatch(input);
+        return child.getShortestMatch(input, startOffset);
     }
 
     @Override
-    public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
+    public V getLongestMatch(String input, int startOffset) {
+        if (startOffset < 0 ||
+            charIndex  + startOffset == input.length() ||
+            childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
+        char myChar = input.charAt(charIndex + startOffset); // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
             return theValue; // Cannot store these, so this is where it ends.
         }
@@ -167,7 +170,7 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return theValue;
         }
 
-        V returnValue = child.getLongestMatch(input);
+        V returnValue = child.getLongestMatch(input, startOffset);
         return (returnValue == null) ? theValue : returnValue;
     }
 

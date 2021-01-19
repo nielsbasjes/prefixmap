@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StringPrefixMapTest extends AbstractPrefixMapTests {
+class StringPrefixMapTest extends AbstractPrefixMapTests {
 
     @Override
     PrefixMap<String> createPrefixMap(boolean caseSensitive) {
@@ -31,7 +31,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseINSensitiveLookup(){
+    void testCaseINSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -177,7 +177,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseSensitiveLookup(){
+    void testCaseSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -317,7 +317,33 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void verifyDocumentationExampleUsage() {
+    void testOffsetLookup(){
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("BC",     "Result BC");
+        prefixMap.put("BCD",    "Result BCD");
+
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(true);
+        prefixLookup.putAll(prefixMap);
+
+        checkShortest(prefixLookup, "A",        0, null);
+        checkShortest(prefixLookup, "AB",       0, null);
+        checkShortest(prefixLookup, "ABC",      0, null);
+        checkShortest(prefixLookup, "ABCD",     1, "Result BC");
+        checkShortest(prefixLookup, "ABCD",     2, null);
+        checkShortest(prefixLookup, "ABCD",     3, null);
+        checkShortest(prefixLookup, "ABCD",     4, null);
+
+        checkLongest(prefixLookup,  "A",        0, null);
+        checkLongest(prefixLookup,  "AB",       0, null);
+        checkLongest(prefixLookup,  "ABC",      0, null);
+        checkLongest(prefixLookup,  "ABCD",     1, "Result BCD");
+        checkLongest(prefixLookup,  "ABCD",     2, null);
+        checkLongest(prefixLookup,  "ABCD",     3, null);
+        checkLongest(prefixLookup,  "ABCD",     4, null);
+    }
+
+    @Test
+    void verifyDocumentationExampleUsage() {
         // Parameter caseSensitive=false --> so lookups are caseINsensitive
         PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
 
