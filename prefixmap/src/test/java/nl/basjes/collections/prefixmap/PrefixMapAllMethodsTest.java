@@ -67,6 +67,11 @@ class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public String get(char[] prefix) {
+            return null;
+        }
+
+        @Override
         public String getShortestMatch(String input, int startOffet) {
             return null;
         }
@@ -75,22 +80,30 @@ class PrefixMapAllMethodsTest {
         public String getLongestMatch(String input, int startOffet) {
             return null;
         }
+
+        @Override
+        public String getShortestMatch(char[] input, int startOffet) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(char[] input, int startOffet) {
+            return null;
+        }
     }
 
     @Test
     void testRemoveNotImplemented() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-            dummyPrefixMap.remove("Something");
-        });
+        assertThrows(UnsupportedOperationException.class,
+            () -> new DummyPrefixMap().remove("Something")
+        );
     }
 
     @Test
     void testClearNotImplemented() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-            dummyPrefixMap.clear();
-        });
+        assertThrows(UnsupportedOperationException.class,
+            () -> new DummyPrefixMap().clear()
+        );
     }
 
     private static class DummyPrefixTrie implements PrefixTrie<String> {
@@ -110,12 +123,27 @@ class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public String get(char[] input) {
+            return null;
+        }
+
+        @Override
         public String getShortestMatch(String input, int startOffet) {
             return null;
         }
 
         @Override
         public String getLongestMatch(String input, int startOffet) {
+            return null;
+        }
+
+        @Override
+        public String getShortestMatch(char[] input, int startOffet) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(char[] input, int startOffet) {
             return null;
         }
 
@@ -130,7 +158,7 @@ class PrefixMapAllMethodsTest {
     }
 
     @Test
-    public void testRemoveTrieNotImplemented() {
+    void testRemoveTrieNotImplemented() {
         assertThrows(UnsupportedOperationException.class, () -> {
             PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
             dummyPrefixTrie.remove("Something");

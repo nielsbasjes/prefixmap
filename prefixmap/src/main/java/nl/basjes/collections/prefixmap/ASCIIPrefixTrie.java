@@ -130,6 +130,30 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.get(prefix);
     }
 
+
+    @Override
+    public V get(char[] prefix) {
+        if (charIndex == prefix.length) {
+            return theValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix[charIndex]; // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return null; // Cannot store these, so is false.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return null;
+        }
+
+        return child.get(prefix);
+    }
+
     @Override
     public V getShortestMatch(String input, int startOffset) {
         if (startOffset < 0  ||
@@ -152,6 +176,29 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.getShortestMatch(input, startOffset);
     }
 
+
+    @Override
+    public V getShortestMatch(char[] input, int startOffset) {
+        if (startOffset < 0  ||
+            theValue != null ||
+            charIndex + startOffset == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex + startOffset]; // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return null; // Cannot store these, so this is where it ends.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return null;
+        }
+
+        return child.getShortestMatch(input, startOffset);
+    }
+
     @Override
     public V getLongestMatch(String input, int startOffset) {
         if (startOffset < 0 ||
@@ -161,6 +208,28 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         }
 
         char myChar = input.charAt(charIndex + startOffset); // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return theValue; // Cannot store these, so this is where it ends.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return theValue;
+        }
+
+        V returnValue = child.getLongestMatch(input, startOffset);
+        return (returnValue == null) ? theValue : returnValue;
+    }
+
+    @Override
+    public V getLongestMatch(char[] input, int startOffset) {
+        if (startOffset < 0 ||
+            charIndex  + startOffset == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex + startOffset]; // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
             return theValue; // Cannot store these, so this is where it ends.
         }

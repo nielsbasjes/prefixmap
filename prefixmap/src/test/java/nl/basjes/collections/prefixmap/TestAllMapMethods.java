@@ -77,12 +77,27 @@ class TestAllMapMethods {
             }
 
             @Override
+            public String get(char[] prefix) {
+                return null;
+            }
+
+            @Override
             public String getShortestMatch(String input, int startOffet) {
                 return null;
             }
 
             @Override
             public String getLongestMatch(String input, int startOffet) {
+                return null;
+            }
+
+            @Override
+            public String getShortestMatch(char[] input, int startOffet) {
+                return null;
+            }
+
+            @Override
+            public String getLongestMatch(char[] input, int startOffet) {
                 return null;
             }
         };

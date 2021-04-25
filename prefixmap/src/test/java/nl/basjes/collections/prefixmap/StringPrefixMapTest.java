@@ -38,6 +38,7 @@ class StringPrefixMapTest extends AbstractPrefixMapTests {
         // The ABCDE is missing !!!
         prefixMap.put("ABCDEF",  "Result ABCDEF");
         prefixMap.put("你", "Hello in Chinese");
+        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
@@ -184,6 +185,7 @@ class StringPrefixMapTest extends AbstractPrefixMapTests {
         // The ABCDE is missing !!!
         prefixMap.put("ABCDEF",  "Result ABCDEF");
         prefixMap.put("你", "Hello in Chinese");
+        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(true);
         prefixLookup.putAll(prefixMap);
@@ -192,7 +194,8 @@ class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
 
-        checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        checkShortest(prefixLookup, "你好",     "Hello in Chinese");
+        checkShortest(prefixLookup, "🖖👹",     "May the force be with you (🖖)");
 
         // Same case
         checkShortest(prefixLookup, "A",       null);
@@ -235,6 +238,7 @@ class StringPrefixMapTest extends AbstractPrefixMapTests {
         checkLongest(prefixLookup, "MisMatch", null);
 
         checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        checkLongest(prefixLookup, "🖖👹",     "May the force be with you (🖖)");
 
         // Same case
         checkLongest(prefixLookup, "A",       null);
@@ -278,6 +282,8 @@ class StringPrefixMapTest extends AbstractPrefixMapTests {
 
         checkContains(prefixLookup, "你",      true);
         checkContains(prefixLookup, "你好",    false);
+        checkContains(prefixLookup, "🖖",     true);
+        checkContains(prefixLookup, "🖖👹",   false);
 
         // Same case
         checkContains(prefixLookup, "A",       false);

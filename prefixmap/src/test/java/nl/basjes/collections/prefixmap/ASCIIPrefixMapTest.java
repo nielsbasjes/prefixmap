@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -33,12 +34,11 @@ class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
 
     @Test
     void testPutNonASCIIPrefix() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            Map<String, String> prefixMap = new HashMap<>();
-            prefixMap.put("你好", "Hello in Chinese");
-            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-            prefixLookup.putAll(prefixMap);
-        });
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("你好", "Hello in Chinese");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
         assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
@@ -46,19 +46,48 @@ class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     void testPutNonASCIIValue() {
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("Hello in Chinese", "你好");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-        prefixLookup.putAll(prefixMap);
-        // This should just work.
+        assertDoesNotThrow(
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
     }
 
     @Test
     void testRemoveNonASCIIPrefix() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-            prefixLookup.put("Something",    "To ensure not empty");
-            prefixLookup.remove("你好");
-        });
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("你好")
+        );
         assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+        assertEquals(1, prefixLookup.size());
+    }
+
+    @Test
+    void testPutEmojiPrefix() {
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("🖖", "May the force be with you (🖖)");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+    }
+
+    @Test
+    void testPutEmojiValue() {
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("LLAP", "May the force be with you (🖖)");
+        assertDoesNotThrow(() -> new ASCIIPrefixMap<>(false).putAll(prefixMap));
+    }
+
+    @Test
+    void testRemoveEmojiPrefix() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("🖖")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+        assertEquals(1, prefixLookup.size());
     }
 
     @Test

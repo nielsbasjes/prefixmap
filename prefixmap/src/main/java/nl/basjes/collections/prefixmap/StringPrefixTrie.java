@@ -111,6 +111,27 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.get(prefix);
     }
 
+
+    @Override
+    public V get(char[] prefix) {
+        if (charIndex == prefix.length) {
+            return theValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix[charIndex];
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return null;
+        }
+
+        return child.get(prefix);
+    }
+
     @Override
     public V getShortestMatch(String input, int startOffset) {
         if (startOffset < 0  ||
@@ -130,6 +151,26 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.getShortestMatch(input, startOffset);
     }
 
+
+    @Override
+    public V getShortestMatch(char[] input, int startOffset) {
+        if (startOffset < 0  ||
+            theValue != null ||
+            charIndex + startOffset == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex + startOffset];
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return null;
+        }
+
+        return child.getShortestMatch(input, startOffset);
+    }
+
     @Override
     public V getLongestMatch(String input, int startOffset) {
         if (startOffset < 0  ||
@@ -139,6 +180,25 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         }
 
         char myChar = input.charAt(charIndex + startOffset);
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return theValue;
+        }
+
+        V returnValue = child.getLongestMatch(input, startOffset);
+        return (returnValue == null) ? theValue : returnValue;
+    }
+
+    @Override
+    public V getLongestMatch(char[] input, int startOffset) {
+        if (startOffset < 0  ||
+            charIndex + startOffset == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex + startOffset];
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {

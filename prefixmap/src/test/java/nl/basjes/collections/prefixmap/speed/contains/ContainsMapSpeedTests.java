@@ -20,7 +20,10 @@ import nl.basjes.collections.PrefixMap;
 import nl.basjes.collections.prefixmap.ASCIIPrefixMap;
 import nl.basjes.collections.prefixmap.StringPrefixMap;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * This is a set of preformance tests to verify a question:
+ * This is a set of performance tests to verify a question:
  * I have a set of strings and I want to know if any of these string occur in my input.
  * Naive: for each case : if (input.contains(case)) ...
  * Can the prefixMap help here?
@@ -42,23 +45,29 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Early Speed stats SearchStringContains          (63 rules): 1000000 runs took  973ms -->  973ns each (=0us) .
  * Late  Speed stats SearchStringContains          (63 rules): 1000000 runs took 1417ms --> 1417ns each (=1us) .
  * No    Speed stats SearchStringContains          (63 rules): 1000000 runs took 1351ms --> 1351ns each (=1us) .
- *
+ * <p>
  * -- Use the StringPrefixMap
  * Early Speed stats StringPrefixMapSearchContains (63 rules): 1000000 runs took 1015ms --> 1015ns each (=1us) .
  * Late  Speed stats StringPrefixMapSearchContains (63 rules): 1000000 runs took 1736ms --> 1736ns each (=1us) .
  * No    Speed stats StringPrefixMapSearchContains (63 rules): 1000000 runs took 2055ms --> 2055ns each (=2us) .
- *
+ * <p>
  * -- Use the ASCIIPrefixMap
  * Early Speed stats ASCIIPrefixMapSearchContains  (63 rules): 1000000 runs took  374ms -->  374ns each (=0us) .
  * Late  Speed stats ASCIIPrefixMapSearchContains  (63 rules): 1000000 runs took  633ms -->  633ns each (=0us) .
  * No    Speed stats ASCIIPrefixMapSearchContains  (63 rules): 1000000 runs took  786ms -->  786ns each (=0us) .
  */
+@TestMethodOrder(OrderAnnotation.class)
 public class ContainsMapSpeedTests {
 
     public interface BaseSearchContains<V> {
         void putAll(Map<? extends String, ? extends V> m);
+
         void clear();
+
         V search(String input);
+
+        V search(char[] input);
+
         int size();
     }
 
@@ -90,6 +99,17 @@ public class ContainsMapSpeedTests {
         @Override
         public V search(String input) {
             for (int startOffset = 0; startOffset <= input.length() - shortestSubstringLength; startOffset++) {
+                V result = prefixMap.getShortestMatch(input, startOffset);
+                if (result != null) {
+                    return result;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public V search(char[] input) {
+            for (int startOffset = 0; startOffset <= input.length - shortestSubstringLength; startOffset++) {
                 V result = prefixMap.getShortestMatch(input, startOffset);
                 if (result != null) {
                     return result;
@@ -138,6 +158,18 @@ public class ContainsMapSpeedTests {
         @Override
         public V search(String input) {
             String lowerInput = input.toLowerCase(Locale.ENGLISH);
+            for (Map.Entry<String, V> entry : treeMap.entrySet()) {
+                String k = entry.getKey();
+                if (lowerInput.contains(k)) {
+                    return entry.getValue();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public V search(char[] input) {
+            String lowerInput = String.valueOf(input).toLowerCase(Locale.ENGLISH);
             for (Map.Entry<String, V> entry : treeMap.entrySet()) {
                 String k = entry.getKey();
                 if (lowerInput.contains(k)) {
@@ -242,14 +274,27 @@ public class ContainsMapSpeedTests {
 
     void preheat(BaseSearchContains<?> map) {
         // Heat it up
-        for (int i = 0; i< 10000; i++) {
-            for (String testcase: TESTCASES_EARLY_MATCH) {
+        for (int i = 0; i < 10000; i++) {
+            for (String testcase : TESTCASES_EARLY_MATCH) {
                 map.search(testcase);
             }
-            for (String testcase: TESTCASES_LATE_MATCH) {
+            for (String testcase : TESTCASES_LATE_MATCH) {
                 map.search(testcase);
             }
-            for (String testcase: TESTCASES_NO_MATCH) {
+            for (String testcase : TESTCASES_NO_MATCH) {
+                map.search(testcase);
+            }
+        }
+    }
+
+    void preheatChars(BaseSearchContains<?> map) {
+        // Heat it up
+        List<char[]> testcases = new ArrayList<>();
+        testcases.addAll(toCharArrayList(TESTCASES_EARLY_MATCH));
+        testcases.addAll(toCharArrayList(TESTCASES_LATE_MATCH));
+        testcases.addAll(toCharArrayList(TESTCASES_NO_MATCH));
+        for (int i = 0; i < 10000; i++) {
+            for (char[] testcase : testcases) {
                 map.search(testcase);
             }
         }
@@ -257,8 +302,8 @@ public class ContainsMapSpeedTests {
 
     void run(BaseSearchContains<?> map, String label, List<String> testCases, long iterations, boolean mustHaveResult) {
         long start = System.nanoTime();
-        for (int i = 0; i < (iterations/testCases.size()); i++) {
-            for (String testcase: testCases) {
+        for (int i = 0; i < (iterations / testCases.size()); i++) {
+            for (String testcase : testCases) {
                 if (mustHaveResult) {
                     assertNotNull(map.search(testcase), testcase);
                 } else {
@@ -267,12 +312,12 @@ public class ContainsMapSpeedTests {
             }
         }
         long stop = System.nanoTime();
-        System.out.println(label + " Speed stats " + map.getClass().getSimpleName() +
-            "\t (" + map.size() + "\t rules): " +
-            iterations + " runs took " +
-            ((stop - start)/1000000) + "ms --> " +
-            ((stop - start)/iterations) + "ns each (=" +
-            (((stop - start)/iterations)/1000) + "us) .");
+        System.out.printf("%-15s Speed stats %-30s ( %5d rules): %7d runs took %6dms --> %6dns each (=%6dus) .%n",
+            label, map.getClass().getSimpleName(), map.size(),
+            iterations,
+            ((stop - start) / 1000000),
+            ((stop - start) / iterations),
+            (((stop - start) / iterations) / 1000));
     }
 
     void runTest(BaseSearchContains<String> map) {
@@ -280,23 +325,83 @@ public class ContainsMapSpeedTests {
         map.putAll(SEARCH_TERMS_MAP);
         long iterations = 1000000;
         preheat(map);
-        run(map, "Early", TESTCASES_EARLY_MATCH, iterations, true);
-        run(map, "Late ", TESTCASES_LATE_MATCH,  iterations, true);
-        run(map, "No   ", TESTCASES_NO_MATCH,    iterations, false);
+        run(map, "String | Early", TESTCASES_EARLY_MATCH, iterations, true);
+        run(map, "String | Late ", TESTCASES_LATE_MATCH, iterations, true);
+        run(map, "String | No   ", TESTCASES_NO_MATCH, iterations, false);
+    }
+
+    void runChars(BaseSearchContains<?> map, String label, List<char[]> testCases, long iterations, boolean mustHaveResult) {
+        long start = System.nanoTime();
+        for (int i = 0; i < (iterations / testCases.size()); i++) {
+            for (char[] testcase : testCases) {
+                if (mustHaveResult) {
+                    assertNotNull(map.search(testcase));
+                } else {
+                    assertNull(map.search(testcase));
+                }
+            }
+        }
+        long stop = System.nanoTime();
+        System.out.printf("%-15s Speed stats %-30s ( %5d rules): %7d runs took %6dms --> %6dns each (=%6dus) .%n",
+            label, map.getClass().getSimpleName(), map.size(),
+            iterations,
+            ((stop - start) / 1000000),
+            ((stop - start) / iterations),
+            (((stop - start) / iterations) / 1000));
+    }
+
+    private List<char[]> toCharArrayList(List<String> input) {
+        List<char[]> list = new ArrayList<>();
+        for (String s : input) {
+            list.add(s.toCharArray());
+        }
+        return list;
+    }
+
+    void runTestChars(BaseSearchContains<String> map) {
+        map.clear();
+        map.putAll(SEARCH_TERMS_MAP);
+        long iterations = 1000000;
+        preheatChars(map);
+        runChars(map, "char[] | Early", toCharArrayList(TESTCASES_EARLY_MATCH), iterations, true);
+        runChars(map, "char[] | Late ", toCharArrayList(TESTCASES_LATE_MATCH), iterations, true);
+        runChars(map, "char[] | No   ", toCharArrayList(TESTCASES_NO_MATCH), iterations, false);
     }
 
     @Test
+    @Order(1)
     public void testStringContains() {
         runTest(new SearchStringContains<>());
     }
 
     @Test
+    @Order(2)
     public void testStringPrefix() {
         runTest(new StringPrefixMapSearchContains<>());
     }
 
     @Test
+    @Order(3)
     public void testASCIIPrefix() {
         runTest(new ASCIIPrefixMapSearchContains<>());
     }
+
+    @Test
+    @Order(4)
+    public void testStringContainsChars() {
+        runTestChars(new SearchStringContains<>());
+    }
+
+    @Test
+    @Order(5)
+    public void testStringPrefixChars() {
+        runTestChars(new StringPrefixMapSearchContains<>());
+    }
+
+    @Test
+    @Order(6)
+    public void testASCIIPrefixChars() {
+        runTestChars(new ASCIIPrefixMapSearchContains<>());
+    }
+
 }
