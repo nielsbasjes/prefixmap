@@ -1,4 +1,8 @@
 This is intended as an overview of the major changes
+v2.1-SNAPSHOT
+===
+- Added support for directly searching for a char[]
+- Added tests searching for 🖖 (which is a 2 char character).
 
 v2.0
 ===

@@ -20,7 +20,7 @@ import nl.basjes.collections.prefixmap.ASCIIPrefixMap;
 
 import java.util.Map;
 
-public class ASCIIPrefixMapSpeedTest extends AbstractPrefixMapSpeedTests {
+public class TestASCIIPrefixMapSpeed extends AbstractPrefixMapSpeedTests {
 
     @Override
     protected PrefixMap<String> create(Map<String, String> prefixMap) {

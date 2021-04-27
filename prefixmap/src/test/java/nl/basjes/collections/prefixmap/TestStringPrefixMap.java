@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StringPrefixMapTest extends AbstractPrefixMapTests {
+class TestStringPrefixMap extends AbstractPrefixMapTests {
 
     @Override
     PrefixMap<String> createPrefixMap(boolean caseSensitive) {
@@ -31,13 +31,16 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseINSensitiveLookup(){
+    void testCaseINSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
         prefixMap.put("ABCDEF",  "Result ABCDEF");
+        // These are 1 char per character
         prefixMap.put("你", "Hello in Chinese");
+        // These are 2 chars per character
+        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
@@ -46,6 +49,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
 
+        // These are 1 char per character
         checkShortest(prefixLookup, "你好",     "Hello in Chinese");
 
         // Same case
@@ -90,6 +94,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
 
+        // These are 1 char per character
         checkLongest(prefixLookup, "你好",     "Hello in Chinese");
 
         // Same case
@@ -134,6 +139,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Contains
         checkContains(prefixLookup, "MisMatch", false);
 
+        // These are 1 char per character
         checkContains(prefixLookup, "你",      true);
         checkContains(prefixLookup, "你好",    false);
 
@@ -177,13 +183,16 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseSensitiveLookup(){
+    void testCaseSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
         prefixMap.put("ABCDEF",  "Result ABCDEF");
+        // These are 1 char per character
         prefixMap.put("你", "Hello in Chinese");
+        // These are 2 chars per character
+        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(true);
         prefixLookup.putAll(prefixMap);
@@ -192,7 +201,10 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
 
-        checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        // These are 1 char per character
+        checkShortest(prefixLookup, "你好",     "Hello in Chinese");
+        // These are 2 chars per character
+        checkShortest(prefixLookup, "🖖👹",     "May the force be with you (🖖)");
 
         // Same case
         checkShortest(prefixLookup, "A",       null);
@@ -234,7 +246,10 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
 
+        // These are 1 char per character
         checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        // These are 2 chars per character
+        checkLongest(prefixLookup, "🖖👹",    "May the force be with you (🖖)");
 
         // Same case
         checkLongest(prefixLookup, "A",       null);
@@ -276,8 +291,12 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
         // Contains
         checkContains(prefixLookup, "MisMatch", false);
 
+        // These are 1 char per character
         checkContains(prefixLookup, "你",      true);
         checkContains(prefixLookup, "你好",    false);
+        // These are 2 chars per character
+        checkContains(prefixLookup, "🖖",     true);
+        checkContains(prefixLookup, "🖖👹",   false);
 
         // Same case
         checkContains(prefixLookup, "A",       false);
@@ -317,7 +336,7 @@ public class StringPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void verifyDocumentationExampleUsage() {
+    void verifyDocumentationExampleUsage() {
         // Parameter caseSensitive=false --> so lookups are caseINsensitive
         PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
 

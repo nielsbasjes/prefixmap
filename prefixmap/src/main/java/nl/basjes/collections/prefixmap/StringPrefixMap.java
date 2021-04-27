@@ -95,6 +95,11 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
         return prefixTrie.containsPrefix(prefix);
     }
 
+    @Override
+    public boolean containsPrefix(char[] prefix) {
+        return prefixTrie.containsPrefix(prefix);
+    }
+
     private String storedKey(String key) {
         if (prefixTrie.caseSensitive()) {
             return key;
@@ -148,12 +153,27 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
+    public V get(char[] prefix) {
+        return prefixTrie.get(prefix);
+    }
+
+    @Override
     public V getShortestMatch(String input) {
         return prefixTrie.getShortestMatch(input);
     }
 
     @Override
     public V getLongestMatch(String input) {
+        return prefixTrie.getLongestMatch(input);
+    }
+
+    @Override
+    public V getShortestMatch(char[] input) {
+        return prefixTrie.getShortestMatch(input);
+    }
+
+    @Override
+    public V getLongestMatch(char[] input) {
         return prefixTrie.getLongestMatch(input);
     }
 

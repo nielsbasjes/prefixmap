@@ -22,24 +22,33 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public abstract class AbstractPrefixMapTests {
+abstract class AbstractPrefixMapTests {
 
     abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
 
     protected void checkShortest(PrefixMap<String> prefixLookup, String prefix, String expected) {
-        assertEquals(expected, prefixLookup.getShortestMatch(prefix), "Wrong 'ShortestMatch' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.getShortestMatch(prefix),
+            "Wrong 'ShortestMatch' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.getShortestMatch(prefix.toCharArray()),
+            "Wrong 'ShortestMatch' result for '" + prefix + "' as char[]");
     }
 
     protected void checkLongest(PrefixMap<String> prefixLookup, String prefix, String expected) {
-        assertEquals(expected, prefixLookup.getLongestMatch(prefix), "Wrong 'ShortestMatch' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.getLongestMatch(prefix),
+            "Wrong 'ShortestMatch' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.getLongestMatch(prefix.toCharArray()),
+            "Wrong 'ShortestMatch' result for '" + prefix + "' as char[]");
     }
 
     protected void checkContains(PrefixMap<String> prefixLookup, String prefix, boolean expected) {
-        assertEquals(expected, prefixLookup.containsPrefix(prefix), "Wrong 'Contains' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.containsPrefix(prefix),
+            "Wrong 'ContainsPrefix' result for '" + prefix + "'");
+        assertEquals(expected, prefixLookup.containsPrefix(prefix.toCharArray()),
+            "Wrong 'ContainsPrefix' result for '" + prefix + "' as char[]");
     }
 
     @Test
-    public void testPutNullPrefix() {
+    void testPutNullPrefix() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
             PrefixMap<String> prefixLookup = createPrefixMap(true);
             prefixLookup.put(null, "Something");
@@ -48,17 +57,16 @@ public abstract class AbstractPrefixMapTests {
     }
 
     @Test
-    public void testPutNullValue() {
+    void testPutNullValue() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
             PrefixMap<String> prefixLookup = createPrefixMap(true);
             prefixLookup.put("Something", null);
         });
         assertEquals("The value may not be null", exception.getMessage());
-
     }
 
     @Test
-    public void testRemoveNullValue() {
+    void testRemoveNullValue() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
             PrefixMap<String> prefixLookup = createPrefixMap(true);
             prefixLookup.remove(null);
@@ -67,7 +75,7 @@ public abstract class AbstractPrefixMapTests {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         PrefixMap<String> prefixLookup = createPrefixMap(true);
 
         assertEquals(0,         prefixLookup.size());
@@ -102,7 +110,7 @@ public abstract class AbstractPrefixMapTests {
     }
 
     @Test
-    public void testRemoveCaseSensitive() {
+    void testRemoveCaseSensitive() {
         PrefixMap<String> prefixLookup = createPrefixMap(true);
 
         // Initial filling
@@ -202,7 +210,7 @@ public abstract class AbstractPrefixMapTests {
     }
 
     @Test
-    public void testRemoveCaseINSensitive() {
+    void testRemoveCaseINSensitive() {
         PrefixMap<String> prefixLookup = createPrefixMap(false);
 
         // Initial filling
@@ -329,7 +337,7 @@ public abstract class AbstractPrefixMapTests {
     }
 
     @Test
-    public void testEntrySet() {
+    void testEntrySet() {
         PrefixMap<String> instance = createSerializationInstance();
         verifySerializationInstance(instance);
 

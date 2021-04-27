@@ -24,10 +24,10 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAllMapMethods {
+class TestAllMapMethods {
 
     @Test
-    public void checkASCIIPrefixMap(){
+    void checkASCIIPrefixMap(){
         PrefixMap<String> prefixMap = new ASCIIPrefixMap<>(true);
         prefixMap.put("A", "AA");
 
@@ -38,7 +38,7 @@ public class TestAllMapMethods {
     }
 
     @Test
-    public void checkStringPrefixMap(){
+    void checkStringPrefixMap(){
         PrefixMap<String> prefixMap = new StringPrefixMap<>(true);
         prefixMap.put("A", "AA");
 
@@ -49,7 +49,7 @@ public class TestAllMapMethods {
     }
 
     @Test
-    public void checkBasePrefixMap(){
+    void checkBasePrefixMap(){
         PrefixMap<String> prefixMap = new PrefixMap<>() {
             @Override
             public int size() {
@@ -58,6 +58,11 @@ public class TestAllMapMethods {
 
             @Override
             public boolean containsPrefix(String prefix) {
+                return false;
+            }
+
+            @Override
+            public boolean containsPrefix(char[] prefix) {
                 return false;
             }
 
@@ -77,12 +82,27 @@ public class TestAllMapMethods {
             }
 
             @Override
+            public String get(char[] prefix) {
+                return null;
+            }
+
+            @Override
             public String getShortestMatch(String input) {
                 return null;
             }
 
             @Override
             public String getLongestMatch(String input) {
+                return null;
+            }
+
+            @Override
+            public String getShortestMatch(char[] input) {
+                return null;
+            }
+
+            @Override
+            public String getLongestMatch(char[] input) {
                 return null;
             }
         };

@@ -20,10 +20,10 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
-    private   final boolean                     caseSensitive;
-    private   final int                         charIndex;
-    protected TreeMap<Character, PrefixTrie<V>> childNodes;
-    private   V                                 theValue;
+    private final boolean                     caseSensitive;
+    private final int                         charIndex;
+    private TreeMap<Character, PrefixTrie<V>> childNodes;
+    private V                                 theValue;
 
     StringPrefixTrie(boolean caseSensitive) {
         this(caseSensitive, 0);
@@ -92,11 +92,6 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public boolean containsPrefix(String prefix) {
-        return get(prefix) != null;
-    }
-
-    @Override
     public V get(String prefix) {
         if (charIndex == prefix.length()) {
             return theValue;
@@ -107,6 +102,27 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         }
 
         char myChar = prefix.charAt(charIndex);
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return null;
+        }
+
+        return child.get(prefix);
+    }
+
+
+    @Override
+    public V get(char[] prefix) {
+        if (charIndex == prefix.length) {
+            return theValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix[charIndex];
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
@@ -134,6 +150,25 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.getShortestMatch(input);
     }
 
+
+    @Override
+    public V getShortestMatch(char[] input) {
+        if (theValue != null ||
+            charIndex == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex];
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return null;
+        }
+
+        return child.getShortestMatch(input);
+    }
+
     @Override
     public V getLongestMatch(String input) {
         if (charIndex == input.length() || childNodes == null) {
@@ -141,6 +176,24 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         }
 
         char myChar = input.charAt(charIndex);
+
+        PrefixTrie<V> child = childNodes.get(myChar);
+        if (child == null) {
+            return theValue;
+        }
+
+        V returnValue = child.getLongestMatch(input);
+        return (returnValue == null) ? theValue : returnValue;
+    }
+
+    @Override
+    public V getLongestMatch(char[] input) {
+        if (charIndex == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex];
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {

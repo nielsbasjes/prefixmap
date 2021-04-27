@@ -21,10 +21,11 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
+class TestASCIIPrefixMap extends AbstractPrefixMapTests {
 
     @Override
     PrefixMap<String> createPrefixMap(boolean caseSensitive) {
@@ -32,37 +33,67 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testPutNonASCIIPrefix() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            Map<String, String> prefixMap = new HashMap<>();
-            prefixMap.put("你好", "Hello in Chinese");
-            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-            prefixLookup.putAll(prefixMap);
-        });
+    void testPutNonASCIIPrefix() {
+        Map<String, String> prefixMap = new HashMap<>();
+        // These are 1 char per character
+        prefixMap.put("你好", "Hello in Chinese");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
         assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
     @Test
-    public void testPutNonASCIIValue() {
+    void testPutNonASCIIValue() {
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("Hello in Chinese", "你好");
-        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-        prefixLookup.putAll(prefixMap);
-        // This should just work.
+        assertDoesNotThrow(
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
     }
 
     @Test
-    public void testRemoveNonASCIIPrefix() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
-            prefixLookup.put("Something",    "To ensure not empty");
-            prefixLookup.remove("你好");
-        });
+    void testRemoveNonASCIIPrefix() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("你好")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+        assertEquals(1, prefixLookup.size());
+    }
+
+    @Test
+    void testPutEmojiPrefix() {
+        Map<String, String> prefixMap = new HashMap<>();
+        // These are 2 chars per character
+        prefixMap.put("🖖", "May the force be with you (🖖)");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
         assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
     @Test
-    public void testCaseINSensitiveLookup(){
+    void testPutEmojiValue() {
+        Map<String, String> prefixMap = new HashMap<>();
+        prefixMap.put("LLAP", "May the force be with you (🖖)");
+        assertDoesNotThrow(() -> new ASCIIPrefixMap<>(false).putAll(prefixMap));
+    }
+
+    @Test
+    void testRemoveEmojiPrefix() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("🖖")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+        assertEquals(1, prefixLookup.size());
+    }
+
+    @Test
+    void testCaseINSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -76,6 +107,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
+        // These are 1 char per character
         checkShortest(prefixLookup, "你好",     null);
 
         // Same case
@@ -119,6 +151,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
+        // These are 1 char per character
         checkLongest(prefixLookup, "你好",      null);
 
         // Same case
@@ -203,7 +236,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
     }
 
     @Test
-    public void testCaseSensitiveLookup(){
+    void testCaseSensitiveLookup(){
         Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
@@ -217,6 +250,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
+        // These are 1 char per character
         checkShortest(prefixLookup, "你好",     null);
 
         // Same case
@@ -260,6 +294,7 @@ public class ASCIIPrefixMapTest extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
+        // These are 1 char per character
         checkLongest(prefixLookup, "你好",     null);
 
         // Same case

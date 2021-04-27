@@ -16,7 +16,6 @@
 
 package nl.basjes.collections.prefixmap;
 
-import com.esotericsoftware.kryo.Kryo;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrefixMapAllMethodsTest {
+class TestPrefixMapAllMethods {
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
 
         assertTrue(stringPrefixMap.isEmpty());
@@ -53,6 +52,11 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public boolean containsPrefix(char[] prefix) {
+            return false;
+        }
+
+        @Override
         public String put(String prefix, String value) {
             return null;
         }
@@ -68,6 +72,11 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public String get(char[] prefix) {
+            return null;
+        }
+
+        @Override
         public String getShortestMatch(String input) {
             return null;
         }
@@ -77,25 +86,29 @@ public class PrefixMapAllMethodsTest {
             return null;
         }
 
-        public static void registerClassesWithKryo_impl(Kryo kryo) {
-            kryo.register(DummyPrefixMap.class);
+        @Override
+        public String getShortestMatch(char[] input) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(char[] input) {
+            return null;
         }
     }
 
     @Test
-    public void testRemoveNotImplemented() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-            dummyPrefixMap.remove("Something");
-        });
+    void testRemoveNotImplemented() {
+        assertThrows(UnsupportedOperationException.class,
+            () -> new DummyPrefixMap().remove("Something")
+        );
     }
 
     @Test
-    public void testClearNotImplemented() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            PrefixMap<String> dummyPrefixMap = new DummyPrefixMap();
-            dummyPrefixMap.clear();
-        });
+    void testClearNotImplemented() {
+        assertThrows(UnsupportedOperationException.class,
+            () -> new DummyPrefixMap().clear()
+        );
     }
 
     private static class DummyPrefixTrie implements PrefixTrie<String> {
@@ -115,12 +128,27 @@ public class PrefixMapAllMethodsTest {
         }
 
         @Override
+        public String get(char[] input) {
+            return null;
+        }
+
+        @Override
         public String getShortestMatch(String input) {
             return null;
         }
 
         @Override
         public String getLongestMatch(String input) {
+            return null;
+        }
+
+        @Override
+        public String getShortestMatch(char[] input) {
+            return null;
+        }
+
+        @Override
+        public String getLongestMatch(char[] input) {
             return null;
         }
 
@@ -135,7 +163,7 @@ public class PrefixMapAllMethodsTest {
     }
 
     @Test
-    public void testRemoveTrieNotImplemented() {
+    void testRemoveTrieNotImplemented() {
         assertThrows(UnsupportedOperationException.class, () -> {
             PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
             dummyPrefixTrie.remove("Something");

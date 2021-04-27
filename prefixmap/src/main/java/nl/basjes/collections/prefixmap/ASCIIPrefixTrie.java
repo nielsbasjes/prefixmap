@@ -130,6 +130,30 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.get(prefix);
     }
 
+
+    @Override
+    public V get(char[] prefix) {
+        if (charIndex == prefix.length) {
+            return theValue;
+        }
+
+        if (childNodes == null) {
+            return null;
+        }
+
+        char myChar = prefix[charIndex]; // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return null; // Cannot store these, so is false.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return null;
+        }
+
+        return child.get(prefix);
+    }
+
     @Override
     public V getShortestMatch(String input) {
         if (theValue != null ||
@@ -152,12 +176,55 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
+    public V getShortestMatch(char[] input) {
+        if (theValue != null ||
+            charIndex == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex]; // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return null; // Cannot store these, so this is where it ends.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return null;
+        }
+
+        return child.getShortestMatch(input);
+    }
+
+    @Override
     public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
+        if (charIndex  == input.length() ||
+            childNodes == null) {
             return theValue;
         }
 
         char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
+        if (myChar < 32 || myChar > 126) {
+            return theValue; // Cannot store these, so this is where it ends.
+        }
+
+        ASCIIPrefixTrie<V> child = childNodes[myChar];
+        if (child == null) {
+            return theValue;
+        }
+
+        V returnValue = child.getLongestMatch(input);
+        return (returnValue == null) ? theValue : returnValue;
+    }
+
+    @Override
+    public V getLongestMatch(char[] input) {
+        if (charIndex  == input.length ||
+            childNodes == null) {
+            return theValue;
+        }
+
+        char myChar = input[charIndex]; // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
             return theValue; // Cannot store these, so this is where it ends.
         }
