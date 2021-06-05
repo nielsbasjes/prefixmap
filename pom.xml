@@ -600,6 +600,10 @@
             <exclude>**/*.iml</exclude>
             <exclude>*.patch</exclude>
             <exclude>*.diff</exclude>
+            <!-- Files that cannot be 'polluted' -->
+            <exclude>.github/**</exclude>
+            <exclude>*.json</exclude>
+            <exclude>CNAME</exclude>
             <!-- File generated during build -->
             <exclude>**/target/**</exclude>
             <exclude>**/dependency-reduced-pom.xml</exclude>
