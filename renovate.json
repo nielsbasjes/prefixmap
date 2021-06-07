@@ -1,5 +1,19 @@
 {
   "extends": [
     "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": [
+        "kryo4.version"
+      ],
+      "rangeStrategy": "pin"
+    },
+    {
+      "groupSlug": "all",
+      "packagePatterns": ["*"],
+      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian)[-_\\.]?[0-9]?.*$/",
+      "groupName": "all dependencies"
+    }
   ]
 }
