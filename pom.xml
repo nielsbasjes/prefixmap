@@ -604,6 +604,7 @@
             <exclude>.github/**</exclude>
             <exclude>*.json</exclude>
             <exclude>CNAME</exclude>
+            <exclude>CODEOWNERS</exclude>
             <!-- File generated during build -->
             <exclude>**/target/**</exclude>
             <exclude>**/dependency-reduced-pom.xml</exclude>
