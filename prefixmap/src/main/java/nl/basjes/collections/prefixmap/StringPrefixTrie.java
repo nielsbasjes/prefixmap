@@ -17,12 +17,15 @@
 package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private final boolean                     caseSensitive;
     private final int                         charIndex;
-    private TreeMap<Character, PrefixTrie<V>> childNodes;
+    private TreeMap<Character, StringPrefixTrie<V>> childNodes;
     private V                                 theValue;
 
     StringPrefixTrie(boolean caseSensitive) {
@@ -58,7 +61,7 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             char lower = Character.toLowerCase(myChar);
             char upper = Character.toUpperCase(myChar);
 
-            PrefixTrie<V> child = childNodes.computeIfAbsent(lower, c -> new StringPrefixTrie<>(false, charIndex + 1));
+            StringPrefixTrie<V> child = childNodes.computeIfAbsent(lower, c -> new StringPrefixTrie<>(false, charIndex + 1));
             previousValue = child.add(prefix, value);
             childNodes.put(upper, child);
         }
@@ -90,6 +93,9 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         }
         return child.remove(prefix);
     }
+
+    // ==============================================================
+    // GET
 
     @Override
     public V get(String prefix) {
@@ -132,6 +138,9 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.get(prefix);
     }
 
+    // ==============================================================
+    // GET SHORTEST
+
     @Override
     public V getShortestMatch(String input) {
         if (theValue != null ||
@@ -169,6 +178,9 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.getShortestMatch(input);
     }
 
+    // ==============================================================
+    // GET LONGEST
+
     @Override
     public V getLongestMatch(String input) {
         if (charIndex == input.length() || childNodes == null) {
@@ -203,6 +215,91 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         V returnValue = child.getLongestMatch(input);
         return (returnValue == null) ? theValue : returnValue;
     }
+
+    // ==============================================================
+    // GET ALL VIA ITERATOR
+
+    public static class StringTrieIterator<V extends Serializable> implements Iterator<V> {
+        private V next;
+        private final char[] input;
+        private StringPrefixTrie<V> node;
+
+        StringTrieIterator(char[] input, StringPrefixTrie<V> node) {
+            this.input = input;
+            this.node = node;
+            this.next = getNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public V next() {
+            if (next == null) {
+                throw new NoSuchElementException("Trying next() when hasNext() is false.");
+            }
+            V result = next;
+            next = getNext();
+            return result;
+        }
+
+        private V getNext() {
+            if (node == null) {
+                return null;
+            }
+
+            V theValue = node.theValue;
+
+            // Are we at the last possible one for the given input?
+            if (node.charIndex  == input.length ||
+                node.childNodes == null) {
+                node = null;
+                return theValue;
+            }
+
+            // Find the next
+            char myChar = input[node.charIndex]; // This will give us the ASCII value of the char
+            if (myChar < 32 || myChar > 126) {
+                node = null; // Cannot store these, so this is where it ends.
+                return theValue;
+            }
+
+            StringPrefixTrie<V> child = node.childNodes.get(myChar);
+            if (child == null) {
+                node = null; // No more children, so this is where it ends.
+                return theValue;
+            }
+
+            node = child;
+            if (theValue == null) {
+                return getNext();
+            }
+            return theValue;
+        }
+
+        @Override
+        public String toString() {
+            return "StringTrieIterator{" +
+                "next=" + next +
+                ", input=" + Arrays.toString(input) +
+                ", node=" + node +
+                '}';
+        }
+    }
+
+    @Override
+    public Iterator<V> getAllMatches(String input) {
+        return new StringTrieIterator<>(input.toCharArray(), this);
+    }
+
+    @Override
+    public Iterator<V> getAllMatches(char[] input) {
+        return new StringTrieIterator<>(input, this);
+    }
+
+    // ==============================================================
 
     @Override
     public void clear() {

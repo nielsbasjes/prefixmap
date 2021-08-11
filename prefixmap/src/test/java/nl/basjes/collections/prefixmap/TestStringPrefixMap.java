@@ -19,9 +19,14 @@ import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestStringPrefixMap extends AbstractPrefixMapTests {
 
@@ -36,14 +41,15 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
-        prefixMap.put("ABCDEF",  "Result ABCDEF");
-        // These are 1 char per character
-        prefixMap.put("你", "Hello in Chinese");
-        // These are 2 chars per character
-        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
         prefixLookup.putAll(prefixMap);
+
+        prefixLookup.put("ABCDEF",  "Result ABCDEF");
+        // These are 1 char per character
+        prefixLookup.put("你", "Hello in Chinese");
+        // These are 2 chars per character
+        prefixLookup.put("🖖", "May the force be with you (🖖)");
 
         // ----------------------------------------------------
         // Shortest Match
@@ -162,6 +168,8 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "ABC€",    false);
         checkContains(prefixLookup, "ABCD€",   false);
 
+        checkGetAllIterator(prefixLookup, "ABCD", "Result ABC", "Result ABCD");
+
         // Different case
         checkContains(prefixLookup, "a",       false);
         checkContains(prefixLookup, "ab",      false);
@@ -180,6 +188,8 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
         checkContains(prefixLookup, "abcd€",   false);
+
+        checkGetAllIterator(prefixLookup, "abcd", "Result ABC", "Result ABCD");
     }
 
     @Test
@@ -188,14 +198,15 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         prefixMap.put("ABC",    "Result ABC");
         prefixMap.put("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
-        prefixMap.put("ABCDEF",  "Result ABCDEF");
-        // These are 1 char per character
-        prefixMap.put("你", "Hello in Chinese");
-        // These are 2 chars per character
-        prefixMap.put("🖖", "May the force be with you (🖖)");
 
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(true);
         prefixLookup.putAll(prefixMap);
+
+        prefixLookup.put("ABCDEF",  "Result ABCDEF");
+        // These are 1 char per character
+        prefixLookup.put("你", "Hello in Chinese");
+        // These are 2 chars per character
+        prefixLookup.put("🖖", "May the force be with you (🖖)");
 
         // ----------------------------------------------------
         // Shortest Match
@@ -223,6 +234,7 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkShortest(prefixLookup, "ABC\\t",  "Result ABC");
         checkShortest(prefixLookup, "ABC€",    "Result ABC");
+        checkShortest(prefixLookup, "ABCD€",   "Result ABC");
 
         // Different case
         checkShortest(prefixLookup, "a",       null);
@@ -241,6 +253,7 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkShortest(prefixLookup, "abc\\t",  null);
         checkShortest(prefixLookup, "abc€",    null);
+        checkShortest(prefixLookup, "abcd€",   null);
 
         // ----------------------------------------------------
         // Longest Match
@@ -268,6 +281,7 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkLongest(prefixLookup, "ABC\\t",  "Result ABC");
         checkLongest(prefixLookup, "ABC€",    "Result ABC");
+        checkLongest(prefixLookup, "ABCD€",   "Result ABCD");
 
         // Different case
         checkLongest(prefixLookup, "a",       null);
@@ -286,6 +300,7 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkLongest(prefixLookup, "abc\\t",  null);
         checkLongest(prefixLookup, "abc€",    null);
+        checkLongest(prefixLookup, "abcd€",   null);
 
         // ----------------------------------------------------
         // Contains
@@ -315,6 +330,9 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkContains(prefixLookup, "ABC\\t",  false);
         checkContains(prefixLookup, "ABC€",    false);
+        checkContains(prefixLookup, "ABCD€",   false);
+
+        checkGetAllIterator(prefixLookup, "ABCD", "Result ABC", "Result ABCD");
 
         // Different case
         checkContains(prefixLookup, "a",       false);
@@ -333,6 +351,41 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
+        checkContains(prefixLookup, "abcd€",   false);
+
+        checkGetAllIterator(prefixLookup, "abcd"); // No output
+    }
+
+
+    @Test
+    void testIteratorBasics() {
+        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
+        assertTrue(matches.hasNext());
+        assertEquals("Result A", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABC", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABCDE", matches.next());
+        assertFalse(matches.hasNext());
+
+        assertThrows(NoSuchElementException.class, matches::next);
+    }
+
+    @Test
+    void testCaseINSensitiveIterator() {
+        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        checkGetAllIterator(prefixLookup, "aBcDeF", "Result A", "Result ABC", "Result ABCDE");
     }
 
     @Test

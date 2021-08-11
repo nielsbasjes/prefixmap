@@ -20,6 +20,7 @@ import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -95,6 +96,16 @@ class TestPrefixMapAllMethods {
         public String getLongestMatch(char[] input) {
             return null;
         }
+
+        @Override
+        public Iterator<String> getAllMatches(String input) {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        public Iterator<String> getAllMatches(char[] input) {
+            return Collections.emptyIterator();
+        }
     }
 
     @Test
@@ -128,17 +139,22 @@ class TestPrefixMapAllMethods {
         }
 
         @Override
-        public String get(char[] input) {
-            return null;
-        }
-
-        @Override
         public String getShortestMatch(String input) {
             return null;
         }
 
         @Override
         public String getLongestMatch(String input) {
+            return null;
+        }
+
+        @Override
+        public Iterator<String> getAllMatches(String input) {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        public String get(char[] input) {
             return null;
         }
 
@@ -150,6 +166,11 @@ class TestPrefixMapAllMethods {
         @Override
         public String getLongestMatch(char[] input) {
             return null;
+        }
+
+        @Override
+        public Iterator<String> getAllMatches(char[] input) {
+            return Collections.emptyIterator();
         }
 
         @Override

@@ -17,6 +17,7 @@
 package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 interface PrefixTrie<V extends Serializable> extends Serializable {
     /**
@@ -94,6 +95,18 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
     V getLongestMatch(String input);
 
     /**
+     * <p>Returns List of all matches that have a value.</p>
+     * <p>The list contains all non-null values for the prefix values where this is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @return The list of values, an empty List if nothing is found.
+     */
+    Iterator<V> getAllMatches(String input);
+
+    /**
      * <p>Return the value of the <code>shortest</code> matching prefix. </p>
      * <p>The value returned is the shortest stored prefix for which is true:
      * <code>input.startsWith(prefix)</code>.</p>
@@ -116,6 +129,18 @@ interface PrefixTrie<V extends Serializable> extends Serializable {
      * @return The value, null if not found.
      */
     V getLongestMatch(char[] input);
+
+    /**
+     * <p>Returns List of all matches that have a value.</p>
+     * <p>The list contains all non-null values for the prefix values where this is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string for which we need value of the stored prefix
+     * @return The list of values, an empty List if nothing is found.
+     */
+    Iterator<V> getAllMatches(char[] input);
 
     default V remove(String prefix) {
         throw new UnsupportedOperationException("The 'remove(String prefix)' method has not been implemented in " +

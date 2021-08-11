@@ -19,6 +19,10 @@ package nl.basjes.collections.prefixmap;
 import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,6 +49,16 @@ abstract class AbstractPrefixMapTests {
             "Wrong 'ContainsPrefix' result for '" + prefix + "'");
         assertEquals(expected, prefixLookup.containsPrefix(prefix.toCharArray()),
             "Wrong 'ContainsPrefix' result for '" + prefix + "' as char[]");
+    }
+
+    protected void checkGetAllIterator(PrefixMap<String> prefixLookup, String prefix, String... expected) {
+        List<String> result = new ArrayList<>();
+        prefixLookup.getAllMatches(prefix).forEachRemaining(result::add);
+        assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "'");
+
+        result.clear();
+        prefixLookup.getAllMatches(prefix.toCharArray()).forEachRemaining(result::add);
+        assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "' as char[]");
     }
 
     @Test

@@ -18,6 +18,9 @@ package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private final boolean        caseSensitive;
@@ -107,6 +110,8 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return get(prefix) != null;
     }
 
+    // ==============================================================
+    // GET
     @Override
     public V get(String prefix) {
         if (charIndex == prefix.length()) {
@@ -130,7 +135,6 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.get(prefix);
     }
 
-
     @Override
     public V get(char[] prefix) {
         if (charIndex == prefix.length) {
@@ -153,6 +157,9 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
         return child.get(prefix);
     }
+
+    // ==============================================================
+    // GET SHORTEST
 
     @Override
     public V getShortestMatch(String input) {
@@ -196,6 +203,9 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.getShortestMatch(input);
     }
 
+    // ==============================================================
+    // GET LONGEST
+
     @Override
     public V getLongestMatch(String input) {
         if (charIndex  == input.length() ||
@@ -237,6 +247,91 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         V returnValue = child.getLongestMatch(input);
         return (returnValue == null) ? theValue : returnValue;
     }
+
+    // ==============================================================
+    // GET ALL VIA ITERATOR
+
+    public static class ASCIITrieIterator<V extends Serializable> implements Iterator<V> {
+        private V next;
+        private final char[] input;
+        private ASCIIPrefixTrie<V> node;
+
+        ASCIITrieIterator(char[] input, ASCIIPrefixTrie<V> node) {
+            this.input = input;
+            this.node = node;
+            this.next = getNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public V next() {
+            if (next == null) {
+                throw new NoSuchElementException("Trying next() when hasNext() is false.");
+            }
+            V result = next;
+            next = getNext();
+            return result;
+        }
+
+        private V getNext() {
+            if (node == null) {
+                return null;
+            }
+
+            V theValue = node.theValue;
+
+            // Are we at the last possible one for the given input?
+            if (node.charIndex  == input.length ||
+                node.childNodes == null) {
+                node = null;
+                return theValue;
+            }
+
+            // Find the next
+            char myChar = input[node.charIndex]; // This will give us the ASCII value of the char
+            if (myChar < 32 || myChar > 126) {
+                node = null; // Cannot store these, so this is where it ends.
+                return theValue;
+            }
+
+            ASCIIPrefixTrie<V> child = node.childNodes[myChar];
+            if (child == null) {
+                node = null; // No more children, so this is where it ends.
+                return theValue;
+            }
+
+            node = child;
+            if (theValue == null) {
+                return getNext();
+            }
+            return theValue;
+        }
+
+        @Override
+        public String toString() {
+            return "ASCIITrieIterator{" +
+                "next=" + next +
+                ", input=" + Arrays.toString(input) +
+                ", node=" + node +
+                '}';
+        }
+    }
+
+    @Override
+    public Iterator<V> getAllMatches(String input) {
+        return new ASCIITrieIterator<>(input.toCharArray(), this);
+    }
+
+    @Override
+    public Iterator<V> getAllMatches(char[] input) {
+        return new ASCIITrieIterator<>(input, this);
+    }
+
+    // ==============================================================
 
     @Override
     public void clear() {

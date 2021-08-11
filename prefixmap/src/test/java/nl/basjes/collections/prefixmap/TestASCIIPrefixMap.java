@@ -19,11 +19,15 @@ import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestASCIIPrefixMap extends AbstractPrefixMapTests {
 
@@ -196,6 +200,10 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Contains
         checkContains(prefixLookup, "MisMatch", false);
 
+        // These are 1 char per character
+        checkContains(prefixLookup, "你",       false);
+        checkContains(prefixLookup, "你好",     false);
+
         // Same case
         checkContains(prefixLookup, "A",       false);
         checkContains(prefixLookup, "AB",      false);
@@ -215,6 +223,8 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "ABC€",    false);
         checkContains(prefixLookup, "ABCD€",   false);
 
+        checkGetAllIterator(prefixLookup, "ABCD", "Result ABC", "Result ABCD");
+
         // Different case
         checkContains(prefixLookup, "a",       false);
         checkContains(prefixLookup, "ab",      false);
@@ -233,6 +243,8 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
         checkContains(prefixLookup, "abcd€",   false);
+
+        checkGetAllIterator(prefixLookup, "abcd", "Result ABC", "Result ABCD");
     }
 
     @Test
@@ -252,6 +264,8 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkShortest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
         checkShortest(prefixLookup, "你好",     null);
+        // These are 2 chars per character
+        checkShortest(prefixLookup, "🖖👹",    null);
 
         // Same case
         checkShortest(prefixLookup, "A",       null);
@@ -296,8 +310,9 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkLongest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
         checkLongest(prefixLookup, "你好",     null);
-
-        // Same case
+        // These are 2 chars per character
+        checkLongest(prefixLookup, "🖖👹",    null);
+            // Same case
         checkLongest(prefixLookup, "A",       null);
         checkLongest(prefixLookup, "AB",      null);
         checkLongest(prefixLookup, "ABC",     "Result ABC");
@@ -339,6 +354,13 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Contains
         checkContains(prefixLookup, "MisMatch", false);
 
+        // These are 1 char per character
+        checkContains(prefixLookup, "你",      false);
+        checkContains(prefixLookup, "你好",    false);
+        // These are 2 chars per character
+        checkContains(prefixLookup, "🖖",     false);
+        checkContains(prefixLookup, "🖖👹",   false);
+
         // Same case
         checkContains(prefixLookup, "A",       false);
         checkContains(prefixLookup, "AB",      false);
@@ -358,6 +380,8 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "ABC€",    false);
         checkContains(prefixLookup, "ABCD€",   false);
 
+        checkGetAllIterator(prefixLookup, "ABCD", "Result ABC", "Result ABCD");
+
         // Different case
         checkContains(prefixLookup, "a",       false);
         checkContains(prefixLookup, "ab",      false);
@@ -376,6 +400,38 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "abc\\t",  false);
         checkContains(prefixLookup, "abc€",    false);
         checkContains(prefixLookup, "abcd€",   false);
+
+        checkGetAllIterator(prefixLookup, "abcd"); // No output
     }
 
+    @Test
+    void testIteratorBasics() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
+        assertTrue(matches.hasNext());
+        assertEquals("Result A", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABC", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABCDE", matches.next());
+        assertFalse(matches.hasNext());
+
+        assertThrows(NoSuchElementException.class, matches::next);
+    }
+
+    @Test
+    void testCaseINSensitiveIterator() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        checkGetAllIterator(prefixLookup, "aBcDeF", "Result A", "Result ABC", "Result ABCDE");
+    }
 }

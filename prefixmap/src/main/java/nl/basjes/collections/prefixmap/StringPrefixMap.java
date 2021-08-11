@@ -26,6 +26,7 @@ import nl.basjes.collections.PrefixMap;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -56,6 +57,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
      * This is used to configure the provided Kryo instance if Kryo serialization is desired.
      * The expected type here is Object because otherwise the Kryo library becomes
      * a mandatory dependency on any project that uses Yauaa.
+     *
      * @param kryoInstance The instance of com.esotericsoftware.kryo.Kryo that needs to be configured.
      */
     public static void configureKryo(Object kryoInstance) {
@@ -153,11 +155,6 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
-    public V get(char[] prefix) {
-        return prefixTrie.get(prefix);
-    }
-
-    @Override
     public V getShortestMatch(String input) {
         return prefixTrie.getShortestMatch(input);
     }
@@ -168,6 +165,16 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
+    public Iterator<V> getAllMatches(String input) {
+        return prefixTrie.getAllMatches(input);
+    }
+
+    @Override
+    public V get(char[] prefix) {
+        return prefixTrie.get(prefix);
+    }
+
+    @Override
     public V getShortestMatch(char[] input) {
         return prefixTrie.getShortestMatch(input);
     }
@@ -175,6 +182,11 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     @Override
     public V getLongestMatch(char[] input) {
         return prefixTrie.getLongestMatch(input);
+    }
+
+    @Override
+    public Iterator<V> getAllMatches(char[] input) {
+        return prefixTrie.getAllMatches(input);
     }
 
     @Override

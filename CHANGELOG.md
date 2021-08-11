@@ -3,6 +3,7 @@ v2.1-SNAPSHOT
 ===
 - Added support for directly searching for a char[]
 - Added tests searching for 🖖 (which is a 2 char character).
+- Added a way to get all matches via an iterator.
 
 v2.0
 ===
