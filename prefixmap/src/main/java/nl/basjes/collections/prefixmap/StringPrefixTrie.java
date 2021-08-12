@@ -261,10 +261,6 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
             // Find the next
             char myChar = input[node.charIndex]; // This will give us the ASCII value of the char
-            if (myChar < 32 || myChar > 126) {
-                node = null; // Cannot store these, so this is where it ends.
-                return theValue;
-            }
 
             StringPrefixTrie<V> child = node.childNodes.get(myChar);
             if (child == null) {

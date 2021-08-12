@@ -425,6 +425,31 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
     }
 
     @Test
+    void testCaseNonASCIIIterator() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("",         "Empty");
+        prefixLookup.put("A",        "Result A");
+        prefixLookup.put("ABC",      "Result ABC");
+        prefixLookup.put("ABCDE",    "Result ABCDE");
+        prefixLookup.put("ABCDEFG",  "Result ABCDEFG");
+
+        checkGetAllIterator(prefixLookup, "",           "Empty");
+        checkGetAllIterator(prefixLookup, "aB",         "Empty", "Result A");
+        checkGetAllIterator(prefixLookup, "aBc",        "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖",       "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖e",       "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖eF",     "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖eFgH",   "Empty", "Result A", "Result ABC");
+
+        checkGetAllIterator(prefixLookup, "🖖",          "Empty");
+        checkGetAllIterator(prefixLookup, "🖖BcDe",      "Empty");
+
+        checkGetAllIterator(prefixLookup, "你好",          "Empty");
+        checkGetAllIterator(prefixLookup, "你好DeF",       "Empty");
+        checkGetAllIterator(prefixLookup, "你🖖DeFg",      "Empty");
+    }
+
+    @Test
     void testCaseINSensitiveIterator() {
         PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.put("A",       "Result A");

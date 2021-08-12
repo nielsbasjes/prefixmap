@@ -389,6 +389,40 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
     }
 
     @Test
+    void testCaseNonASCIIIterator() {
+        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
+        prefixLookup.put("",         "Empty");
+        prefixLookup.put("你",       "One Chinese 'letter'");
+        prefixLookup.put("你好",      "Hello in Chinese");
+        prefixLookup.put("你好DE",    "Chinese DE");
+        prefixLookup.put("🖖",       "Result 🖖");
+        prefixLookup.put("🖖B",       "Result 🖖B");
+        prefixLookup.put("A",        "Result A");
+        prefixLookup.put("ABC",      "Result ABC");
+        prefixLookup.put("ABCDE",    "Result ABCDE");
+        prefixLookup.put("ABCDEFG",  "Result ABCDEFG");
+        prefixLookup.put("ABC🖖",    "Result ABC🖖");
+        prefixLookup.put("ABC🖖EF",  "Result ABC🖖EF");
+        prefixLookup.put("ABC你",     "Result ABC你");
+        prefixLookup.put("ABC你EF",  "Result ABC你EF");
+
+        checkGetAllIterator(prefixLookup, "",           "Empty");
+        checkGetAllIterator(prefixLookup, "aB",         "Empty", "Result A");
+        checkGetAllIterator(prefixLookup, "aBc",        "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖",       "Empty", "Result A", "Result ABC", "Result ABC🖖");
+        checkGetAllIterator(prefixLookup, "aBc🖖e",       "Empty", "Result A", "Result ABC", "Result ABC🖖");
+        checkGetAllIterator(prefixLookup, "aBc🖖eF",     "Empty", "Result A", "Result ABC", "Result ABC🖖", "Result ABC🖖EF");
+        checkGetAllIterator(prefixLookup, "aBc🖖eFgH",   "Empty", "Result A", "Result ABC", "Result ABC🖖", "Result ABC🖖EF");
+
+        checkGetAllIterator(prefixLookup, "🖖",          "Empty", "Result 🖖");
+        checkGetAllIterator(prefixLookup, "🖖BcDe",      "Empty", "Result 🖖", "Result 🖖B");
+
+        checkGetAllIterator(prefixLookup, "你好",          "Empty", "One Chinese 'letter'", "Hello in Chinese");
+        checkGetAllIterator(prefixLookup, "你好DeF",       "Empty", "One Chinese 'letter'", "Hello in Chinese", "Chinese DE");
+        checkGetAllIterator(prefixLookup, "你🖖DeFg",      "Empty", "One Chinese 'letter'");
+    }
+
+    @Test
     void verifyDocumentationExampleUsage() {
         // Parameter caseSensitive=false --> so lookups are caseINsensitive
         PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
