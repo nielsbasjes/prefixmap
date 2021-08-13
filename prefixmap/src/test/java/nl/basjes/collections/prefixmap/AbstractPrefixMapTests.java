@@ -20,11 +20,15 @@ import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract class AbstractPrefixMapTests {
 
@@ -358,6 +362,89 @@ abstract class AbstractPrefixMapTests {
         PrefixMap<String> instance2 = createPrefixMap(false);
         instance.forEach(instance2::put);
         verifySerializationInstance(instance2);
+    }
+
+    @Test
+    void testIteratorEmpty() {
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        Iterator<String> matches;
+
+        matches = prefixLookup.getAllMatches("");
+        assertFalse(matches.hasNext());
+        assertThrows(NoSuchElementException.class, matches::next);
+
+        matches = prefixLookup.getAllMatches("Anything");
+        assertFalse(matches.hasNext());
+        assertThrows(NoSuchElementException.class, matches::next);
+    }
+
+    @Test
+    void testNPEOnNullInput() {
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        // Just don't pass a null value.
+        assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((String) null));
+        assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((char[]) null));
+    }
+
+    @Test
+    void testIteratorMatchEmptyString() {
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        Iterator<String> matches;
+
+        // Only a single empty string
+        prefixLookup.put("", "Result Empty");
+        matches = prefixLookup.getAllMatches("");
+        assertTrue(matches.hasNext());
+        assertEquals("Result Empty", matches.next());
+        assertFalse(matches.hasNext());
+        assertThrows(NoSuchElementException.class, matches::next);
+
+    }
+
+    @Test
+    void testIteratorZeroMatches() {
+        // Normal value but no matches at all
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        prefixLookup.put("ABC",       "Result Empty");
+        Iterator<String> matches = prefixLookup.getAllMatches("XYZ");
+        assertFalse(matches.hasNext());
+        assertThrows(NoSuchElementException.class, matches::next);
+    }
+
+    @Test
+    void testIteratorSingleMatch() {
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        Iterator<String> matches = prefixLookup.getAllMatches("aBXYZ");
+        assertTrue(matches.hasNext());
+        assertEquals("Result A", matches.next());
+        assertFalse(matches.hasNext());
+
+        assertThrows(NoSuchElementException.class, matches::next);
+    }
+
+    @Test
+    void testIteratorNormalUse() {
+        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        prefixLookup.put("A",       "Result A");
+        prefixLookup.put("ABC",     "Result ABC");
+        prefixLookup.put("ABCDE",   "Result ABCDE");
+        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+
+        Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
+        assertTrue(matches.hasNext());
+        assertEquals("Result A", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABC", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABCDE", matches.next());
+        assertFalse(matches.hasNext());
+
+        assertThrows(NoSuchElementException.class, matches::next);
     }
 
 }

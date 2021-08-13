@@ -356,27 +356,6 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         checkGetAllIterator(prefixLookup, "abcd"); // No output
     }
 
-
-    @Test
-    void testIteratorBasics() {
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
-        prefixLookup.put("A",       "Result A");
-        prefixLookup.put("ABC",     "Result ABC");
-        prefixLookup.put("ABCDE",   "Result ABCDE");
-        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
-
-        Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
-        assertTrue(matches.hasNext());
-        assertEquals("Result A", matches.next());
-        assertTrue(matches.hasNext());
-        assertEquals("Result ABC", matches.next());
-        assertTrue(matches.hasNext());
-        assertEquals("Result ABCDE", matches.next());
-        assertFalse(matches.hasNext());
-
-        assertThrows(NoSuchElementException.class, matches::next);
-    }
-
     @Test
     void testCaseINSensitiveIterator() {
         PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
