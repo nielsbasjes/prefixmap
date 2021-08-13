@@ -29,9 +29,9 @@ For both of these types of use cases being able to do this analysis as fast as p
 
 Analyzing the device model
 ===
-As described in two previous articles ( 
+As described in two previous articles (
 [For better device profiling, delete your DDR!](https://techlab.bol.com/better-device-profiling)
- and [Making sense of the user agent string](https://techlab.bol.com/making-sense-user-agent-string) ) 
+ and [Making sense of the user agent string](https://techlab.bol.com/making-sense-user-agent-string) )
  we use an opensource tool called [Yauaa (Yet Another UserAgent Analyzer)](https://yauaa.basjes.nl) for analyzing the user agent string.
 
 One of the slowest steps in the analysis of Yauaa is the classification of the brand of device that was used.
@@ -133,7 +133,7 @@ The problem of “Finding the prefix that best matches the provided string” se
 I expected to find a working implementation in something like Apache Common Collections.
 However … I couldn’t find it.
 
-After some asking around my colleague [Oscar](https://techlab.bol.com/author/owestra/) said a 
+After some asking around my colleague [Oscar](https://techlab.bol.com/author/owestra/) said a
 [Trie](https://en.wikipedia.org/wiki/Trie) is probably the most suitable data structure to handle this type of question.
 The idea of Trie is that a tree structure is used where the nodes contain a letter and a walk from the root to the leaves is essentially spelling a word.
 
@@ -223,7 +223,7 @@ But in the real context ... it didn’t really matter.
 
 Running the Yauaa parsing benchmarks showed this over the last few versions:
 
-![Performance](https://techlab.bol.com/app/files/2018/12/FindPrefix-Performance.png)
+![Performance](FindPrefix-Performance.png)
 So in the context of the application the removal of the vast number of rules and replacing them by a bit of Java code made a massive impact (81% less time spent).
 The subsequent improvements of switching from the List implementation to the Trie with toLowerCase resulted in only about 4.4% speedup compared to the List.
 Yet the switch to the Trie without toLowerCase  made almost no impact in this use case: &lt; 1% .
