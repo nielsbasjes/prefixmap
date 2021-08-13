@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Niels Basjes
+ * Copyright (C) 2018-2021 Niels Basjes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ public class ASCIIPrefixMap<V extends Serializable> extends StringPrefixMap<V> {
      * This is used to configure the provided Kryo instance if Kryo serialization is desired.
      * The expected type here is Object because otherwise the Kryo library becomes
      * a mandatory dependency on any project that uses Yauaa.
+     *
      * @param kryoInstance The instance of com.esotericsoftware.kryo.Kryo that needs to be configured.
      */
     public static void configureKryo(Object kryoInstance) {
