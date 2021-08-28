@@ -29,8 +29,8 @@
   <description>A datastructure the allows looking up the best matching prefix.</description>
 
   <properties>
-    <target.java.version>11</target.java.version>
-    <target.java.release>11</target.java.release>
+    <target.java.version>1.8</target.java.version>
+    <target.java.release>8</target.java.release>
 
     <!--  We test with Kryo 4.x to ensure backwards compatibility. -->
     <kryo4.version>4.0.2</kryo4.version>
@@ -445,13 +445,37 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <!-- Based upon https://maven.apache.org/plugins/maven-compiler-plugin/examples/module-info.html-->
+        <executions>
+          <execution>
+            <id>Compile for Java 9 to build correct module-info</id>
+            <configuration>
+              <!-- compile everything to ensure module-info contains right entries -->
+              <release>9</release>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Compile for Java 8 to build classes correctly</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <!-- recompile everything for target VM except the module-info.java -->
+            <configuration>
+              <excludes>
+                <exclude>module-info.java</exclude>
+              </excludes>
+              <release>${target.java.release}</release>
+              <compilerArgument>
+                -Xlint:unchecked
+              </compilerArgument>
+              <showWarnings>true</showWarnings>
+              <showDeprecation>true</showDeprecation>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
-          <release>${target.java.release}</release>
-          <compilerArgument>
-            -Xlint:unchecked
-          </compilerArgument>
-          <showWarnings>true</showWarnings>
-          <showDeprecation>true</showDeprecation>
+          <!-- This here is to lie to plugins like javadoc -->
+          <release>9</release>
         </configuration>
       </plugin>
 

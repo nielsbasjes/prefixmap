@@ -1,10 +1,9 @@
 This is intended as an overview of the major changes
-v3.0-SNAPSHOT
+v2.1-SNAPSHOT
 ===
 - Added support for directly searching for a char[]
 - Added tests searching for 🖖 (which is a 2 char character).
 - Added a way to get all matches via an iterator.
-- Full switch to Java 11
 
 v2.0
 ===
