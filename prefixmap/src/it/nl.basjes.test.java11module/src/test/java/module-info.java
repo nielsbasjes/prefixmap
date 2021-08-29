@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-open module nl.basjes.test.java11module {
+module nl.basjes.test.java11module {
     // Optional module only needed if the Kryo serialization is desired
     requires com.esotericsoftware.kryo;
 
