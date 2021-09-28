@@ -18,9 +18,9 @@ package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 
 class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private final boolean        caseSensitive;
@@ -37,19 +37,28 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         this.charIndex = charIndex;
     }
 
+    public static void throwOnInvalidASCIIChar(int myChar) {
+        if (isInvalidASCIIChar(myChar)) {
+            throw new IllegalArgumentException("Only readable ASCII is allowed as prefix !!!");
+        }
+    }
+
+    public static boolean isInvalidASCIIChar(int myChar) {
+        return (myChar < 32 || myChar > 126);
+    }
+
     @SuppressWarnings("unchecked") // Creating the array of generics is tricky
     @Override
-    public V add(String prefix, V value) {
+    public V add(PrimitiveIterator.OfInt prefix, V value) {
         V previousValue = theValue;
-        if (charIndex == prefix.length()) {
+
+        if (!prefix.hasNext()) {
             theValue = value;
             return previousValue;
         }
 
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            throw new IllegalArgumentException("Only readable ASCII is allowed as prefix !!!");
-        }
+        int myChar = prefix.nextInt(); // This will give us the ASCII value of the char
+        throwOnInvalidASCIIChar(myChar);
 
         if (childNodes == null) {
             childNodes = (ASCIIPrefixTrie<V>[]) Array.newInstance(ASCIIPrefixTrie.class, 128);
@@ -64,8 +73,8 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             // If case INsensitive we build the tree
             // and we link the same child to both the
             // lower and uppercase entries in the child array.
-            char lower = Character.toLowerCase(myChar);
-            char upper = Character.toUpperCase(myChar);
+            int lower = Character.toLowerCase(myChar);
+            int upper = Character.toUpperCase(myChar);
 
             if (childNodes[lower] == null) {
                 childNodes[lower] = new ASCIIPrefixTrie<>(false, charIndex + 1);
@@ -77,8 +86,8 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public V remove(String prefix) {
-        if (charIndex == prefix.length()) {
+    public V remove(PrimitiveIterator.OfInt  prefix) {
+        if (!prefix.hasNext()) {
             V previousValue = theValue;
             theValue = null;
             return previousValue;
@@ -88,10 +97,8 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return null;
         }
 
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            throw new IllegalArgumentException("Only readable ASCII is allowed as prefix !!!");
-        }
+        int myChar = prefix.nextInt(); // This will give us the ASCII value of the char
+        throwOnInvalidASCIIChar(myChar);
 
         if (!caseSensitive) {
             // If case INsensitive we only follow the lower case one.
@@ -105,16 +112,11 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
         return child.remove(prefix);
     }
 
-    @Override
-    public boolean containsPrefix(String prefix) {
-        return get(prefix) != null;
-    }
-
     // ==============================================================
     // GET
     @Override
-    public V get(String prefix) {
-        if (charIndex == prefix.length()) {
+    public V get(PrimitiveIterator.OfInt prefix) {
+        if (!prefix.hasNext()) {
             return theValue;
         }
 
@@ -122,31 +124,8 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return null;
         }
 
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return null; // Cannot store these, so is false.
-        }
-
-        ASCIIPrefixTrie<V> child = childNodes[myChar];
-        if (child == null) {
-            return null;
-        }
-
-        return child.get(prefix);
-    }
-
-    @Override
-    public V get(char[] prefix) {
-        if (charIndex == prefix.length) {
-            return theValue;
-        }
-
-        if (childNodes == null) {
-            return null;
-        }
-
-        char myChar = prefix[charIndex]; // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
+        int myChar = prefix.nextInt(); // This will give us the ASCII value of the char
+        if (isInvalidASCIIChar(myChar)) {
             return null; // Cannot store these, so is false.
         }
 
@@ -160,38 +139,16 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     // ==============================================================
     // GET SHORTEST
-
     @Override
-    public V getShortestMatch(String input) {
+    public V getShortestMatch(PrimitiveIterator.OfInt input) {
         if (theValue != null ||
-            charIndex == input.length() ||
+            !input.hasNext() ||
             childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return null; // Cannot store these, so this is where it ends.
-        }
-
-        ASCIIPrefixTrie<V> child = childNodes[myChar];
-        if (child == null) {
-            return null;
-        }
-
-        return child.getShortestMatch(input);
-    }
-
-    @Override
-    public V getShortestMatch(char[] input) {
-        if (theValue != null ||
-            charIndex == input.length ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input[charIndex]; // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
+        int myChar = input.nextInt(); // This will give us the ASCII value of the char
+        if (isInvalidASCIIChar(myChar)) {
             return null; // Cannot store these, so this is where it ends.
         }
 
@@ -207,34 +164,13 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     // GET LONGEST
 
     @Override
-    public V getLongestMatch(String input) {
-        if (charIndex  == input.length() ||
+    public V getLongestMatch(PrimitiveIterator.OfInt input) {
+        if (!input.hasNext() ||
             childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex); // This will give us the ASCII value of the char
-        if (myChar < 32 || myChar > 126) {
-            return theValue; // Cannot store these, so this is where it ends.
-        }
-
-        ASCIIPrefixTrie<V> child = childNodes[myChar];
-        if (child == null) {
-            return theValue;
-        }
-
-        V returnValue = child.getLongestMatch(input);
-        return (returnValue == null) ? theValue : returnValue;
-    }
-
-    @Override
-    public V getLongestMatch(char[] input) {
-        if (charIndex  == input.length ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input[charIndex]; // This will give us the ASCII value of the char
+        int myChar = input.nextInt(); // This will give us the ASCII value of the char
         if (myChar < 32 || myChar > 126) {
             return theValue; // Cannot store these, so this is where it ends.
         }
@@ -253,10 +189,10 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     public static class ASCIITrieIterator<V extends Serializable> implements Iterator<V> {
         private V next;
-        private final char[] input;
+        private final PrimitiveIterator.OfInt input;
         private ASCIIPrefixTrie<V> node;
 
-        ASCIITrieIterator(char[] input, ASCIIPrefixTrie<V> node) {
+        ASCIITrieIterator(PrimitiveIterator.OfInt input, ASCIIPrefixTrie<V> node) {
             this.input = input;
             this.node = node;
             this.next = getNext();
@@ -285,14 +221,14 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             V theValue = node.theValue;
 
             // Are we at the last possible one for the given input?
-            if (node.charIndex  == input.length ||
+            if (!input.hasNext() ||
                 node.childNodes == null) {
                 node = null;
                 return theValue;
             }
 
             // Find the next
-            char myChar = input[node.charIndex]; // This will give us the ASCII value of the char
+            int myChar = input.nextInt(); // This will give us the ASCII value of the char
             if (myChar < 32 || myChar > 126) {
                 node = null; // Cannot store these, so this is where it ends.
                 return theValue;
@@ -310,24 +246,10 @@ class ASCIIPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             }
             return theValue;
         }
-
-        @Override
-        public String toString() {
-            return "ASCIITrieIterator{" +
-                "next=" + next +
-                ", input=" + Arrays.toString(input) +
-                ", node=" + node +
-                '}';
-        }
     }
 
     @Override
-    public Iterator<V> getAllMatches(String input) {
-        return new ASCIITrieIterator<>(input.toCharArray(), this);
-    }
-
-    @Override
-    public Iterator<V> getAllMatches(char[] input) {
+    public Iterator<V> getAllMatches(PrimitiveIterator.OfInt input) {
         return new ASCIITrieIterator<>(input, this);
     }
 

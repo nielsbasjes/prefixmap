@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.PrimitiveIterator;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,12 +50,7 @@ class TestPrefixMapAllMethods {
         }
 
         @Override
-        public boolean containsPrefix(String prefix) {
-            return false;
-        }
-
-        @Override
-        public boolean containsPrefix(char[] prefix) {
+        public boolean containsPrefix(PrimitiveIterator.OfInt prefix) {
             return false;
         }
 
@@ -74,37 +70,17 @@ class TestPrefixMapAllMethods {
         }
 
         @Override
-        public String get(char[] prefix) {
+        public String getShortestMatch(PrimitiveIterator.OfInt input) {
             return null;
         }
 
         @Override
-        public String getShortestMatch(String input) {
+        public String getLongestMatch(PrimitiveIterator.OfInt input) {
             return null;
         }
 
         @Override
-        public String getLongestMatch(String input) {
-            return null;
-        }
-
-        @Override
-        public String getShortestMatch(char[] input) {
-            return null;
-        }
-
-        @Override
-        public String getLongestMatch(char[] input) {
-            return null;
-        }
-
-        @Override
-        public Iterator<String> getAllMatches(String input) {
-            return Collections.emptyIterator();
-        }
-
-        @Override
-        public Iterator<String> getAllMatches(char[] input) {
+        public Iterator<String> getAllMatches(PrimitiveIterator.OfInt input) {
             return Collections.emptyIterator();
         }
     }

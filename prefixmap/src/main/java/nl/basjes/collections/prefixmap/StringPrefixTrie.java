@@ -17,15 +17,15 @@
 package nl.basjes.collections.prefixmap;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 import java.util.TreeMap;
 
 class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     private final boolean                     caseSensitive;
     private final int                         charIndex;
-    private TreeMap<Character, StringPrefixTrie<V>> childNodes;
+    private TreeMap<Integer, StringPrefixTrie<V>> childNodes;
     private V                                 theValue;
 
     StringPrefixTrie(boolean caseSensitive) {
@@ -38,14 +38,14 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public V add(String prefix, V value) {
+    public V add(PrimitiveIterator.OfInt prefix, V value) {
         V previousValue = theValue;
-        if (charIndex == prefix.length()) {
+        if (!prefix.hasNext()) {
             theValue = value;
             return previousValue;
         }
 
-        char myChar = prefix.charAt(charIndex);
+        int myChar = prefix.nextInt();
 
         if (childNodes == null) {
             childNodes = new TreeMap<>();
@@ -58,8 +58,8 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             // If case INsensitive we build the tree
             // and we link the same child to both the
             // lower and uppercase entries in the child array.
-            char lower = Character.toLowerCase(myChar);
-            char upper = Character.toUpperCase(myChar);
+            int lower = Character.toLowerCase(myChar);
+            int upper = Character.toUpperCase(myChar);
 
             StringPrefixTrie<V> child = childNodes.computeIfAbsent(lower, c -> new StringPrefixTrie<>(false, charIndex + 1));
             previousValue = child.add(prefix, value);
@@ -69,8 +69,8 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     }
 
     @Override
-    public V remove(String prefix) {
-        if (charIndex == prefix.length()) {
+    public V remove(PrimitiveIterator.OfInt prefix) {
+        if (!prefix.hasNext()) {
             V previousValue = theValue;
             theValue = null;
             return previousValue;
@@ -80,7 +80,7 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return null;
         }
 
-        char myChar = prefix.charAt(charIndex); // This will give us the ASCII value of the char
+        int myChar = prefix.nextInt(); // This will give us the ASCII value of the char
 
         if (!caseSensitive) {
             // If case INsensitive we only follow the lower case one.
@@ -98,8 +98,8 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     // GET
 
     @Override
-    public V get(String prefix) {
-        if (charIndex == prefix.length()) {
+    public V get(PrimitiveIterator.OfInt prefix) {
+        if (!prefix.hasNext()) {
             return theValue;
         }
 
@@ -107,28 +107,7 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             return null;
         }
 
-        char myChar = prefix.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
-            return null;
-        }
-
-        return child.get(prefix);
-    }
-
-
-    @Override
-    public V get(char[] prefix) {
-        if (charIndex == prefix.length) {
-            return theValue;
-        }
-
-        if (childNodes == null) {
-            return null;
-        }
-
-        char myChar = prefix[charIndex];
+        int myChar = prefix.nextInt();
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
@@ -142,33 +121,14 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     // GET SHORTEST
 
     @Override
-    public V getShortestMatch(String input) {
+    public V getShortestMatch(PrimitiveIterator.OfInt input) {
         if (theValue != null ||
-            charIndex == input.length() ||
+            !input.hasNext() ||
             childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
-            return null;
-        }
-
-        return child.getShortestMatch(input);
-    }
-
-
-    @Override
-    public V getShortestMatch(char[] input) {
-        if (theValue != null ||
-            charIndex == input.length ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input[charIndex];
+        int myChar = input.nextInt();
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
@@ -182,30 +142,12 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
     // GET LONGEST
 
     @Override
-    public V getLongestMatch(String input) {
-        if (charIndex == input.length() || childNodes == null) {
+    public V getLongestMatch(PrimitiveIterator.OfInt input) {
+        if (!input.hasNext() || childNodes == null) {
             return theValue;
         }
 
-        char myChar = input.charAt(charIndex);
-
-        PrefixTrie<V> child = childNodes.get(myChar);
-        if (child == null) {
-            return theValue;
-        }
-
-        V returnValue = child.getLongestMatch(input);
-        return (returnValue == null) ? theValue : returnValue;
-    }
-
-    @Override
-    public V getLongestMatch(char[] input) {
-        if (charIndex == input.length ||
-            childNodes == null) {
-            return theValue;
-        }
-
-        char myChar = input[charIndex];
+        int myChar = input.nextInt();
 
         PrefixTrie<V> child = childNodes.get(myChar);
         if (child == null) {
@@ -221,10 +163,10 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
 
     public static class StringTrieIterator<V extends Serializable> implements Iterator<V> {
         private V next;
-        private final char[] input;
+        private final PrimitiveIterator.OfInt input;
         private StringPrefixTrie<V> node;
 
-        StringTrieIterator(char[] input, StringPrefixTrie<V> node) {
+        StringTrieIterator(PrimitiveIterator.OfInt input, StringPrefixTrie<V> node) {
             this.input = input;
             this.node = node;
             this.next = getNext();
@@ -253,14 +195,14 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             V theValue = node.theValue;
 
             // Are we at the last possible one for the given input?
-            if (node.charIndex  == input.length ||
+            if (!input.hasNext() ||
                 node.childNodes == null) {
                 node = null;
                 return theValue;
             }
 
             // Find the next
-            char myChar = input[node.charIndex]; // This will give us the ASCII value of the char
+            int myChar = input.nextInt(); // This will give us the ASCII value of the char
 
             StringPrefixTrie<V> child = node.childNodes.get(myChar);
             if (child == null) {
@@ -274,24 +216,10 @@ class StringPrefixTrie<V extends Serializable> implements PrefixTrie<V> {
             }
             return theValue;
         }
-
-        @Override
-        public String toString() {
-            return "StringTrieIterator{" +
-                "next=" + next +
-                ", input=" + Arrays.toString(input) +
-                ", node=" + node +
-                '}';
-        }
     }
 
     @Override
-    public Iterator<V> getAllMatches(String input) {
-        return new StringTrieIterator<>(input.toCharArray(), this);
-    }
-
-    @Override
-    public Iterator<V> getAllMatches(char[] input) {
+    public Iterator<V> getAllMatches(PrimitiveIterator.OfInt input) {
         return new StringTrieIterator<>(input, this);
     }
 

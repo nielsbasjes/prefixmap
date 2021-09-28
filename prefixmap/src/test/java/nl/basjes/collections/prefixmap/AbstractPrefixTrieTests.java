@@ -16,7 +16,6 @@
 
 package nl.basjes.collections.prefixmap;
 
-import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -31,46 +30,46 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-abstract class AbstractPrefixMapTests {
+abstract class AbstractPrefixTrieTests {
 
-    abstract PrefixMap<String> createPrefixMap(boolean caseSensitive);
+    abstract PrefixTrie<String> createPrefixTrie(boolean caseSensitive);
 
-    protected void checkShortest(PrefixMap<String> prefixLookup, String prefix, String expected) {
+    protected void checkShortest(PrefixTrie<String> prefixLookup, String prefix, String expected) {
         assertEquals(expected, prefixLookup.getShortestMatch(prefix),
             "Wrong 'ShortestMatch' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.getShortestMatch(prefix.codePoints().toArray()),
+        assertEquals(expected, prefixLookup.getShortestMatch(prefix.codePoints().iterator()),
             "Wrong 'ShortestMatch' result for '" + prefix + "' as int[]");
     }
 
-    protected void checkLongest(PrefixMap<String> prefixLookup, String prefix, String expected) {
+    protected void checkLongest(PrefixTrie<String> prefixLookup, String prefix, String expected) {
         assertEquals(expected, prefixLookup.getLongestMatch(prefix),
             "Wrong 'ShortestMatch' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.getLongestMatch(prefix.codePoints().toArray()),
+        assertEquals(expected, prefixLookup.getLongestMatch(prefix.codePoints().iterator()),
             "Wrong 'ShortestMatch' result for '" + prefix + "' as int[]");
     }
 
-    protected void checkContains(PrefixMap<String> prefixLookup, String prefix, boolean expected) {
+    protected void checkContains(PrefixTrie<String> prefixLookup, String prefix, boolean expected) {
         assertEquals(expected, prefixLookup.containsPrefix(prefix),
             "Wrong 'ContainsPrefix' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.containsPrefix(prefix.codePoints().toArray()),
+        assertEquals(expected, prefixLookup.containsPrefix(prefix.codePoints().iterator()),
             "Wrong 'ContainsPrefix' result for '" + prefix + "' as int[]");
     }
 
-    protected void checkGetAllIterator(PrefixMap<String> prefixLookup, String prefix, String... expected) {
+    protected void checkGetAllIterator(PrefixTrie<String> prefixLookup, String prefix, String... expected) {
         List<String> result = new ArrayList<>();
         prefixLookup.getAllMatches(prefix).forEachRemaining(result::add);
         assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "'");
 
         result.clear();
-        prefixLookup.getAllMatches(prefix.codePoints().toArray()).forEachRemaining(result::add);
+        prefixLookup.getAllMatches(prefix.codePoints().iterator()).forEachRemaining(result::add);
         assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "' as int[]");
     }
 
     @Test
     void testPutNullPrefix() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-            PrefixMap<String> prefixLookup = createPrefixMap(true);
-            prefixLookup.put(null, "Something");
+            PrefixTrie<String> prefixLookup = createPrefixTrie(true);
+            prefixLookup.add((String)null, "Something");
         });
         assertEquals("The prefix may not be null", exception.getMessage());
     }
@@ -78,8 +77,8 @@ abstract class AbstractPrefixMapTests {
     @Test
     void testPutNullValue() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-            PrefixMap<String> prefixLookup = createPrefixMap(true);
-            prefixLookup.put("Something", null);
+            PrefixTrie<String> prefixLookup = createPrefixTrie(true);
+            prefixLookup.add("Something", null);
         });
         assertEquals("The value may not be null", exception.getMessage());
     }
@@ -87,59 +86,23 @@ abstract class AbstractPrefixMapTests {
     @Test
     void testRemoveNullValue() {
         NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-            PrefixMap<String> prefixLookup = createPrefixMap(true);
-            prefixLookup.remove(null);
+            PrefixTrie<String> prefixLookup = createPrefixTrie(true);
+            prefixLookup.remove((String)null);
         });
         assertEquals("The prefix may not be null", exception.getMessage());
     }
 
     @Test
-    void testSize() {
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
-
-        assertEquals(0,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("One",     "One"));
-        assertEquals(1,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("Two",     "Two"));
-        assertEquals(2,         prefixLookup.size());
-        assertEquals("One",     prefixLookup.put("One",     "111"));
-        assertEquals(2,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("Three",   "Three"));
-        assertEquals(3,         prefixLookup.size());
-        assertEquals("Two",     prefixLookup.put("Two",     "222"));
-        assertEquals(3,         prefixLookup.size());
-        assertEquals("Three",   prefixLookup.put("Three",   "333"));
-        assertEquals(3,         prefixLookup.size());
-
-        prefixLookup.clear();
-
-        assertEquals(0,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("One",     "One"));
-        assertEquals(1,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("Two",     "Two"));
-        assertEquals(2,         prefixLookup.size());
-        assertEquals("One",     prefixLookup.put("One",     "111"));
-        assertEquals(2,         prefixLookup.size());
-        assertEquals(null,      prefixLookup.put("Three",   "Three"));
-        assertEquals(3,         prefixLookup.size());
-        assertEquals("Two",     prefixLookup.put("Two",     "222"));
-        assertEquals(3,         prefixLookup.size());
-        assertEquals("Three",   prefixLookup.put("Three",   "333"));
-        assertEquals(3,         prefixLookup.size());
-    }
-
-    @Test
     void testRemoveCaseSensitive() {
-        PrefixMap<String> prefixLookup = createPrefixMap(true);
+        PrefixTrie<String> prefixLookup = createPrefixTrie(true);
 
         // Initial filling
-        assertEquals(null,      prefixLookup.put("A",   "ONE"));
-        assertEquals(null,      prefixLookup.put("AB",  "TWO"));
-        assertEquals(null,      prefixLookup.put("ABC", "THREE"));
-        assertEquals(null,      prefixLookup.put("a",   "one"));
-        assertEquals(null,      prefixLookup.put("ab",  "two"));
-        assertEquals(null,      prefixLookup.put("abc", "three"));
-        assertEquals(6,         prefixLookup.size());
+        assertEquals(null,      prefixLookup.add("A",   "ONE"));
+        assertEquals(null,      prefixLookup.add("AB",  "TWO"));
+        assertEquals(null,      prefixLookup.add("ABC", "THREE"));
+        assertEquals(null,      prefixLookup.add("a",   "one"));
+        assertEquals(null,      prefixLookup.add("ab",  "two"));
+        assertEquals(null,      prefixLookup.add("abc", "three"));
 
         // Test uppercase
         assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
@@ -165,7 +128,6 @@ abstract class AbstractPrefixMapTests {
 
         // Now remove one entry (uppercase)
         assertEquals("ONE",     prefixLookup.remove("A"));
-        assertEquals(5,         prefixLookup.size());
 
         // Test uppercase (CHANGED!)
         assertEquals(null,      prefixLookup.getShortestMatch("A"));
@@ -186,8 +148,7 @@ abstract class AbstractPrefixMapTests {
         // =====================
 
         // Now re-add the removed entry
-        assertEquals(null,      prefixLookup.put("A",   "ONE"));
-        assertEquals(6,         prefixLookup.size());
+        assertEquals(null,      prefixLookup.add("A",   "ONE"));
 
         // Test uppercase (Original tests)
         assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
@@ -209,7 +170,6 @@ abstract class AbstractPrefixMapTests {
 
         // Now remove one entry (lowercase)
         assertEquals("one",     prefixLookup.remove("a"));
-        assertEquals(5,         prefixLookup.size());
 
         // Test uppercase (NOT changed)
         assertEquals("ONE",     prefixLookup.getShortestMatch("A"));
@@ -230,16 +190,15 @@ abstract class AbstractPrefixMapTests {
 
     @Test
     void testRemoveCaseINSensitive() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
 
         // Initial filling
-        assertEquals(null,      prefixLookup.put("A",   "ONE"));
-        assertEquals(null,      prefixLookup.put("AB",  "TWO"));
-        assertEquals(null,      prefixLookup.put("ABC", "THREE"));
-        assertEquals("ONE",     prefixLookup.put("a",   "one"));
-        assertEquals("TWO",     prefixLookup.put("ab",  "two"));
-        assertEquals("THREE",   prefixLookup.put("abc", "three"));
-        assertEquals(3,         prefixLookup.size());
+        assertEquals(null,      prefixLookup.add("A",   "ONE"));
+        assertEquals(null,      prefixLookup.add("AB",  "TWO"));
+        assertEquals(null,      prefixLookup.add("ABC", "THREE"));
+        assertEquals("ONE",     prefixLookup.add("a",   "one"));
+        assertEquals("TWO",     prefixLookup.add("ab",  "two"));
+        assertEquals("THREE",   prefixLookup.add("abc", "three"));
 
         // Test uppercase
         assertEquals("one",     prefixLookup.get("A"));
@@ -271,19 +230,15 @@ abstract class AbstractPrefixMapTests {
 
         // Now remove non-existing entry (Totally unrelated)
         assertEquals(null,      prefixLookup.remove("Does not exist"));
-        assertEquals(3,         prefixLookup.size());
 
         // Now remove non-existing entry (Partial match)
         assertEquals(null,      prefixLookup.remove("ABDDD"));
-        assertEquals(3,         prefixLookup.size());
 
         // Now remove non-existing entry (Full prefix)
         assertEquals(null,      prefixLookup.remove("ABCD"));
-        assertEquals(3,         prefixLookup.size());
 
         // Now remove one entry
         assertEquals("one",     prefixLookup.remove("A"));
-        assertEquals(2,         prefixLookup.size());
 
         // Test uppercase (CHANGED!)
         assertEquals(null,      prefixLookup.get("A"));
@@ -314,8 +269,7 @@ abstract class AbstractPrefixMapTests {
         assertEquals("three",   prefixLookup.getLongestMatch("abcd"));
 
         // Now re-add the removed entry
-        assertEquals(null,      prefixLookup.put("A",   "ONE"));
-        assertEquals(3,         prefixLookup.size());
+        assertEquals(null,      prefixLookup.add("A",   "ONE"));
 
         // Test uppercase (Original tests)
         assertEquals("ONE",     prefixLookup.get("A"));
@@ -340,34 +294,25 @@ abstract class AbstractPrefixMapTests {
         assertEquals("three",   prefixLookup.getLongestMatch("abc"));
     }
 
-    private PrefixMap<String> createSerializationInstance() {
-        PrefixMap<String> brandLookup = createPrefixMap(false);
+    private PrefixTrie<String> createSerializationInstance() {
+        PrefixTrie<String> brandLookup = createPrefixTrie(false);
 
-        brandLookup.put("RM-", "Nokia");
-        brandLookup.put("GT-", "Samsung");
+        brandLookup.add("RM-", "Nokia");
+        brandLookup.add("GT-", "Samsung");
         return brandLookup;
     }
 
-    private void verifySerializationInstance(PrefixMap<String> instance) {
+    private void verifySerializationInstance(PrefixTrie<String> instance) {
         assertEquals("Samsung", instance.getLongestMatch("gT-i8190N"));
         assertEquals("Samsung", instance.getLongestMatch("Gt-I8190n"));
         assertEquals("Nokia",   instance.getLongestMatch("rM-1092"));
         assertEquals("Nokia",   instance.getLongestMatch("Rm-1092"));
     }
 
-    @Test
-    void testEntrySet() {
-        PrefixMap<String> instance = createSerializationInstance();
-        verifySerializationInstance(instance);
-
-        PrefixMap<String> instance2 = createPrefixMap(false);
-        instance.forEach(instance2::put);
-        verifySerializationInstance(instance2);
-    }
 
     @Test
     void testIteratorEmpty() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
         Iterator<String> matches;
 
         matches = prefixLookup.getAllMatches("");
@@ -381,7 +326,7 @@ abstract class AbstractPrefixMapTests {
 
     @Test
     void testNPEOnNullInput() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
         // Just don't pass a null value.
         assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((String) null));
         assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((PrimitiveIterator.OfInt) null));
@@ -389,11 +334,11 @@ abstract class AbstractPrefixMapTests {
 
     @Test
     void testIteratorMatchEmptyString() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
         Iterator<String> matches;
 
         // Only a single empty string
-        prefixLookup.put("", "Result Empty");
+        prefixLookup.add("", "Result Empty");
         matches = prefixLookup.getAllMatches("");
         assertTrue(matches.hasNext());
         assertEquals("Result Empty", matches.next());
@@ -405,8 +350,8 @@ abstract class AbstractPrefixMapTests {
     @Test
     void testIteratorZeroMatches() {
         // Normal value but no matches at all
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
-        prefixLookup.put("ABC",       "Result Empty");
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
+        prefixLookup.add("ABC",       "Result Empty");
         Iterator<String> matches = prefixLookup.getAllMatches("XYZ");
         assertFalse(matches.hasNext());
         assertThrows(NoSuchElementException.class, matches::next);
@@ -414,11 +359,11 @@ abstract class AbstractPrefixMapTests {
 
     @Test
     void testIteratorSingleMatch() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
-        prefixLookup.put("A",       "Result A");
-        prefixLookup.put("ABC",     "Result ABC");
-        prefixLookup.put("ABCDE",   "Result ABCDE");
-        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
+        prefixLookup.add("A",       "Result A");
+        prefixLookup.add("ABC",     "Result ABC");
+        prefixLookup.add("ABCDE",   "Result ABCDE");
+        prefixLookup.add("ABCDEFG", "Result ABCDEFG");
 
         Iterator<String> matches = prefixLookup.getAllMatches("aBXYZ");
         assertTrue(matches.hasNext());
@@ -430,11 +375,11 @@ abstract class AbstractPrefixMapTests {
 
     @Test
     void testIteratorNormalUse() {
-        PrefixMap<String> prefixLookup = createPrefixMap(false);
-        prefixLookup.put("A",       "Result A");
-        prefixLookup.put("ABC",     "Result ABC");
-        prefixLookup.put("ABCDE",   "Result ABCDE");
-        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+        PrefixTrie<String> prefixLookup = createPrefixTrie(false);
+        prefixLookup.add("A",       "Result A");
+        prefixLookup.add("ABC",     "Result ABC");
+        prefixLookup.add("ABCDE",   "Result ABCDE");
+        prefixLookup.add("ABCDEFG", "Result ABCDEFG");
 
         Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
         assertTrue(matches.hasNext());

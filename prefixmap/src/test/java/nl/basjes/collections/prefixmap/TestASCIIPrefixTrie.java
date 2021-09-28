@@ -15,45 +15,87 @@
  */
 package nl.basjes.collections.prefixmap;
 
-import nl.basjes.collections.PrefixMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TestStringPrefixMap extends AbstractPrefixMapTests {
+class TestASCIIPrefixTrie extends AbstractPrefixTrieTests {
 
     @Override
-    PrefixMap<String> createPrefixMap(boolean caseSensitive) {
-        return new StringPrefixMap<>(caseSensitive);
+    PrefixTrie<String> createPrefixTrie(boolean caseSensitive) {
+        return new ASCIIPrefixTrie<>(caseSensitive);
+    }
+
+    @Test
+    void testPutNonASCIIPrefix() {
+        // These are 1 char per character
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixTrie<>(false).add("你好", "Hello in Chinese")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+    }
+
+    @Test
+    void testPutNonASCIIValue() {
+        assertDoesNotThrow(
+            () -> new ASCIIPrefixTrie<>(false).add("Hello in Chinese", "你好")
+        );
+    }
+
+    @Test
+    void testRemoveNonASCIIPrefix() {
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("你好")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+    }
+
+    @Test
+    void testPutEmojiPrefix() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            // These are 2 chars per character
+            () -> new ASCIIPrefixTrie<>(false).add("🖖", "May the force be with you (🖖)")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+    }
+
+    @Test
+    void testPutEmojiValue() {
+        assertDoesNotThrow(() -> new ASCIIPrefixTrie<>(false).add("LLAP", "May the force be with you (🖖)"));
+    }
+
+    @Test
+    void testRemoveEmojiPrefix() {
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("🖖")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
     }
 
     @Test
     void testCaseINSensitiveLookup(){
-        Map<String, String> prefixMap = new HashMap<>();
-        prefixMap.put("ABC",    "Result ABC");
-        prefixMap.put("ABCD",    "Result ABCD");
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("ABC",    "Result ABC");
+        prefixLookup.add("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
-
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
-        prefixLookup.putAll(prefixMap);
-
-        prefixLookup.put("ABCDEF",  "Result ABCDEF");
-        // These are 1 char per character
-        prefixLookup.put("你", "Hello in Chinese");
-        // These are 2 chars per character
-        prefixLookup.put("🖖", "May the force be with you (🖖)");
+        prefixLookup.add("ABCDEF",  "Result ABCDEF");
 
         // ----------------------------------------------------
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
-
         // These are 1 char per character
-        checkShortest(prefixLookup, "你好",     "Hello in Chinese");
+        checkShortest(prefixLookup, "你好",     null);
 
         // Same case
         checkShortest(prefixLookup, "A",       null);
@@ -72,7 +114,7 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
         checkShortest(prefixLookup, "ABC\\t",  "Result ABC");
         checkShortest(prefixLookup, "ABC€",    "Result ABC");
-        checkShortest(prefixLookup, "ABCD€",   "Result ABC");
+        checkShortest(prefixLookup, "ABCD€",    "Result ABC");
 
         // Different case
         checkShortest(prefixLookup, "a",       null);
@@ -96,9 +138,8 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
-
         // These are 1 char per character
-        checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        checkLongest(prefixLookup, "你好",      null);
 
         // Same case
         checkLongest(prefixLookup, "A",       null);
@@ -143,8 +184,8 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "MisMatch", false);
 
         // These are 1 char per character
-        checkContains(prefixLookup, "你",      true);
-        checkContains(prefixLookup, "你好",    false);
+        checkContains(prefixLookup, "你",       false);
+        checkContains(prefixLookup, "你好",     false);
 
         // Same case
         checkContains(prefixLookup, "A",       false);
@@ -191,28 +232,19 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
 
     @Test
     void testCaseSensitiveLookup(){
-        Map<String, String> prefixMap = new HashMap<>();
-        prefixMap.put("ABC",    "Result ABC");
-        prefixMap.put("ABCD",    "Result ABCD");
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(true);
+        prefixLookup.add("ABC",    "Result ABC");
+        prefixLookup.add("ABCD",    "Result ABCD");
         // The ABCDE is missing !!!
-
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(true);
-        prefixLookup.putAll(prefixMap);
-
-        prefixLookup.put("ABCDEF",  "Result ABCDEF");
-        // These are 1 char per character
-        prefixLookup.put("你", "Hello in Chinese");
-        // These are 2 chars per character
-        prefixLookup.put("🖖", "May the force be with you (🖖)");
+        prefixLookup.add("ABCDEF",  "Result ABCDEF");
 
         // ----------------------------------------------------
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
-
         // These are 1 char per character
-        checkShortest(prefixLookup, "你好",     "Hello in Chinese");
+        checkShortest(prefixLookup, "你好",     null);
         // These are 2 chars per character
-        checkShortest(prefixLookup, "🖖👹",     "May the force be with you (🖖)");
+        checkShortest(prefixLookup, "🖖👹",    null);
 
         // Same case
         checkShortest(prefixLookup, "A",       null);
@@ -255,13 +287,11 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         // ----------------------------------------------------
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
-
         // These are 1 char per character
-        checkLongest(prefixLookup, "你好",     "Hello in Chinese");
+        checkLongest(prefixLookup, "你好",     null);
         // These are 2 chars per character
-        checkLongest(prefixLookup, "🖖👹",    "May the force be with you (🖖)");
-
-        // Same case
+        checkLongest(prefixLookup, "🖖👹",    null);
+            // Same case
         checkLongest(prefixLookup, "A",       null);
         checkLongest(prefixLookup, "AB",      null);
         checkLongest(prefixLookup, "ABC",     "Result ABC");
@@ -304,10 +334,10 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "MisMatch", false);
 
         // These are 1 char per character
-        checkContains(prefixLookup, "你",      true);
+        checkContains(prefixLookup, "你",      false);
         checkContains(prefixLookup, "你好",    false);
         // These are 2 chars per character
-        checkContains(prefixLookup, "🖖",     true);
+        checkContains(prefixLookup, "🖖",     false);
         checkContains(prefixLookup, "🖖👹",   false);
 
         // Same case
@@ -354,82 +384,58 @@ class TestStringPrefixMap extends AbstractPrefixMapTests {
     }
 
     @Test
-    void testCaseINSensitiveIterator() {
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
-        prefixLookup.put("A",       "Result A");
-        prefixLookup.put("ABC",     "Result ABC");
-        prefixLookup.put("ABCDE",   "Result ABCDE");
-        prefixLookup.put("ABCDEFG", "Result ABCDEFG");
+    void testIteratorBasics() {
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("A",       "Result A");
+        prefixLookup.add("ABC",     "Result ABC");
+        prefixLookup.add("ABCDE",   "Result ABCDE");
+        prefixLookup.add("ABCDEFG", "Result ABCDEFG");
 
-        checkGetAllIterator(prefixLookup, "aBcDeF", "Result A", "Result ABC", "Result ABCDE");
+        Iterator<String> matches = prefixLookup.getAllMatches("aBcDeF");
+        assertTrue(matches.hasNext());
+        assertEquals("Result A", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABC", matches.next());
+        assertTrue(matches.hasNext());
+        assertEquals("Result ABCDE", matches.next());
+        assertFalse(matches.hasNext());
+
+        assertThrows(NoSuchElementException.class, matches::next);
     }
 
     @Test
     void testCaseNonASCIIIterator() {
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
-        prefixLookup.put("",         "Empty");
-        prefixLookup.put("你",       "One Chinese 'letter'");
-        prefixLookup.put("你好",      "Hello in Chinese");
-        prefixLookup.put("你好DE",    "Chinese DE");
-        prefixLookup.put("🖖",       "Result 🖖");
-        prefixLookup.put("🖖B",       "Result 🖖B");
-        prefixLookup.put("A",        "Result A");
-        prefixLookup.put("ABC",      "Result ABC");
-        prefixLookup.put("ABCDE",    "Result ABCDE");
-        prefixLookup.put("ABCDEFG",  "Result ABCDEFG");
-        prefixLookup.put("ABC🖖",    "Result ABC🖖");
-        prefixLookup.put("ABC🖖EF",  "Result ABC🖖EF");
-        prefixLookup.put("ABC你",     "Result ABC你");
-        prefixLookup.put("ABC你EF",  "Result ABC你EF");
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("",         "Empty");
+        prefixLookup.add("A",        "Result A");
+        prefixLookup.add("ABC",      "Result ABC");
+        prefixLookup.add("ABCDE",    "Result ABCDE");
+        prefixLookup.add("ABCDEFG",  "Result ABCDEFG");
 
         checkGetAllIterator(prefixLookup, "",           "Empty");
         checkGetAllIterator(prefixLookup, "aB",         "Empty", "Result A");
         checkGetAllIterator(prefixLookup, "aBc",        "Empty", "Result A", "Result ABC");
-        checkGetAllIterator(prefixLookup, "aBc🖖",       "Empty", "Result A", "Result ABC", "Result ABC🖖");
-        checkGetAllIterator(prefixLookup, "aBc🖖e",       "Empty", "Result A", "Result ABC", "Result ABC🖖");
-        checkGetAllIterator(prefixLookup, "aBc🖖eF",     "Empty", "Result A", "Result ABC", "Result ABC🖖", "Result ABC🖖EF");
-        checkGetAllIterator(prefixLookup, "aBc🖖eFgH",   "Empty", "Result A", "Result ABC", "Result ABC🖖", "Result ABC🖖EF");
+        checkGetAllIterator(prefixLookup, "aBc🖖",       "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖e",       "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖eF",     "Empty", "Result A", "Result ABC");
+        checkGetAllIterator(prefixLookup, "aBc🖖eFgH",   "Empty", "Result A", "Result ABC");
 
-        checkGetAllIterator(prefixLookup, "🖖",          "Empty", "Result 🖖");
-        checkGetAllIterator(prefixLookup, "🖖BcDe",      "Empty", "Result 🖖", "Result 🖖B");
+        checkGetAllIterator(prefixLookup, "🖖",          "Empty");
+        checkGetAllIterator(prefixLookup, "🖖BcDe",      "Empty");
 
-        checkGetAllIterator(prefixLookup, "你好",          "Empty", "One Chinese 'letter'", "Hello in Chinese");
-        checkGetAllIterator(prefixLookup, "你好DeF",       "Empty", "One Chinese 'letter'", "Hello in Chinese", "Chinese DE");
-        checkGetAllIterator(prefixLookup, "你🖖DeFg",      "Empty", "One Chinese 'letter'");
+        checkGetAllIterator(prefixLookup, "你好",          "Empty");
+        checkGetAllIterator(prefixLookup, "你好DeF",       "Empty");
+        checkGetAllIterator(prefixLookup, "你🖖DeFg",      "Empty");
     }
 
     @Test
-    void verifyDocumentationExampleUsage() {
-        // Parameter caseSensitive=false --> so lookups are caseINsensitive
-        PrefixMap<String> brandLookup = new StringPrefixMap<>(false);
+    void testCaseINSensitiveIterator() {
+        PrefixTrie<String> prefixLookup = new ASCIIPrefixTrie<>(false);
+        prefixLookup.add("A",       "Result A");
+        prefixLookup.add("ABC",     "Result ABC");
+        prefixLookup.add("ABCDE",   "Result ABCDE");
+        prefixLookup.add("ABCDEFG", "Result ABCDEFG");
 
-        brandLookup.put("RM-", "Nokia");
-        brandLookup.put("GT-", "Samsung");
-
-        String brandGT = brandLookup.getLongestMatch("GT-I8190N");   // --> "Samsung"
-        String brandRM = brandLookup.getLongestMatch("RM-1092");     // --> "Nokia"
-
-        assertEquals("Samsung", brandGT);
-        assertEquals("Nokia", brandRM);
+        checkGetAllIterator(prefixLookup, "aBcDeF", "Result A", "Result ABC", "Result ABCDE");
     }
-
-    private static final Logger LOG = LogManager.getFormatterLogger("FOO");
-
-    @Test
-    void experimentWithCodePoints() {
-        // Parameter caseSensitive=false --> so lookups are caseINsensitive
-        PrefixMap<String> prefixLookup = new StringPrefixMap<>(false);
-        prefixLookup.put("",         "Empty");
-        prefixLookup.put("你",       "One Chinese 'letter'");
-        prefixLookup.put("你好",      "Hello in Chinese");
-        prefixLookup.put("你好DE",    "Chinese DE");
-        prefixLookup.put("🖖",       "Result 🖖");
-        prefixLookup.put("🖖B",       "Result 🖖B");
-        prefixLookup.put("A",        "Result A");
-        prefixLookup.put("ABC",      "Result ABC");
-
-        String foo = "你🖖好DE";
-        LOG.info("{}", foo.codePoints().count());
-    }
-
 }

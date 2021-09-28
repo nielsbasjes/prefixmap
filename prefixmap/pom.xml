@@ -40,6 +40,14 @@
       <version>${kryo5.version}</version>
       <optional>true</optional>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.14.1</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

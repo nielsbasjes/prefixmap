@@ -28,6 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.PrimitiveIterator;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -93,12 +95,7 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
-    public boolean containsPrefix(String prefix) {
-        return prefixTrie.containsPrefix(prefix);
-    }
-
-    @Override
-    public boolean containsPrefix(char[] prefix) {
+    public boolean containsPrefix(PrimitiveIterator.OfInt prefix) {
         return prefixTrie.containsPrefix(prefix);
     }
 
@@ -112,12 +109,8 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
 
     @Override
     public V put(String prefix, V value) {
-        if (prefix == null) {
-            throw new NullPointerException("The prefix may not be null");
-        }
-        if (value == null) {
-            throw new NullPointerException("The value may not be null");
-        }
+        Objects.requireNonNull(prefix, "The prefix may not be null");
+        Objects.requireNonNull(value, "The value may not be null");
 
         V previousValue = prefixTrie.add(prefix, value);
         if (previousValue == null) {
@@ -155,37 +148,17 @@ public class StringPrefixMap<V extends Serializable> implements PrefixMap<V>, Se
     }
 
     @Override
-    public V getShortestMatch(String input) {
+    public V getShortestMatch(PrimitiveIterator.OfInt input) {
         return prefixTrie.getShortestMatch(input);
     }
 
     @Override
-    public V getLongestMatch(String input) {
+    public V getLongestMatch(PrimitiveIterator.OfInt input) {
         return prefixTrie.getLongestMatch(input);
     }
 
     @Override
-    public Iterator<V> getAllMatches(String input) {
-        return prefixTrie.getAllMatches(input);
-    }
-
-    @Override
-    public V get(char[] prefix) {
-        return prefixTrie.get(prefix);
-    }
-
-    @Override
-    public V getShortestMatch(char[] input) {
-        return prefixTrie.getShortestMatch(input);
-    }
-
-    @Override
-    public V getLongestMatch(char[] input) {
-        return prefixTrie.getLongestMatch(input);
-    }
-
-    @Override
-    public Iterator<V> getAllMatches(char[] input) {
+    public Iterator<V> getAllMatches(PrimitiveIterator.OfInt input) {
         return prefixTrie.getAllMatches(input);
     }
 

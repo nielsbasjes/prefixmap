@@ -20,7 +20,9 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.PrimitiveIterator;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 /**
  * <p>
@@ -54,30 +56,6 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
     default boolean isEmpty() {
         return size() == 0;
     }
-
-    /**
-     * <p>Returns <code>true</code> if this map contains an exact mapping
-     * for the specified prefix.</p>
-     * <p>Note that implementations may be constructed to match either
-     * case sensitive or case insensitive.</p>
-     *
-     * @param prefix prefix whose presence in this prefixmap is to be checked
-     * @return <code>true</code> if this map contains an the exact mapping
-     * for the specified prefix.
-     */
-    boolean containsPrefix(String prefix);
-
-    /**
-     * <p>Returns <code>true</code> if this map contains an exact mapping
-     * for the specified prefix.</p>
-     * <p>Note that implementations may be constructed to match either
-     * case sensitive or case insensitive.</p>
-     *
-     * @param prefix prefix whose presence in this prefixmap is to be checked
-     * @return <code>true</code> if this map contains an the exact mapping
-     * for the specified prefix.
-     */
-    boolean containsPrefix(char[] prefix);
 
     /**
      * Copies all of the mappings from the specified map to this prefixmap.
@@ -157,18 +135,6 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
      *
-     * @param prefix The char[] for which we need value of the stored prefix
-     * @return The value, null if not found.
-     */
-    V get(char[] prefix);
-
-    /**
-     * <p>Return the value of the <code>exact</code> matching prefix. </p>
-     * <p>The value returned is the stored prefix for which is true:
-     * <code>input.equals(prefix)</code>.</p>
-     * <p>Note that implementations may be constructed to match either
-     * case sensitive or case insensitive.</p>
-     *
      * @param prefix The string for which we need the stored value
      * @return The value, null if not found.
      */
@@ -201,40 +167,18 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
     }
 
     /**
-     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
-     * <p>The value returned is the shortest stored prefix for which is true:
-     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Returns <code>true</code> if this map contains an exact mapping
+     * for the specified prefix.</p>
      * <p>Note that implementations may be constructed to match either
      * case sensitive or case insensitive.</p>
      *
-     * @param input The string for which we need value of the stored prefix
-     * @return The value, null if not found.
+     * @param prefix prefix whose presence in this prefixmap is to be checked
+     * @return <code>true</code> if this map contains an the exact mapping
+     * for the specified prefix.
      */
-    V getShortestMatch(String input);
-
-    /**
-     * <p>Return the value of the longest matching prefix.</p>
-     * <p>The value returned is the longest stored prefix for which is true:
-     * <code>input.startsWith(prefix)</code>.</p>
-     * <p>Note that implementations may be constructed to match either
-     * case sensitive or case insensitive.</p>
-     *
-     * @param input The string for which we need value of the stored prefix
-     * @return The value, null if not found.
-     */
-    V getLongestMatch(String input);
-
-    /**
-     * <p>Returns List of all matches that have a value.</p>
-     * <p>The list contains all non-null values for the prefix values where this is true:
-     * <code>input.startsWith(prefix)</code>.</p>
-     * <p>Note that implementations may be constructed to match either
-     * case sensitive or case insensitive.</p>
-     *
-     * @param input The string for which we need value of the stored prefix
-     * @return The list of values, an empty List if nothing is found.
-     */
-    Iterator<V> getAllMatches(String input);
+    default boolean containsPrefix(String prefix) {
+        return containsPrefix(prefix.codePoints().iterator());
+    }
 
     /**
      * <p>Return the value of the <code>shortest</code> matching prefix. </p>
@@ -246,7 +190,9 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getShortestMatch(char[] input);
+    default V getShortestMatch(String input) {
+        return getShortestMatch(input.codePoints().iterator());
+    }
 
     /**
      * <p>Return the value of the longest matching prefix.</p>
@@ -258,7 +204,9 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * @param input The string for which we need value of the stored prefix
      * @return The value, null if not found.
      */
-    V getLongestMatch(char[] input);
+    default V getLongestMatch(String input){
+        return getLongestMatch(input.codePoints().iterator());
+    }
 
     /**
      * <p>Returns List of all matches that have a value.</p>
@@ -270,6 +218,112 @@ public interface PrefixMap<V extends Serializable> extends Serializable, Map<Str
      * @param input The string for which we need value of the stored prefix
      * @return The list of values, an empty List if nothing is found.
      */
-    Iterator<V> getAllMatches(char[] input);
+    default Iterator<V> getAllMatches(String input){
+        return getAllMatches(input.codePoints().iterator());
+    }
+
+    /**
+     * <p>Returns <code>true</code> if this map contains an exact mapping
+     * for the specified prefix.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param prefix prefix whose presence in this prefixmap is to be checked
+     * @return <code>true</code> if this map contains an the exact mapping
+     * for the specified prefix.
+     */
+    default boolean containsPrefix(int[] prefix){
+        return containsPrefix(IntStream.of(prefix).iterator());
+    }
+
+    /**
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
+     * <p>The value returned is the shortest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The value, null if not found.
+     */
+    default V getShortestMatch(int[] input){
+        return getShortestMatch(IntStream.of(input).iterator());
+    }
+
+    /**
+     * <p>Return the value of the longest matching prefix.</p>
+     * <p>The value returned is the longest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The value, null if not found.
+     */
+    default V getLongestMatch(int[] input){
+        return getLongestMatch(IntStream.of(input).iterator());
+    }
+
+    /**
+     * <p>Returns List of all matches that have a value.</p>
+     * <p>The list contains all non-null values for the prefix values where this is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The list of values, an empty List if nothing is found.
+     */
+    default Iterator<V> getAllMatches(int[] input){
+        return getAllMatches(IntStream.of(input).iterator());
+    }
+
+    /**
+     * <p>Returns <code>true</code> if this map contains an exact mapping
+     * for the specified prefix.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param prefix prefix whose presence in this prefixmap is to be checked
+     * @return <code>true</code> if this map contains an the exact mapping
+     * for the specified prefix.
+     */
+    boolean containsPrefix(PrimitiveIterator.OfInt prefix);
+
+    /**
+     * <p>Return the value of the <code>shortest</code> matching prefix. </p>
+     * <p>The value returned is the shortest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The value, null if not found.
+     */
+    V getShortestMatch(PrimitiveIterator.OfInt input);
+
+    /**
+     * <p>Return the value of the longest matching prefix.</p>
+     * <p>The value returned is the longest stored prefix for which is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The value, null if not found.
+     */
+    V getLongestMatch(PrimitiveIterator.OfInt input);
+
+    /**
+     * <p>Returns List of all matches that have a value.</p>
+     * <p>The list contains all non-null values for the prefix values where this is true:
+     * <code>input.startsWith(prefix)</code>.</p>
+     * <p>Note that implementations may be constructed to match either
+     * case sensitive or case insensitive.</p>
+     *
+     * @param input The string (iterator of Unicode CodePoints) for which we need value of the stored prefix.
+     * @return The list of values, an empty List if nothing is found.
+     */
+    Iterator<V> getAllMatches(PrimitiveIterator.OfInt input);
 
 }

@@ -26,8 +26,8 @@ final class PrefixMapSpeedTestData {
     private PrefixMapSpeedTestData() {
     }
 
-    static final Map<String, String> PREFIX_MAP      = new HashMap<>(500);
-    static final Map<String, String> FULL_PREFIX_MAP = new HashMap<>(20000);
+    public static final Map<String, String> PREFIX_MAP      = new HashMap<>(500);
+    public static final Map<String, String> FULL_PREFIX_MAP = new HashMap<>(200000);
 
     // This data was collected as part of the Apache 2.0 licensed project
     // Yauaa: Yet Another UserAgent Analyzer ( https://yauaa.basjes.nl/ )
@@ -581,9 +581,14 @@ final class PrefixMapSpeedTestData {
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
         for (String l1: letters) {
+            FULL_PREFIX_MAP.put(l1+"-", "Unknown");
             for (String l2: letters) {
+                FULL_PREFIX_MAP.put(l1+l2+"-", "Unknown");
                 for (String l3: letters) {
                     FULL_PREFIX_MAP.put(l1+l2+l3+"-", "Unknown");
+                    for (String l4: letters) {
+                        FULL_PREFIX_MAP.put(l1+l2+l3+l4+"-", "Unknown");
+                    }
                 }
             }
         }

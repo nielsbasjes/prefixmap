@@ -1,9 +1,9 @@
 This is intended as an overview of the major changes
 v2.1-SNAPSHOT
 ===
-- Added support for directly searching for a char[]
 - Added tests searching for 🖖 (which is a 2 char character).
 - Added a way to get all matches via an iterator.
+- Made it fully unicode proof (and slightly slower).
 
 v2.0
 ===

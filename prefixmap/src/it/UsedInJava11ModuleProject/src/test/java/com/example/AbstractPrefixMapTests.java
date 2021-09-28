@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,22 +38,22 @@ abstract class AbstractPrefixMapTests {
     protected void checkShortest(PrefixMap<String> prefixLookup, String prefix, String expected) {
         assertEquals(expected, prefixLookup.getShortestMatch(prefix),
             "Wrong 'ShortestMatch' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.getShortestMatch(prefix.toCharArray()),
-            "Wrong 'ShortestMatch' result for '" + prefix + "' as char[]");
+        assertEquals(expected, prefixLookup.getShortestMatch(prefix.codePoints().toArray()),
+            "Wrong 'ShortestMatch' result for '" + prefix + "' as int[]");
     }
 
     protected void checkLongest(PrefixMap<String> prefixLookup, String prefix, String expected) {
         assertEquals(expected, prefixLookup.getLongestMatch(prefix),
             "Wrong 'ShortestMatch' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.getLongestMatch(prefix.toCharArray()),
-            "Wrong 'ShortestMatch' result for '" + prefix + "' as char[]");
+        assertEquals(expected, prefixLookup.getLongestMatch(prefix.codePoints().toArray()),
+            "Wrong 'ShortestMatch' result for '" + prefix + "' as int[]");
     }
 
     protected void checkContains(PrefixMap<String> prefixLookup, String prefix, boolean expected) {
         assertEquals(expected, prefixLookup.containsPrefix(prefix),
             "Wrong 'ContainsPrefix' result for '" + prefix + "'");
-        assertEquals(expected, prefixLookup.containsPrefix(prefix.toCharArray()),
-            "Wrong 'ContainsPrefix' result for '" + prefix + "' as char[]");
+        assertEquals(expected, prefixLookup.containsPrefix(prefix.codePoints().toArray()),
+            "Wrong 'ContainsPrefix' result for '" + prefix + "' as int[]");
     }
 
     protected void checkGetAllIterator(PrefixMap<String> prefixLookup, String prefix, String... expected) {
@@ -61,8 +62,8 @@ abstract class AbstractPrefixMapTests {
         assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "'");
 
         result.clear();
-        prefixLookup.getAllMatches(prefix.toCharArray()).forEachRemaining(result::add);
-        assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "' as char[]");
+        prefixLookup.getAllMatches(prefix.codePoints().toArray()).forEachRemaining(result::add);
+        assertArrayEquals(expected, result.toArray(), "Wrong 'getAllMatches' result for '" + prefix + "' as int[]");
     }
 
     @Test
@@ -383,7 +384,7 @@ abstract class AbstractPrefixMapTests {
         PrefixMap<String> prefixLookup = createPrefixMap(false);
         // Just don't pass a null value.
         assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((String) null));
-        assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((char[]) null));
+        assertThrows(NullPointerException.class, () -> prefixLookup.getAllMatches((PrimitiveIterator.OfInt) null));
     }
 
     @Test

@@ -16,36 +16,20 @@
 
 package nl.basjes.collections.prefixmap;
 
-import nl.basjes.collections.PrefixMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TestPrefixMapAllMethods {
+class TestPrefixTrieAllMethods {
 
-    @Test
-    void testIsEmpty() {
-        PrefixMap<String> stringPrefixMap = new StringPrefixMap<>(false);
-
-        assertTrue(stringPrefixMap.isEmpty());
-        stringPrefixMap.put("Foo", "Bar");
-        assertFalse(stringPrefixMap.isEmpty());
-        stringPrefixMap.clear();
-        assertTrue(stringPrefixMap.isEmpty());
-    }
-
-    // We implement the least possible
-    private static class DummyPrefixMap implements PrefixMap<String> {
+    private static class DummyPrefixTrie implements PrefixTrie<String> {
         @Override
-        public int size() {
-            return 0;
+        public String add(PrimitiveIterator.OfInt prefix, String value) {
+            return null;
         }
 
         @Override
@@ -54,17 +38,7 @@ class TestPrefixMapAllMethods {
         }
 
         @Override
-        public String put(String prefix, String value) {
-            return null;
-        }
-
-        @Override
-        public Set<Entry<String, String>> entrySet() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public String get(String prefix) {
+        public String get(PrimitiveIterator.OfInt input) {
             return null;
         }
 
@@ -82,20 +56,23 @@ class TestPrefixMapAllMethods {
         public Iterator<String> getAllMatches(PrimitiveIterator.OfInt input) {
             return Collections.emptyIterator();
         }
+
+        @Override
+        public void clear() {
+        }
+
+        @Override
+        public boolean caseSensitive() {
+            return false;
+        }
     }
 
     @Test
-    void testRemoveNotImplemented() {
-        assertThrows(UnsupportedOperationException.class,
-            () -> new DummyPrefixMap().remove("Something")
-        );
-    }
-
-    @Test
-    void testClearNotImplemented() {
-        assertThrows(UnsupportedOperationException.class,
-            () -> new DummyPrefixMap().clear()
-        );
+    void testRemoveTrieNotImplemented() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            PrefixTrie<String> dummyPrefixTrie = new DummyPrefixTrie();
+            dummyPrefixTrie.remove("Something");
+        });
     }
 
 }
