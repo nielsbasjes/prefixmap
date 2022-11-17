@@ -46,7 +46,7 @@
 
     <checkstyle-plugin.version>3.2.0</checkstyle-plugin.version>
     <checkstyle.version>10.4</checkstyle.version>
-    <slf4j.version>2.0.3</slf4j.version>
+    <slf4j.version>2.0.4</slf4j.version>
     <rat.version>0.15</rat.version>
     <jacoco.version>0.8.8</jacoco.version>
 
@@ -346,7 +346,7 @@
     <pluginManagement>
       <plugins>
         <plugin><artifactId>maven-clean-plugin</artifactId>     <version>3.2.0</version>  </plugin>
-        <plugin><artifactId>maven-install-plugin</artifactId>   <version>3.0.1</version>  </plugin>
+        <plugin><artifactId>maven-install-plugin</artifactId>   <version>3.1.0</version>  </plugin>
         <plugin><artifactId>maven-jar-plugin</artifactId>       <version>3.3.0</version>  </plugin>
         <plugin><artifactId>maven-resources-plugin</artifactId> <version>3.3.0</version>  </plugin>
         <plugin><artifactId>maven-site-plugin</artifactId>      <version>3.12.1</version>  </plugin>
