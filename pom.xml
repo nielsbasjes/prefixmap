@@ -633,7 +633,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.13.0</version>
+        <version>2.14.0</version>
         <configuration>
           <!-- Thank you https://stackoverflow.com/a/33727833/114196 -->
           <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
