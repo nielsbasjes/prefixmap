@@ -34,7 +34,7 @@
 
     <!--  We test with Kryo 4.x to ensure backwards compatibility. -->
     <kryo4.version>4.0.2</kryo4.version>
-    <kryo5.version>5.3.0</kryo5.version>
+    <kryo5.version>5.4.0</kryo5.version>
 
     <!-- In order for everything to work correctly we need at least this version of maven. -->
     <maven.minimal.version>3.5.2</maven.minimal.version>
