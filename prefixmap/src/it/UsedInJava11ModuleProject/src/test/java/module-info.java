@@ -15,10 +15,13 @@
  */
 
 module nl.basjes.test.java11module {
+    opens com.example;
+
     // Optional module only needed if the Kryo serialization is desired
     requires com.esotericsoftware.kryo;
 
     requires nl.basjes.collections.prefixmap;
 
     requires org.junit.jupiter.api;
+    requires org.junit.jupiter.engine;
 }
