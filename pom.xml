@@ -33,7 +33,7 @@
     <target.java.release>8</target.java.release>
 
     <!--  We test with Kryo 4.x to ensure backwards compatibility. -->
-    <kryo4.version>4.0.2</kryo4.version>
+    <kryo4.version>4.0.3</kryo4.version>
     <kryo5.version>5.5.0</kryo5.version>
 
     <!-- In order for everything to work correctly we need at least this version of maven. -->
