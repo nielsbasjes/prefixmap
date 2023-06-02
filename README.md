@@ -1,7 +1,7 @@
 PrefixMap: A Map type datastructure that uses prefixes instead of keys
 ========================================
-[![Travis Build status](https://api.travis-ci.com/nielsbasjes/prefixmap.png?branch=master)](https://travis-ci.com/nielsbasjes/prefixmap)
-[![Coverage Status](https://coveralls.io/repos/github/nielsbasjes/prefixmap/badge.svg?branch=master)](https://coveralls.io/github/nielsbasjes/prefixmap?branch=master)
+[![Github actions Build status](https://img.shields.io/github/actions/workflow/status/nielsbasjes/prefixmap/build.yml?branch=main)](https://github.com/nielsbasjes/prefixmap/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/nielsbasjes/prefixmap)](https://app.codecov.io/gh/nielsbasjes/prefixmap)
 [![License](https://img.shields.io/:license-apache-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://img.shields.io/maven-central/v/nl.basjes.collections/prefixmap.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22nl.basjes.collections%22)
 [![If this project has business value for you then don't hesitate to support me with a small donation.](https://img.shields.io/badge/Sponsor%20me-via%20Github-red.svg)](https://github.com/sponsors/nielsbasjes)
