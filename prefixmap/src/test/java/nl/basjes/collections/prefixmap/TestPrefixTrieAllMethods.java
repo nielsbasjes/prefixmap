@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TestPrefixTrieAllMethods {
 
-    private static class DummyPrefixTrie implements PrefixTrie<String> {
+    private static final class DummyPrefixTrie implements PrefixTrie<String> {
         @Override
         public String add(PrimitiveIterator.OfInt prefix, String value) {
             return null;

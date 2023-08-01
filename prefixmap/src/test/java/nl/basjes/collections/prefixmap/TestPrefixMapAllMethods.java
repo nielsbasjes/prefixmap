@@ -42,7 +42,7 @@ class TestPrefixMapAllMethods {
     }
 
     // We implement the least possible
-    private static class DummyPrefixMap implements PrefixMap<String> {
+    private static final class DummyPrefixMap implements PrefixMap<String> {
         @Override
         public int size() {
             return 0;
