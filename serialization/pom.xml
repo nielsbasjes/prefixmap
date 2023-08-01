@@ -117,17 +117,7 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <executions>
-          <execution>
-            <id>Perform OWASP dependency check</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+     </plugins>
   </build>
 
 </project>
