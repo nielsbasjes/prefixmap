@@ -214,34 +214,6 @@
             </executions>
           </plugin>
 
-          <plugin>
-            <!-- Description: https://github.com/git-commit-id/git-commit-id-maven-plugin -->
-            <groupId>io.github.git-commit-id</groupId>
-            <artifactId>git-commit-id-maven-plugin</artifactId>
-            <version>${git-commit-id-plugin.version}</version>
-            <executions>
-              <execution>
-                <id>Enforce for release: Everything is committed</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>validateRevision</goal>
-                </goals>
-                <configuration>
-                  <validationProperties>
-                    <!-- verify that the current repository is not dirty -->
-                    <validationProperty>
-                      <name>Don't try to release if something has not yet been committed.</name>
-                      <!--suppress UnresolvedMavenProperty -->
-                      <value>${git.dirty}</value>
-                      <shouldMatchTo>false</shouldMatchTo>
-                    </validationProperty>
-                  </validationProperties>
-                  <validationShouldFailIfNoMatch>true</validationShouldFailIfNoMatch>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
           <!-- https://central.sonatype.org/publish/publish-portal-maven/ -->
           <plugin>
             <groupId>org.sonatype.central</groupId>
@@ -263,105 +235,6 @@
                 <excludeArtifact>prefixmap-serialization-tests-java-kryo-5</excludeArtifact>
               </excludeArtifacts>
             </configuration>
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <!-- Description: https://github.com/git-commit-id/git-commit-id-maven-plugin -->
-            <groupId>io.github.git-commit-id</groupId>
-            <artifactId>git-commit-id-maven-plugin</artifactId>
-            <version>${git-commit-id-plugin.version}</version>
-            <executions>
-              <execution>
-                <id>Enforce for release: Everything is committed</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>validateRevision</goal>
-                </goals>
-                <configuration>
-                  <validationProperties>
-                    <!-- verify that the current repository is not dirty -->
-                    <validationProperty>
-                      <name>Don't try to release if something has not yet been committed.</name>
-                      <!--suppress UnresolvedMavenProperty -->
-                      <value>${git.dirty}</value>
-                      <shouldMatchTo>false</shouldMatchTo>
-                    </validationProperty>
-                  </validationProperties>
-                  <validationShouldFailIfNoMatch>true</validationShouldFailIfNoMatch>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>Enforce for release: Current commit is tagged</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>validateRevision</goal>
-                </goals>
-                <configuration>
-                  <validationProperties>
-                    <!-- verify that the current commit has a tag -->
-                    <validationProperty>
-                      <name>validating current commit has a tag</name>
-                      <!--suppress UnresolvedMavenProperty -->
-                      <value>${git.closest.tag.commit.count}</value>
-                      <shouldMatchTo>0</shouldMatchTo>
-                    </validationProperty>
-                  </validationProperties>
-                  <validationShouldFailIfNoMatch>true</validationShouldFailIfNoMatch>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-build-environment</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireMavenVersion>
-                      <version>[${maven.minimal.version},)</version>
-                      <message>You must use Maven version ${maven.minimal.version} or newer to build this project.</message>
-                      <!-- Reasons for this need:                            -->
-                      <!-- https://issues.apache.org/jira/browse/MDEPLOY-221 -->
-                      <!-- https://issues.apache.org/jira/browse/MNG-6581    -->
-                    </requireMavenVersion>
-
-                    <requireJavaVersion>
-                      <message>You need JDK 11 or newer to build this project. The end result will be a Java 9 module that can still be used as a normal Java 8 dependency</message>
-                      <version>[11,)</version>
-                    </requireJavaVersion>
-                  </rules>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>dependency-convergence</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <dependencyConvergence/>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
 
         </plugins>
@@ -612,7 +485,7 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>Enforce Maven ${maven.minimal.version} or newer</id>
+            <id>Enforce build environment</id>
             <goals>
               <goal>enforce</goal>
             </goals>
@@ -625,38 +498,14 @@
                   <!-- https://issues.apache.org/jira/browse/MDEPLOY-221 -->
                   <!-- https://issues.apache.org/jira/browse/MNG-6581    -->
                 </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>Enforce JDK 11 or newer</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-
                 <requireJavaVersion>
-                  <version>[11,)</version><!-- PrefixMap requires JDK 11 or newer to build, the result will run on JRE 8 -->
+                  <message>You need JDK 11 or newer to build this project. The end result will be a Java 9 module that can still be used as a normal Java 8 dependency</message>
+                  <version>[11,)</version>
                 </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>Enforce Dependency convergence</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
                 <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
 
@@ -757,7 +606,7 @@
 
           <preparationProfiles>packageForRelease</preparationProfiles>
           <preparationGoals>clean verify</preparationGoals>
-          <releaseProfiles>packageForRelease,release</releaseProfiles>
+          <releaseProfiles>packageForRelease</releaseProfiles>
           <pushChanges>false</pushChanges>
           <remoteTagging>false</remoteTagging>
         </configuration>
@@ -795,7 +644,8 @@
   <scm>
     <url>https://github.com/nielsbasjes/prefixmap</url>
     <connection>scm:git:https://github.com/nielsbasjes/prefixmap.git</connection>
-    <developerConnection>scm:git:.</developerConnection>
+    <developerConnection>scm:git:file:///${project.basedir}</developerConnection>
+    <tag>HEAD</tag>
   </scm>
 
 </project>
