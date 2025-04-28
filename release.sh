@@ -100,9 +100,9 @@ fi
 # Forcing a manual gpg signing action to ensure the password is known
 (
   cd /tmp
-  echo x > CodeOwners-release-$$.txt
-  gpg --clearsign CodeOwners-release-$$.txt
-  rm CodeOwners-release-$$.txt CodeOwners-release-$$.txt.asc
+  echo x > PrefixMap-release-$$.txt
+  gpg --clearsign PrefixMap-release-$$.txt
+  rm PrefixMap-release-$$.txt PrefixMap-release-$$.txt.asc
 )
 
 info "GPG workaround: Starting"

@@ -217,22 +217,6 @@
           </plugin>
 
           <plugin>
-            <!-- explicitly define maven-deploy-plugin after other to force exec order -->
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <version>3.1.4</version>
-            <executions>
-              <execution>
-                <id>deploy</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
             <!-- Description: https://github.com/git-commit-id/git-commit-id-maven-plugin -->
             <groupId>io.github.git-commit-id</groupId>
             <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -258,6 +242,29 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+
+          <!-- https://central.sonatype.org/publish/publish-portal-maven/ -->
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.7.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <!--              <autoPublish>true</autoPublish>-->
+              <!--              <waitUntil>published</waitUntil>-->
+              <waitUntil>validated</waitUntil>
+              <excludeArtifacts>
+                <excludeArtifact>prefixmap-devtools</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests-parent</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests-base</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests-java</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests-java-kryo-4</excludeArtifact>
+                <excludeArtifact>prefixmap-serialization-tests-java-kryo-5</excludeArtifact>
+              </excludeArtifacts>
+            </configuration>
           </plugin>
 
         </plugins>
@@ -414,12 +421,11 @@
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-install-plugin</artifactId>   <version>3.1.4</version>  </plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>       <version>3.4.2</version>  </plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-resources-plugin</artifactId> <version>3.3.1</version>  </plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-site-plugin</artifactId>      <version>3.21.0</version>  </plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>  <version>3.14.0</version>  </plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-deploy-plugin</artifactId>    <version>3.1.4</version>  </plugin>
+        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-site-plugin</artifactId>      <version>3.21.0</version> </plugin>
+        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>  <version>3.14.0</version> </plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-enforcer-plugin</artifactId>  <version>3.5.0</version>  </plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId>    <version>3.3.1</version>  </plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>   <version>3.11.2</version>  </plugin>
+        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>   <version>3.11.2</version> </plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-gpg-plugin</artifactId>       <version>3.2.7</version>  </plugin>
 
         <plugin>
@@ -569,11 +575,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
-
-      <plugin>
         <!-- Description: https://github.com/git-commit-id/git-commit-id-maven-plugin -->
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -643,7 +644,6 @@
 
         </executions>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -742,7 +742,7 @@
 
           <preparationProfiles>packageForRelease</preparationProfiles>
           <preparationGoals>clean verify</preparationGoals>
-          <releaseProfiles>packageForRelease,release,deployToSonatype</releaseProfiles>
+          <releaseProfiles>packageForRelease,release</releaseProfiles>
           <pushChanges>false</pushChanges>
           <remoteTagging>false</remoteTagging>
         </configuration>

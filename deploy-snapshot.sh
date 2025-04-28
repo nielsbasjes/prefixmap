@@ -119,4 +119,4 @@ trap killSigner SIGINT
 
 ## Prepare the release: Make releasable version and make tag.
 info "Deploying"
-mvn clean deploy -PpackageForRelease -PdeployToSonatype
+mvn clean deploy -PpackageForRelease
