@@ -60,7 +60,7 @@ If this project has business value for you then don't hesitate to support me wit
 License
 =======
 
-    Copyright (C) 2018-2021 Niels Basjes
+    Copyright (C) 2018-2025 Niels Basjes
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
