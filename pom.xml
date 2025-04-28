@@ -14,14 +14,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.basjes.collections</groupId>
   <artifactId>prefixmap-parent</artifactId>
-  <version>2.1.0-SNAPSHOT</version>
+  <version>2.1.0</version>
 
   <packaging>pom</packaging>
 
@@ -43,7 +41,7 @@
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
     <!-- Needed to make the build reproducible https://reproducible-builds.org/ -->
-    <project.build.outputTimestamp>2025-01-01T01:01:01Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-04-28T13:28:29Z</project.build.outputTimestamp>
 
     <!-- ============================================== -->
 
@@ -54,7 +52,7 @@
     <jacoco.version>0.8.13</jacoco.version>
 
     <!-- See http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html-->
-    <jacoco.surefireArgLine/>
+    <jacoco.surefireArgLine />
     <argLine>@{jacoco.surefireArgLine} -Xmx2048m</argLine>
 
     <junit5.version>5.12.2</junit5.version>
@@ -502,7 +500,7 @@
                   <message>You need JDK 11 or newer to build this project. The end result will be a Java 9 module that can still be used as a normal Java 8 dependency</message>
                   <version>[11,)</version>
                 </requireJavaVersion>
-                <dependencyConvergence/>
+                <dependencyConvergence />
               </rules>
             </configuration>
           </execution>
@@ -645,7 +643,7 @@
     <url>https://github.com/nielsbasjes/prefixmap</url>
     <connection>scm:git:https://github.com/nielsbasjes/prefixmap.git</connection>
     <developerConnection>scm:git:file:///${project.basedir}</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v2.1.0</tag>
   </scm>
 
 </project>
