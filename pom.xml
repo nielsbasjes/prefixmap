@@ -134,7 +134,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-artifact-plugin</artifactId>
-            <version>3.6.0</version>
             <executions>
               <execution>
                 <id>compare</id>
@@ -160,7 +159,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-artifact-plugin</artifactId>
-            <version>3.6.0</version>
             <executions>
               <execution>
                 <id>Ensure plugins are reproducible</id>
@@ -433,6 +431,23 @@
           <version>3.5.3</version>
           <configuration>
             <failIfNoTests>true</failIfNoTests>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-artifact-plugin</artifactId>
+          <version>3.6.0</version>
+          <configuration>
+            <skipModules>
+              <skipModule>nl.basjes.collections/prefixmap-devtools</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests-parent</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests-base</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests-java</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests-java-kryo-4</skipModule>
+              <skipModule>nl.basjes.collections/prefixmap-serialization-tests-java-kryo-5</skipModule>
+            </skipModules>
           </configuration>
         </plugin>
 
