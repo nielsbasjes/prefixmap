@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-#  CodeOwners Tools
-#  Copyright (C) 2023-2025 Niels Basjes
+# Copyright (C) 2018-2025 Niels Basjes
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -99,10 +98,10 @@ fi
 # ----------------------------------------------------------------------------------------------------
 # Forcing a manual gpg signing action to ensure the password is known
 (
-  cd /tmp
-  echo x > PrefixMap-release-$$.txt
-  gpg --clearsign PrefixMap-release-$$.txt
-  rm PrefixMap-release-$$.txt PrefixMap-release-$$.txt.asc
+  cd /tmp || die "Unable to enter /tmp"
+  echo x > ReleaseProcess-$$.txt
+  gpg --clearsign ReleaseProcess-$$.txt
+  rm ReleaseProcess-$$.txt ReleaseProcess-$$.txt.asc
 )
 
 info "GPG workaround: Starting"
