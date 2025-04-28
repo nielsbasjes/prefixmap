@@ -186,6 +186,7 @@ fi
 RELEASEVERSION=$(git describe --abbrev=0| sed 's/^v//')
 
 info "Now verify Sonatype to release version ${RELEASEVERSION}"
+info "Go to https://central.sonatype.com/publishing/deployments"
 warn "Press any key abort or 'c' to continue and update the website"
 read -n 1 k <&1
 if [[ $k = c ]] ;
