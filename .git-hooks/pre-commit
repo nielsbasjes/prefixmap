@@ -1,5 +1,7 @@
+#!/bin/bash
 #
-# Copyright (C) 2018-2021 Niels Basjes
+# Modbus Schema Toolkit
+# Copyright (C) 2019-2025 Niels Basjes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,20 +16,19 @@
 # limitations under the License.
 #
 
-language: java
+# Client side pre-commit hook to assist the committers to ensure the commit messages
+# follow the chosen convention.
 
-dist: trusty
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-jdk:
-  - openjdk11
+. ${SCRIPTDIR}/hook-functions.sh
 
-addons:
-  sonarcloud:
-    organization: "nielsbasjes-github"
-
-script:
-  - mvn test -PEnableReportPlugins coveralls:report sonar:sonar -Dsonar.projectKey=nielsbasjes_prefixmap
-
-cache:
-  directories:
-    - '$HOME/.m2/repository'
+for check in "${SCRIPTDIR}"/pre-commit.d/*sh; do
+   . ${check}
+   STATUS=$?
+   if [ $STATUS -ne 0 ];
+   then
+     echo "STATUS: ${check} ${STATUS}"
+     exit $STATUS
+   fi
+done
