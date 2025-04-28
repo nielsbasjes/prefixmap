@@ -39,7 +39,7 @@ All you need is to add this dependency to you project
     <dependency>
       <groupId>nl.basjes.collections</groupId>
       <artifactId>prefixmap</artifactId>
-      <version>2.0</version>
+      <version>2.1.0</version>
     </dependency>
 
 Version 2.0 If you are using Kryo 5.x you can use this to register all classes:
