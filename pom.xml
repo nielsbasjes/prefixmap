@@ -55,7 +55,7 @@
     <jacoco.surefireArgLine />
     <argLine>@{jacoco.surefireArgLine} -Xmx2048m</argLine>
 
-    <junit5.version>5.13.3</junit5.version>
+    <junit5.version>5.13.4</junit5.version>
     <hamcrest-core.version>2.2</hamcrest-core.version>
 
     <sonar.language>java</sonar.language>
