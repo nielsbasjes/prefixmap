@@ -114,6 +114,10 @@ abstract class AbstractPrefixTrieTests {
 
         assertEquals(null, prefixLookup.getShortestMatch("ABD"));
         assertEquals(null, prefixLookup.getLongestMatch("ABD"));
+
+        prefixLookup.remove("ABC");
+        assertEquals(null, prefixLookup.getShortestMatch("ABD"));
+        assertEquals(null, prefixLookup.getLongestMatch("ABD"));
     }
 
     @Test
