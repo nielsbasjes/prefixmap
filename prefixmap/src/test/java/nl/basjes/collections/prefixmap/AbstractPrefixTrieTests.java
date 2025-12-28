@@ -110,8 +110,18 @@ abstract class AbstractPrefixTrieTests {
         PrefixTrie<String> prefixLookup = createPrefixTrie(true);
 
         // Initial filling
-        assertEquals(null, prefixLookup.add("ABC", "ONE"));
+        assertEquals(null, prefixLookup.add("ABC",  "ONE"));
+        assertEquals(null, prefixLookup.add("ABCD", "TWO"));
+        assertEquals("ONE", prefixLookup.getShortestMatch("ABCD"));
+        assertEquals("TWO", prefixLookup.getLongestMatch("ABCD"));
 
+        assertEquals(null, prefixLookup.getShortestMatch("ABD"));
+        assertEquals(null, prefixLookup.getLongestMatch("ABD"));
+
+        prefixLookup.remove("ABC");
+        prefixLookup.remove("ABCD");
+        assertEquals(null, prefixLookup.getShortestMatch("ABCD"));
+        assertEquals(null, prefixLookup.getLongestMatch("ABCD"));
         assertEquals(null, prefixLookup.getShortestMatch("ABD"));
         assertEquals(null, prefixLookup.getLongestMatch("ABD"));
     }
