@@ -106,6 +106,17 @@ abstract class AbstractPrefixTrieTests {
     }
 
     @Test
+    void testPartialPrefixNoMatch() {
+        PrefixTrie<String> prefixLookup = createPrefixTrie(true);
+
+        // Initial filling
+        assertEquals(null, prefixLookup.add("ABC", "ONE"));
+
+        assertEquals(null, prefixLookup.getShortestMatch("ABD"));
+        assertEquals(null, prefixLookup.getLongestMatch("ABD"));
+    }
+
+    @Test
     void testRemoveCaseSensitive() {
         PrefixTrie<String> prefixLookup = createPrefixTrie(true);
 
