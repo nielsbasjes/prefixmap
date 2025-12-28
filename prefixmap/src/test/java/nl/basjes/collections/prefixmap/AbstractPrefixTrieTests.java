@@ -93,6 +93,19 @@ abstract class AbstractPrefixTrieTests {
     }
 
     @Test
+    void testRemoveEmptyPrefix() {
+        PrefixTrie<String> prefixLookup = createPrefixTrie(true);
+
+        // Initial filling
+        assertEquals(null, prefixLookup.add("A", "ONE"));
+        assertEquals(null, prefixLookup.add("a", "one"));
+
+        assertEquals(null, prefixLookup.getShortestMatch(""));
+        assertEquals(null, prefixLookup.getLongestMatch(""));
+        assertEquals(null, prefixLookup.remove(""));
+    }
+
+    @Test
     void testRemoveCaseSensitive() {
         PrefixTrie<String> prefixLookup = createPrefixTrie(true);
 
