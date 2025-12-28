@@ -27,7 +27,7 @@
   <packaging>jar</packaging>
 
   <name>PrefixMap : Implementation</name>
-  <description>A datastructure the allows looking up the best matching prefix.</description>
+  <description>A data structure that allows looking up the best matching prefix.</description>
 
   <url>https://github.com/nielsbasjes/prefixmap</url>
 
