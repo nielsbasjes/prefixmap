@@ -4,6 +4,7 @@ v2.1-SNAPSHOT
 - Added tests searching for 🖖 (which is a 2 char character).
 - Added a way to get all matches via an iterator.
 - Made it fully unicode proof (and slightly slower).
+- Build under Java 25
 
 v2.0
 ===
