@@ -245,7 +245,7 @@ abstract class AbstractPrefixMapTests {
         assertEquals("one",     prefixLookup.get("A"));
         assertEquals("two",     prefixLookup.get("AB"));
         assertEquals("three",   prefixLookup.get("ABC"));
-        assertEquals(null,   prefixLookup.get("ABCD"));
+        assertEquals(null,      prefixLookup.get("ABCD"));
         assertEquals("one",     prefixLookup.getShortestMatch("A"));
         assertEquals("one",     prefixLookup.getShortestMatch("AB"));
         assertEquals("one",     prefixLookup.getShortestMatch("ABC"));
@@ -259,7 +259,7 @@ abstract class AbstractPrefixMapTests {
         assertEquals("one",     prefixLookup.get("a"));
         assertEquals("two",     prefixLookup.get("ab"));
         assertEquals("three",   prefixLookup.get("abc"));
-        assertEquals(null,   prefixLookup.get("abcd"));
+        assertEquals(null,      prefixLookup.get("abcd"));
         assertEquals("one",     prefixLookup.getShortestMatch("a"));
         assertEquals("one",     prefixLookup.getShortestMatch("ab"));
         assertEquals("one",     prefixLookup.getShortestMatch("abc"));
