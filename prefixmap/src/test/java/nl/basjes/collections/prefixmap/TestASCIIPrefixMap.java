@@ -36,8 +36,20 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         return new ASCIIPrefixMap<>(caseSensitive);
     }
 
+
     @Test
-    void testPutNonASCIIPrefix() {
+    void testPutNonASCIIPrefixLow() {
+        Map<String, String> prefixMap = new HashMap<>();
+        // These are 1 char per character
+        prefixMap.put("\t", "A tab character");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> new ASCIIPrefixMap<>(false).putAll(prefixMap)
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+    }
+
+    @Test
+    void testPutNonASCIIPrefixHigh() {
         Map<String, String> prefixMap = new HashMap<>();
         // These are 1 char per character
         prefixMap.put("你好", "Hello in Chinese");
@@ -57,7 +69,18 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
     }
 
     @Test
-    void testRemoveNonASCIIPrefix() {
+    void testRemoveNonASCIIPrefixLow() {
+        PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
+        prefixLookup.put("Something",    "To ensure not empty");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> prefixLookup.remove("\t")
+        );
+        assertEquals("Only readable ASCII is allowed as prefix !!!", exception.getMessage());
+        assertEquals(1, prefixLookup.size());
+    }
+
+    @Test
+    void testRemoveNonASCIIPrefixHigh() {
         PrefixMap<String> prefixLookup = new ASCIIPrefixMap<>(false);
         prefixLookup.put("Something",    "To ensure not empty");
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -112,6 +135,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
+        checkShortest(prefixLookup, "\t",      null);
         checkShortest(prefixLookup, "你好",     null);
 
         // Same case
@@ -156,6 +180,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
+        checkLongest(prefixLookup, "\t",       null);
         checkLongest(prefixLookup, "你好",      null);
 
         // Same case
@@ -201,6 +226,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "MisMatch", false);
 
         // These are 1 char per character
+        checkContains(prefixLookup, "\t",       false);
         checkContains(prefixLookup, "你",       false);
         checkContains(prefixLookup, "你好",     false);
 
@@ -263,6 +289,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Shortest Match
         checkShortest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
+        checkShortest(prefixLookup, "\t",      null);
         checkShortest(prefixLookup, "你好",     null);
         // These are 2 chars per character
         checkShortest(prefixLookup, "🖖👹",    null);
@@ -309,6 +336,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         // Longest Match
         checkLongest(prefixLookup, "MisMatch", null);
         // These are 1 char per character
+        checkLongest(prefixLookup, "\t",      null);
         checkLongest(prefixLookup, "你好",     null);
         // These are 2 chars per character
         checkLongest(prefixLookup, "🖖👹",    null);
@@ -355,6 +383,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkContains(prefixLookup, "MisMatch", false);
 
         // These are 1 char per character
+        checkContains(prefixLookup, "\t",      false);
         checkContains(prefixLookup, "你",      false);
         checkContains(prefixLookup, "你好",    false);
         // These are 2 chars per character
@@ -444,6 +473,7 @@ class TestASCIIPrefixMap extends AbstractPrefixMapTests {
         checkGetAllIterator(prefixLookup, "🖖",          "Empty");
         checkGetAllIterator(prefixLookup, "🖖BcDe",      "Empty");
 
+        checkGetAllIterator(prefixLookup, "\t",           "Empty");
         checkGetAllIterator(prefixLookup, "你好",          "Empty");
         checkGetAllIterator(prefixLookup, "你好DeF",       "Empty");
         checkGetAllIterator(prefixLookup, "你🖖DeFg",      "Empty");
