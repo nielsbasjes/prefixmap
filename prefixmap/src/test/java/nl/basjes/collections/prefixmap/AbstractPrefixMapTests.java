@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 
@@ -361,7 +362,10 @@ abstract class AbstractPrefixMapTests {
         verifySerializationInstance(instance);
 
         PrefixMap<String> instance2 = createPrefixMap(false);
-        instance.forEach(instance2::put);
+        for (Entry<String, String> entry: instance.entrySet()) {
+            instance2.put(entry.getKey(), entry.getValue());
+        }
+
         verifySerializationInstance(instance2);
     }
 
